@@ -1,13 +1,11 @@
 package com.android.lucy.treasure.adapter;
 
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.pager.ContentPager;
-import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.view.ChapterViewPager;
 
 import java.util.LinkedList;

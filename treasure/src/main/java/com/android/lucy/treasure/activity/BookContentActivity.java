@@ -43,7 +43,6 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private MyFrameLayout frameLayout;
     private ArrayList<ContentPager> contentPagers;
     private LinkedList<PagerContentInfo> pagerContentInfos;
-    private int currentPagerPosition;
     private int chapterTotal;
     private int loadChapterId;
 
@@ -139,7 +138,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 
     @Override
     public void onPageSelected(int position) {
-        currentPagerPosition = adapter.getPagerPosition();
+        int currentPagerPosition = adapter.getPagerPosition();
         viewPager.setCurrentPagerPosition(currentPagerPosition);
         MyLogcat.myLog("activiaty----" + "当前页面集合位置：" + currentPagerPosition);
         loadNextChapter(currentPagerPosition);
@@ -161,14 +160,24 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         int currentChapterPager = pagerContentInfo.getCurrentPager();
         int chapterPagerTotal = pagerContentInfo.getChapterPagerToatal();
         MyLogcat.myLog("当前章节id:" + currentChapterId + ",上一次在哪个章节下载:" + loadChapterId + "，当前章节页面id:" + currentChapterPager);
-        if (currentChapterId > loadChapterId && currentChapterPager == chapterPagerTotal) {
+        //章节id等于当前页面id的最后一页下载后二章
+        if (currentChapterPager == chapterPagerTotal) {
             CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(currentChapterId + 1);
             if (null == catalogInfo) {
                 service.startThread(currentChapterId + 1, currentChapterId);
             } else {
                 service.startThread(currentChapterId + 2, currentChapterId);
             }
-            loadChapterId = currentChapterId;
+        }
+        //章节id大于1并且当前页面id为第一页下载前 二章
+        if (currentChapterId > 1 && currentChapterPager == 1) {
+            CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(currentChapterId - 1);
+            if (null == catalogInfo) {
+                service.startThread(currentChapterId - 1, currentChapterId);
+            }
+            if (currentChapterId > 2) {
+                service.startThread(currentChapterId - 2, currentChapterId);
+            }
         }
     }
 
