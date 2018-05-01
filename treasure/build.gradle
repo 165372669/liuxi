@@ -29,7 +29,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation files('D:/Program Files/Android/MyApplication3/phone-dialer/libs/jsoup-1.11.2.jar')
     implementation files('libs/commons-lang3-3.7.jar')
     implementation files('libs/jsoup-1.11.2.jar')
 }

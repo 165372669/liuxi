@@ -8,9 +8,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/my-textview" />
-            <option value="$PROJECT_DIR$/phone-dialer" />
-            <option value="$PROJECT_DIR$/phone-sms" />
             <option value="$PROJECT_DIR$/treasure" />
           </set>
         </option>

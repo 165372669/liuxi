@@ -1,1 +1,1 @@
-include ':treasure', ':phone-dialer', ':phone-sms', ':my-textview'
+include ':treasure'
