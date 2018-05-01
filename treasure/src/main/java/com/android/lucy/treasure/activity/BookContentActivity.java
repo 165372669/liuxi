@@ -150,7 +150,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     }
 
     /**
-     * 功能：加载章节
+     * 功能：加载章节a
      *
      * @param currentPagerPosition 页面集合当前位置
      */
