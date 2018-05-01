@@ -57,15 +57,13 @@ public class ChapterContentService extends Service {
                     //获取数据失败
                     break;
                 case 1://成功下载到章节并添加到页面集合
-                    addPagerCotentInfo(msg.arg2);
-                    //下载第二章
-                    if (loadChapterId == 1)
+                    int loadChapterId = msg.arg2;
+                    addPagerCotentInfo(loadChapterId);
+                    //下载完第一章后下载第二章
+                    if (loadChapterId == 1) {
                         startThread(2, 1);
-                    break;
-                case 2:
-                    //处理好数据通知刷新
-                    MyLogcat.myLog("通知更新");
-                    onChapterContentListener.setChapterContent();
+                        onChapterContentListener.setChapterContent();
+                    }
                     break;
             }
             // onChapterContentListener.setChapterContent();
@@ -124,11 +122,13 @@ public class ChapterContentService extends Service {
         this.currentChapterId = currentChapterId;
         MyLogcat.myLog("调用下载章节线程");
         CatalogInfo catalogInfo = info.getCatalogInfos().get(number - 1);
-        String chapterUrl = catalogInfo.getChapterUrl();
-        ConfigInfo configInfo = new ConfigInfo(chapterNameHeight, bookNameHeight, chapterContentWidth,
-                chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
-        MyLogcat.myLog(configInfo.toString());
-        ThreadPool.getInstance().submitTask(new PbtxtChapterContentThread(chapterUrl, this.contentHandler, catalogInfo, configInfo));
+        if (null == catalogInfo.getStrs()) {
+            String chapterUrl = catalogInfo.getChapterUrl();
+            ConfigInfo configInfo = new ConfigInfo(chapterNameHeight, bookNameHeight, chapterContentWidth,
+                    chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
+            MyLogcat.myLog(configInfo.toString());
+            ThreadPool.getInstance().submitTask(new PbtxtChapterContentThread(chapterUrl, this.contentHandler, catalogInfo, configInfo));
+        }
     }
 
     public void setOnChapterContentListener(OnChapterContentListener onChapterContentListener) {
@@ -166,7 +166,7 @@ public class ChapterContentService extends Service {
      * Viewpager集合添加数据
      */
     public void addPagerCotentInfo(int loadChapterId) {
-        MyLogcat.myLog("loadChapterId:" + loadChapterId + ",currentChapterId:" + currentChapterId);
+        MyLogcat.myLog("下载的章节id:" + loadChapterId + ",当前的章节id:" + currentChapterId);
         ArrayList<PagerContentInfo> strs = info.getCatalogInfos().get(loadChapterId - 1).getStrs();
         int size = strs.size() - 1;
         for (int i = 0; i < strs.size(); i++) {
@@ -176,9 +176,23 @@ public class ChapterContentService extends Service {
                 pagerContentInfos.addFirst(strs.get(size - i));
             }
         }
-        Message message = Message.obtain();
-        message.arg1 = 2;
-        contentHandler.handleMessage(message);
+        if (loadChapterId > currentChapterId) {
+            int number = loadChapterId - 4;
+            if (number > 0) {
+                ArrayList<PagerContentInfo> pagerContentInfos = info.getCatalogInfos().get(number).getStrs();
+                if (null != pagerContentInfos) {
+                    pagerContentInfos.clear();
+                    MyLogcat.myLog("删除章节：" + number);
+                }
+            }
+        } else {
+            int number = loadChapterId + 4;
+            if (number < info.getCatalogInfos().size() - 1) {
+                ArrayList<PagerContentInfo> pagerContentInfos = info.getCatalogInfos().get(number).getStrs();
+                if (null != pagerContentInfos)
+                    pagerContentInfos.clear();
+            }
+        }
     }
 
     /*
