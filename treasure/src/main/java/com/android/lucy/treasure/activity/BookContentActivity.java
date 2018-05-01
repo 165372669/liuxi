@@ -169,7 +169,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                 service.startThread(currentChapterId + 2, currentChapterId);
             }
         }
-        //章节id大于1并且当前页面id为第一页下载前二章
+        //章节id大于1并且当前页面id为第一页下载前 二章
         if (currentChapterId > 1 && currentChapterPager == 1) {
             CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(currentChapterId - 1);
             if (null == catalogInfo) {
