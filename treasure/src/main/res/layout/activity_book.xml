@@ -25,18 +25,15 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="小说详情"
-            android:gravity="center_vertical"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginRight="55dp"
             android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginLeft="10dp"
-            />
 
-        <TextView
-            android:layout_width="0.3dp"
-            android:layout_height="match_parent"
-            android:background="@color/huise" />
+            />
     </LinearLayout>
 
     <LinearLayout

@@ -120,7 +120,7 @@ public class ChapterContentService extends Service {
     public void startThread(int number, int currentChapterId) {
         this.loadChapterId = number;
         this.currentChapterId = currentChapterId;
-        MyLogcat.myLog("调用下载章节线程");
+        MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + number);
         CatalogInfo catalogInfo = info.getCatalogInfos().get(number - 1);
         if (null == catalogInfo.getStrs()) {
             String chapterUrl = catalogInfo.getChapterUrl();
@@ -176,23 +176,23 @@ public class ChapterContentService extends Service {
                 pagerContentInfos.addFirst(strs.get(size - i));
             }
         }
-        if (loadChapterId > currentChapterId) {
-            int number = loadChapterId - 4;
-            if (number > 0) {
-                ArrayList<PagerContentInfo> pagerContentInfos = info.getCatalogInfos().get(number).getStrs();
-                if (null != pagerContentInfos) {
-                    pagerContentInfos.clear();
-                    MyLogcat.myLog("删除章节：" + number);
-                }
-            }
-        } else {
-            int number = loadChapterId + 4;
-            if (number < info.getCatalogInfos().size() - 1) {
-                ArrayList<PagerContentInfo> pagerContentInfos = info.getCatalogInfos().get(number).getStrs();
-                if (null != pagerContentInfos)
-                    pagerContentInfos.clear();
-            }
-        }
+//        if (loadChapterId > currentChapterId) {
+//            int number = loadChapterId - 4;
+//            if (number > 0) {
+//                ArrayList<PagerContentInfo> pagerContentInfos = info.getCatalogInfos().get(number).getStrs();
+//                if (null != pagerContentInfos) {
+//                    pagerContentInfos.clear();
+//                    MyLogcat.myLog("删除章节：" + number);
+//                }
+//            }
+//        } else {
+//            int number = loadChapterId + 4;
+//            if (number < info.getCatalogInfos().size() - 1) {
+//                ArrayList<PagerContentInfo> pagerContentInfos = info.getCatalogInfos().get(number).getStrs();
+//                if (null != pagerContentInfos)
+//                    pagerContentInfos.clear();
+//            }
+//        }
     }
 
     /*

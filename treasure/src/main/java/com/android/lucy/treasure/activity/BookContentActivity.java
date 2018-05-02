@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
@@ -22,7 +23,6 @@ import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.MyMathUtils;
 import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.view.ChapterViewPager;
-import com.android.lucy.treasure.view.MyFrameLayout;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,11 +40,9 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private BaiduSearchDataInfo bookDataInfo;
     private ChapterViewPager viewPager;
     private BookContentPagerAdapter<PagerContentInfo> adapter;
-    private MyFrameLayout frameLayout;
     private ArrayList<ContentPager> contentPagers;
     private LinkedList<PagerContentInfo> pagerContentInfos;
     private int chapterTotal;
-    private int loadChapterId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,7 +59,10 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 
     private void initViews() {
         viewPager = findViewById(R.id.vp_book_content);
-        frameLayout = findViewById(R.id.fl_book_content);
+        LinearLayout ll_chapter_titleBar = findViewById(R.id.ll_chapter_titleBar);
+        viewPager.setOtherView(ll_chapter_titleBar);
+        viewPager.setActivity(this);
+
     }
 
     private void initDatas() {
@@ -129,11 +130,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//        if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
-//            currentPagerPosition = adapter.getPagerPosition();
-//            viewPager.setCurrentPagerPosition(currentPagerPosition);
-//            MyLogcat.myLog("onPageScrolled::" + "currentPagerPosition：" + currentPagerPosition);
-//        }
+
     }
 
     @Override
@@ -149,6 +146,19 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 
     }
 
+
+    /**
+     * 隐藏显示状态栏
+     *
+     * @param flag 隐藏或者显示
+     */
+    public void flagsVisibility(boolean flag) {
+        if (flag)
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        else
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
     /**
      * 功能：加载章节a
      *
@@ -159,7 +169,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         int currentChapterId = pagerContentInfo.getChapterId();
         int currentChapterPager = pagerContentInfo.getCurrentPager();
         int chapterPagerTotal = pagerContentInfo.getChapterPagerToatal();
-        MyLogcat.myLog("当前章节id:" + currentChapterId + ",上一次在哪个章节下载:" + loadChapterId + "，当前章节页面id:" + currentChapterPager);
+        MyLogcat.myLog("当前章节id:" + currentChapterId + "，当前章节页面id:" + currentChapterPager);
         //章节id等于当前页面id的最后一页下载后二章
         if (currentChapterPager == chapterPagerTotal) {
             CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(currentChapterId + 1);
