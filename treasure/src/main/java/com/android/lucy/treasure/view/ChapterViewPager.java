@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.android.lucy.treasure.activity.BookContentActivity;
 import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
@@ -31,6 +32,7 @@ public class ChapterViewPager extends ViewPager {
     private int chapterTotal;
     private float startY;
     private View titleBar;
+    private View setings;
     private Activity activity;
 
     public ChapterViewPager(Context context) {
@@ -102,14 +104,17 @@ public class ChapterViewPager extends ViewPager {
                 ((BookContentActivity) activity).flagsVisibility(false);
             }
             titleBar.setVisibility(titleBar.getVisibility() == INVISIBLE ? VISIBLE : INVISIBLE);
+            setings.setVisibility(setings.getVisibility() == INVISIBLE ? VISIBLE : INVISIBLE);
         } else {
             ((BookContentActivity) activity).flagsVisibility(false);
             titleBar.setVisibility(INVISIBLE);
+            setings.setVisibility(INVISIBLE);
         }
     }
 
-    public void setOtherView(View titleBar) {
+    public void setOtherView(View setings, View titleBar) {
         this.titleBar = titleBar;
+        this.setings = setings;
     }
 
     public void setActivity(Activity activity) {

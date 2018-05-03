@@ -2,8 +2,11 @@ package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -11,11 +14,14 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
 import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
+import com.android.lucy.treasure.bean.ChapterIDAndName;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.pager.ContentPager;
 import com.android.lucy.treasure.service.ChapterContentService;
@@ -27,13 +33,15 @@ import com.android.lucy.treasure.view.ChapterViewPager;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * 小说内容页面,包含一个ViewPage，ViewPage里面添加ContentPagerView
  * 将一个章节的内容分割成一个若干个View。
  */
 
-public class BookContentActivity extends Activity implements OnChapterContentListener, ViewPager.OnPageChangeListener {
+public class BookContentActivity extends Activity implements OnChapterContentListener,
+        ViewPager.OnPageChangeListener, View.OnClickListener {
 
     private ServiceConnection connection;
     private ChapterContentService service;
@@ -44,14 +52,18 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private ArrayList<ContentPager> contentPagers;
     private LinkedList<PagerContentInfo> pagerContentInfos;
     private int chapterTotal;
+    private TextView tv_chapter_catalog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        View decorView = getWindow().getDecorView();
-        int option=View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(option);
         setContentView(R.layout.activity_book_content);
+        if (Build.VERSION.SDK_INT > 21) {
+            //设置为透明色
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            flagsVisibility(false);
+            MyLogcat.myLog("状态栏的高度：" + getStatusBarHeight(this.getBaseContext()));
+        }
         initViews();
         initDatas();
         initEvent();
@@ -61,8 +73,11 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private void initViews() {
         viewPager = findViewById(R.id.vp_book_content);
         LinearLayout ll_chapter_titleBar = findViewById(R.id.ll_chapter_titleBar);
-        viewPager.setOtherView(ll_chapter_titleBar);
+        LinearLayout ll_chapter_setings = findViewById(R.id.ll_chapter_setings);
+        ll_chapter_titleBar.setPadding(0, getStatusBarHeight(this.getBaseContext()), 0, 0);
+        viewPager.setOtherView(ll_chapter_titleBar, ll_chapter_setings);
         viewPager.setActivity(this);
+        tv_chapter_catalog = findViewById(R.id.tv_chapter_catalog);
 
     }
 
@@ -117,12 +132,30 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 
     private void initEvent() {
         viewPager.addOnPageChangeListener(this);
+        tv_chapter_catalog.setOnClickListener(this);
+
+    }
+
+    /**
+     * 获取状态栏高度
+     *
+     * @param context 全局
+     * @return 状态栏高度
+     */
+    public int getStatusBarHeight(Context context) {
+        int result = 0;
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen",
+                "android");
+        if (resourceId > 0) {
+            result = context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
 
     /*
-    *加载章内容数据。和章节名等，是ChapterContentService的回调方法
-    * */
+     *加载章内容数据。和章节名等，是ChapterContentService的回调方法
+     * */
     @Override
     public void setChapterContent() {
 
@@ -145,6 +178,31 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+
+    /**
+     * 点击事件
+     *
+     * @param view
+     */
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.tv_chapter_catalog:
+                ArrayList<ChapterIDAndName> chapterIDAndNames = new ArrayList<>();
+                List<CatalogInfo> catalogInfos = bookDataInfo.getCatalogInfos();
+                for (int i = 0; i < catalogInfos.size(); i++) {
+                    CatalogInfo catalogInfo = catalogInfos.get(i);
+                    chapterIDAndNames.add(new ChapterIDAndName(catalogInfo.getChapterId()
+                            , catalogInfo.getChapterName()));
+                }
+                Intent intent = new Intent(this, BookChapterCatalog.class);
+                intent.putParcelableArrayListExtra("chapterIDAndNames", chapterIDAndNames);
+                startActivity(intent);
+                break;
+
+        }
     }
 
 

@@ -21,14 +21,18 @@
         </activity>
         <activity
             android:name=".activity.SearchActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".activity.BookIntroducedActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".activity.BookContentActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
-        <service android:name=".service.ChapterContentService"/>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
+        <activity
+            android:name=".activity.BookChapterCatalog"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
+
+        <service android:name=".service.ChapterContentService" />
     </application>
 
 </manifest>

@@ -13,6 +13,7 @@ public class PagerContentInfo {
     private int currentPager; //页面Id
     private int chapterPagerToatal; //章节总页面
 
+
     public PagerContentInfo(String chapterName, int chapterId, List<TextInfo> textInfos, int currentPager) {
         this(chapterName, chapterId, textInfos, currentPager, 0);
     }

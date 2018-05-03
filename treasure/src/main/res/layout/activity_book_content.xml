@@ -13,7 +13,7 @@
     <LinearLayout
         android:id="@+id/ll_chapter_titleBar"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="80dp"
         android:background="@color/hailanse"
         android:orientation="horizontal"
         android:visibility="invisible">
@@ -30,24 +30,74 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="书名"
             android:gravity="center_vertical|center_horizontal"
             android:singleLine="true"
+            android:text="书名"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:textStyle="bold"
-            />
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/tv_book_huanyuan"
             android:layout_width="55dp"
             android:layout_height="match_parent"
-            android:text="换源"
             android:gravity="center_vertical|center_horizontal"
             android:singleLine="true"
+            android:text="换源"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:textStyle="bold"
-            />
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_chapter_setings"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="@color/hailanse"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="目录"
+            android:textSize="18sp"
+            android:layout_weight="1"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="目录"
+            android:textSize="18sp"
+            android:layout_weight="1"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="目录"
+            android:textSize="18sp"
+            android:layout_weight="1"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="目录"
+            android:textSize="18sp"
+            android:layout_weight="1"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/tv_chapter_catalog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="目录"
+            android:textSize="18sp"
+            android:layout_weight="1"
+            android:gravity="center"/>
     </LinearLayout>
 
 </FrameLayout>
