@@ -195,9 +195,10 @@ public class ChapterContentService extends Service {
 //        }
     }
 
+
     /*
- * 计算字体的宽和高
- * */
+     *计算字体的宽和高
+     */
     public void textInfoCount() {
         mTextPaint = new Paint();
         mTextPaint.setTextSize(MyMathUtils.dip2px(this, 20));

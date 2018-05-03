@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
@@ -47,9 +48,9 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //设置全屏
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        View decorView = getWindow().getDecorView();
+        int option=View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(option);
         setContentView(R.layout.activity_book_content);
         initViews();
         initDatas();
@@ -160,7 +161,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     }
 
     /**
-     * 功能：加载章节a
+     * 功能：加载章节
      *
      * @param currentPagerPosition 页面集合当前位置
      */
