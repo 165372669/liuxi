@@ -56,48 +56,53 @@
         android:layout_gravity="bottom"
         android:background="@color/hailanse"
         android:orientation="horizontal"
-        >
+        android:visibility="invisible">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="目录"
-            android:textSize="18sp"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:text="目录"
+            android:textSize="18sp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="目录"
-            android:textSize="18sp"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:text="目录"
+            android:textSize="18sp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="目录"
-            android:textSize="18sp"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:text="目录"
+            android:textSize="18sp" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="目录"
-            android:textSize="18sp"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:text="目录"
+            android:textSize="18sp" />
+
         <TextView
             android:id="@+id/tv_chapter_catalog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="目录"
-            android:textSize="18sp"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:gravity="center"
+            android:text="目录"
+            android:textSize="18sp" />
     </LinearLayout>
 
 </FrameLayout>

@@ -31,10 +31,11 @@ public class BookChapterCatalog extends Activity {
     }
 
     private void initData() {
-        chapterIDAndNames =  getIntent().getParcelableArrayListExtra("chapterIDAndNames");
+        chapterIDAndNames = getIntent().getParcelableArrayListExtra("chapterIDAndNames");
         ChapterCatalogAdapter chapterCatalogAdapter = new ChapterCatalogAdapter(this, chapterIDAndNames,
                 R.layout.chapter_catalog_list_item);
         lv_chapter_catalog.setAdapter(chapterCatalogAdapter);
+        lv_chapter_catalog.setOnItemClickListener(chapterCatalogAdapter);
     }
 
 }
