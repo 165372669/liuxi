@@ -5,13 +5,13 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.android.lucy.treasure.base.BaseReadThread;
-import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ConfigInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.bean.TextInfo;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.StringUtils;
+import com.android.lucy.treasure.view.CircleProgress;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -32,11 +32,13 @@ public class PbtxtChapterContentThread extends BaseReadThread {
 
     private final CatalogInfo catalogInfo;
     private final ConfigInfo configInfo;
+    private final CircleProgress cv_chapter_progress;
 
-    public PbtxtChapterContentThread(String url, Handler myHandler, CatalogInfo catalogInfo, ConfigInfo configInfo) {
+    public PbtxtChapterContentThread(String url, Handler myHandler, CatalogInfo catalogInfo, ConfigInfo configInfo, CircleProgress cv_chapter_progress) {
         super(url, myHandler);
         this.catalogInfo = catalogInfo;
         this.configInfo = configInfo;
+        this.cv_chapter_progress = cv_chapter_progress;
         flag = "chapter-temp";
     }
 
@@ -50,21 +52,27 @@ public class PbtxtChapterContentThread extends BaseReadThread {
         Pattern p = Pattern.compile(reg);
         //让正则对象和要作用的字符串相关联。获取匹配器对象。
         Matcher m = p.matcher(str);
+        int progress = cv_chapter_progress.getProgress();
         while (m.find()) {
             String s = m.group();
+            if (progress < 100) {
+                progress += 10;
+                cv_chapter_progress.setProgress(progress);
+            }
             if (s.startsWith("下载地址："))
                 break;
             contents.add(s);
             //System.out.println(m.group());
         }
         MyLogcat.myLog("平板电子书网返回数据:" + contents.size());
+        cv_chapter_progress.setProgress(100);
         if (contents.size() > 0) {
             spacingLineCount(contents);
             int pagerTotal = catalogInfo.getStrs().size();
-            for (int i = 0; i < pagerTotal; i++) {
-                PagerContentInfo pagerContentInfo = catalogInfo.getStrs().get(i);
-                pagerContentInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
-            }
+            catalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
+        } else {
+            //没有获取到数据加一页面。
+            catalogInfo.getStrs().add(new PagerContentInfo(null, 0));
         }
         Message msg = Message.obtain();
         MyLogcat.myLog("下载的章节id:" + catalogInfo.getChapterId());
@@ -93,8 +101,6 @@ public class PbtxtChapterContentThread extends BaseReadThread {
      * @return
      */
     public void spacingLineCount(List<String> books) {
-        ArrayList<PagerContentInfo> pagerContentInfos = new ArrayList<>();
-        catalogInfo.setStrs(pagerContentInfos);
         int pager = 0;//当前段落页数
         MyLogcat.myLog(books + ",size:" + books.size());
         List<TextInfo> textInfos = new ArrayList<>();
@@ -167,8 +173,8 @@ public class PbtxtChapterContentThread extends BaseReadThread {
                     pager++;
                     line = 1;
                     y = configInfo.getChapterNameHeight();  //y坐标初始化
-                    PagerContentInfo pagerContentInfo = new PagerContentInfo(catalogInfo.getChapterName(), catalogInfo.getChapterId(), textInfos, pager);
-                    pagerContentInfos.add(pagerContentInfo);
+                    PagerContentInfo pagerContentInfo = new PagerContentInfo(textInfos, pager);
+                    catalogInfo.getStrs().add(pagerContentInfo);
                     textInfos = new ArrayList<>();
                     z = 0;
                 }
@@ -177,8 +183,8 @@ public class PbtxtChapterContentThread extends BaseReadThread {
             //最后一个段落
             if (i == books.size() - 1 && str.length() > 0) {
                 pager++;
-                PagerContentInfo pagerContentInfo = new PagerContentInfo(catalogInfo.getChapterName(), catalogInfo.getChapterId(), textInfos, pager);
-                pagerContentInfos.add(pagerContentInfo);
+                PagerContentInfo pagerContentInfo = new PagerContentInfo(textInfos, pager);
+                catalogInfo.getStrs().add(pagerContentInfo);
             }
         }
     }

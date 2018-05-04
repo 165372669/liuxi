@@ -98,8 +98,6 @@ public class ChapterContentViewPager extends ViewGroup {
 
     private void setChapterContent(int dataIndex, ContentPager contentPager) {
         if (null != datas && dataIndex < datas.size()) {
-            PagerContentInfo pagerContentInfo = datas.get(dataIndex);
-            contentPager.setPagerTotal(pagerContentInfo.getChapterPagerToatal());
         }
     }
 

@@ -14,7 +14,7 @@ public class BaiduSearchDataInfo implements Serializable {
     private String author;
     private String sourceUrl;
     private String sourceName;
-    private List<CatalogInfo> catalogInfos;//章节集合
+    private ArrayList<CatalogInfo> catalogInfos;//章节集合
 
     private static final long serialVersionUID = 1;
 
@@ -50,7 +50,7 @@ public class BaiduSearchDataInfo implements Serializable {
         this.sourceName = sourceName;
     }
 
-    public List<CatalogInfo> getCatalogInfos() {
+    public ArrayList<CatalogInfo> getCatalogInfos() {
         return catalogInfos;
     }
 

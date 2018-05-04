@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tc="http://schemas.android.com/apk/res-auto"
     android:id="@+id/fl_book_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,6 +10,16 @@
         android:id="@+id/vp_book_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.android.lucy.treasure.view.CircleProgress
+        android:id="@+id/cv_chapter_progress"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        tc:bgColor="@color/huise"
+        tc:circleColor="@color/hailanse"
+        tc:roundWidth="7dp" />
 
     <LinearLayout
         android:id="@+id/ll_chapter_titleBar"

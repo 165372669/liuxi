@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <attr name="icon" format="reference"/>
     <attr name="color" format="color"/>
     <attr name="text" format="string"/>
     <attr name="text_size" format="dimension"/>
+
     <declare-styleable name="ChangeColorIconWithText">
         <attr name="icon"/>
         <attr name="color"/>
         <attr name="text"/>
         <attr name="text_size"/>
     </declare-styleable>>
+
     <declare-styleable name="MyTextView">
         <attr name="color"/>
         <attr name="text_size"/>
     </declare-styleable>>
+
+    <!--圆弧进度条-->
+    <declare-styleable name="CircleProgress">
+        <attr name="roundWidth" format="dimension"/>
+        <attr name="bgColor" format="color"/>
+        <attr name="circleColor" format="color"/>
+    </declare-styleable>
+
 </resources>

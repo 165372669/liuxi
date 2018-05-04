@@ -14,6 +14,7 @@ public class CatalogInfo implements Comparable, Serializable {
     private int chapterId;  //章节id
     private String chapterUrl; //章节网址
     private String chapterName; //章节名
+    private int chapterPagerToatal; //章节总页面
     private ArrayList<PagerContentInfo> strs; //页面内容集合
 
     private static final long serialVersionUID = 2;
@@ -54,6 +55,14 @@ public class CatalogInfo implements Comparable, Serializable {
         this.chapterName = chapterName;
     }
 
+    public int getChapterPagerToatal() {
+        return chapterPagerToatal;
+    }
+
+    public void setChapterPagerToatal(int chapterPagerToatal) {
+        this.chapterPagerToatal = chapterPagerToatal;
+    }
+
     public ArrayList<PagerContentInfo> getStrs() {
         return strs;
     }
@@ -61,6 +70,7 @@ public class CatalogInfo implements Comparable, Serializable {
     public void setStrs(ArrayList<PagerContentInfo> strs) {
         this.strs = strs;
     }
+
 
     @Override
     public String toString() {

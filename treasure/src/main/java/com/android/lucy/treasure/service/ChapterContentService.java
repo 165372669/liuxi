@@ -6,13 +6,12 @@ import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.View;
 
+import com.android.lucy.treasure.activity.BookContentActivity;
 import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ConfigInfo;
@@ -22,9 +21,9 @@ import com.android.lucy.treasure.runnable.chapter.PbtxtChapterContentThread;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.MyMathUtils;
 import com.android.lucy.treasure.utils.ThreadPool;
+import com.android.lucy.treasure.view.CircleProgress;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * 章节内容后台服务
@@ -33,7 +32,6 @@ import java.util.LinkedList;
 public class ChapterContentService extends Service {
 
     private MyBinder mBinder;
-    private ChapterContentHandler contentHandler;
     private BaiduSearchDataInfo info;
     private OnChapterContentListener onChapterContentListener;
     private int chapterNameHeight;    //章节名View高
@@ -45,30 +43,9 @@ public class ChapterContentService extends Service {
     private int textWidth; //字体宽度
     private int textHeight; //字体高度
     private int loadChapterId; //下载的章节ID
-    private int currentChapterId; //当前的章节ID
-    private LinkedList<PagerContentInfo> pagerContentInfos;
+    private BookContentActivity.ChapterContentHandler chapterContentHandler;
+    private CircleProgress cv_chapter_progress;
 
-    class ChapterContentHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            MyLogcat.myLog("收到数据：" + msg.arg1);
-            switch (msg.arg1) {
-                case 0:
-                    //获取数据失败
-                    break;
-                case 1://成功下载到章节并添加到页面集合
-                    int loadChapterId = msg.arg2;
-                    addPagerCotentInfo(loadChapterId);
-                    //下载完第一章后下载第二章
-                    if (loadChapterId == 1) {
-                        startThread(2, 1);
-                        onChapterContentListener.setChapterContent();
-                    }
-                    break;
-            }
-            // onChapterContentListener.setChapterContent();
-        }
-    }
 
     /*
     * 该方法在创建service时只调用一次
@@ -76,7 +53,6 @@ public class ChapterContentService extends Service {
     @Override
     public void onCreate() {
         mBinder = new MyBinder();
-        contentHandler = new ChapterContentHandler();
         MyLogcat.myLog("Myservice:" + "启动");
         super.onCreate();
     }
@@ -112,27 +88,36 @@ public class ChapterContentService extends Service {
         MyLogcat.myLog("Myservice:" + "销毁");
     }
 
+
     /**
-     * 启动下载章节
+     * 带进度的下载章节
      *
-     * @param number 下载的章节id
+     * @param ChapterID 下载的章节id
      */
-    public void startThread(int number, int currentChapterId) {
-        this.loadChapterId = number;
-        this.currentChapterId = currentChapterId;
-        MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + number);
-        CatalogInfo catalogInfo = info.getCatalogInfos().get(number - 1);
-        if (null == catalogInfo.getStrs()) {
+    public void startThreadProgress(int ChapterID) {
+        this.loadChapterId = ChapterID;
+        MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + ChapterID);
+        CatalogInfo catalogInfo = info.getCatalogInfos().get(ChapterID - 1);
+        ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
+        if (null == pagerContentInfos) {
+            pagerContentInfos = new ArrayList<>();
+            catalogInfo.setStrs(pagerContentInfos);
             String chapterUrl = catalogInfo.getChapterUrl();
             ConfigInfo configInfo = new ConfigInfo(chapterNameHeight, bookNameHeight, chapterContentWidth,
                     chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
-            MyLogcat.myLog(configInfo.toString());
-            ThreadPool.getInstance().submitTask(new PbtxtChapterContentThread(chapterUrl, this.contentHandler, catalogInfo, configInfo));
+            MyLogcat.myLog("排版需要的配置:" + configInfo.toString());
+            cv_chapter_progress.setProgress(10);
+            ThreadPool.getInstance().submitTask(new PbtxtChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
+                    cv_chapter_progress));
         }
     }
 
     public void setOnChapterContentListener(OnChapterContentListener onChapterContentListener) {
         this.onChapterContentListener = onChapterContentListener;
+    }
+
+    public void setView(CircleProgress cv_chapter_progress) {
+        this.cv_chapter_progress = cv_chapter_progress;
     }
 
     public interface OnChapterContentListener {
@@ -150,13 +135,13 @@ public class ChapterContentService extends Service {
     /**
      * 获取数据
      *
-     * @param info              小说对象
-     * @param contentPagerView  章节内容View
-     * @param pagerContentInfos 章节页面内容结合
+     * @param info                  小说对象
+     * @param contentPagerView      章节内容View
+     * @param chapterContentHandler
      */
-    public void setData(BaiduSearchDataInfo info, ContentPager contentPagerView, LinkedList<PagerContentInfo> pagerContentInfos) {
+    public void setData(BaiduSearchDataInfo info, ContentPager contentPagerView, BookContentActivity.ChapterContentHandler chapterContentHandler) {
         this.info = info;
-        this.pagerContentInfos = pagerContentInfos;
+        this.chapterContentHandler = chapterContentHandler;
         textInfoCount();
         myMeasured(contentPagerView);
         MyLogcat.myLog("NameHeight:" + chapterNameHeight + ",chapterContentHeight:" + chapterContentHeight + ",bookNameHeight:" + bookNameHeight);
@@ -166,16 +151,6 @@ public class ChapterContentService extends Service {
      * Viewpager集合添加数据
      */
     public void addPagerCotentInfo(int loadChapterId) {
-        MyLogcat.myLog("下载的章节id:" + loadChapterId + ",当前的章节id:" + currentChapterId);
-        ArrayList<PagerContentInfo> strs = info.getCatalogInfos().get(loadChapterId - 1).getStrs();
-        int size = strs.size() - 1;
-        for (int i = 0; i < strs.size(); i++) {
-            if (loadChapterId > currentChapterId) {
-                pagerContentInfos.addLast(strs.get(i));
-            } else {
-                pagerContentInfos.addFirst(strs.get(size - i));
-            }
-        }
 //        if (loadChapterId > currentChapterId) {
 //            int number = loadChapterId - 4;
 //            if (number > 0) {
