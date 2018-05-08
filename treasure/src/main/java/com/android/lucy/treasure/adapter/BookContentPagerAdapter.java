@@ -63,38 +63,42 @@ public class BookContentPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         ContentPager contentPager = contentPagers.get(position % contentPagers.size());
-        CatalogInfo catalogInfo = catalogInfos.get(currentChapterId);
-        ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
+        contentPager.pagerContentInvali();
+
         int tempCurrentItem = viewPager.getCurrentItem();
         int temp = position - tempCurrentItem;
-        MyLogcat.myLog("计算之前:" + pagerPosition + "，现在的位置：" + position + "，之前的位置：" + tempCurrentItem);
         pagerPosition += temp;
-        MyLogcat.myLog("计算之前的位置:" + pagerPosition + ",当前章节id:" + currentChapterId + ",temp:" + temp);
-        if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
-            if (temp > 0 && pagerPosition == pagerContentInfos.size() - 1) {
+        MyLogcat.myLog("pagerPosition:" + pagerPosition + ",当前章节id:" + currentChapterId);
+        CatalogInfo catalogInfo = catalogInfos.get(currentChapterId);
+        ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
+        //向右翻页
+        if (temp > 0) {
+            //翻到下一章
+            if (null != pagerContentInfos && pagerPosition == pagerContentInfos.size()) {
                 currentChapterId++;
                 pagerPosition = 0;
                 catalogInfo = catalogInfos.get(currentChapterId);
                 pagerContentInfos = catalogInfo.getStrs();
             }
+        }
+        if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
             PagerContentInfo pagerContentInfo = null;
             if (pagerPosition >= 0) {
                 //10 < 12 - 1
                 if (pagerPosition < pagerContentInfos.size() - 1) {
                     pagerContentInfo = pagerContentInfos.get(pagerPosition + 1);
-                    MyLogcat.myLog("10 < 12 - 1:" + (pagerPosition + 1) + ",当前章节id:" + currentChapterId + ",集合大小：" + pagerContentInfos.size());
                 }
                 //11= 12 - 1
                 if (pagerPosition == pagerContentInfos.size() - 1) {
                     catalogInfo = catalogInfos.get(currentChapterId + 1);
                     pagerContentInfos = catalogInfo.getStrs();
-                    if (null == pagerContentInfos) {
-                        activity.loadChapter(currentChapterId + 2, false);
+                    if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
+                        pagerContentInfo = pagerContentInfos.get(0);
                     }
-                    MyLogcat.myLog("11=12-1:" + pagerPosition + ",当前章节id:" + currentChapterId + ",集合大小：" + pagerContentInfos.size());
                 }
-                if (temp == 0)
+                if (temp == 0) {
                     pagerContentInfo = pagerContentInfos.get(pagerPosition);
+                }
                 if (pagerPosition != 0 && position < tempCurrentItem) {
                     pagerContentInfo = pagerContentInfos.get(pagerPosition - 1);
                 }
@@ -107,8 +111,10 @@ public class BookContentPagerAdapter extends PagerAdapter {
             }
             if (pagerPosition >= 0)
                 viewPager.setCurrentPagerPosition(pagerPosition);
+        } else {
+            MyLogcat.myLog(",当前章节id:" + currentChapterId);
+            activity.loadChapter(currentChapterId + 1, true);
         }
-
         View view = contentPager.getmRootView();
         if (null != view.getParent()) {
             ViewGroup viewGroup = (ViewGroup) view.getParent();

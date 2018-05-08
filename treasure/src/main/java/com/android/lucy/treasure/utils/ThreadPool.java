@@ -66,7 +66,7 @@ public class ThreadPool {
     public void cancelTask(String flag) {
         if (runnables.size() > 0) {
             for (BaseReadThread task : runnables) {
-                if (task.getFlag().equals(flag)) {
+                if (null != task && task.getFlag().equals(flag)) {
                     MyLogcat.myLog(task.getClass().getName() + "取消任务");
                     task.cancel();
                 }

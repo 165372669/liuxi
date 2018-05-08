@@ -71,19 +71,29 @@ public class BookContentTextView extends View {
         * */
     @Override
     protected void onDraw(Canvas canvas) {
-
-        if (null != books) {
+        if (null != books && books.size() > 0) {
             for (int i = 0; i < books.size(); i++) {
                 TextInfo textInfo = books.get(i);
                 canvas.drawText(textInfo.getS(), textInfo.getX(), textInfo.getY(), textPaint);
             }
+        } else {
+            canvas.drawText("", 0, 0, textPaint);
         }
-
     }
 
 
     public void setTextSize(int mTextSize) {
         textPaint.setTextSize(mTextSize);
+    }
+
+    /**
+     * 清空内容
+     */
+    public void contentInvali() {
+        if (null != books && books.size() > 0) {
+            books.clear();
+        }
+        invalidateView();
     }
 
 

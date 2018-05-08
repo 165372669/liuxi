@@ -77,6 +77,13 @@ public class ContentPager {
         tv_chapter_pager.setText(currentPager + "/");
     }
 
+    /**
+     * 页面内容重绘
+     */
+    public void pagerContentInvali() {
+        tv_chapter_content.contentInvali();
+    }
+
 
     /*
     * 返回章节名称TextView

@@ -152,11 +152,7 @@ public class ChapterViewPager extends ViewPager {
                 //如果是第一章并且是章节第一页不能往左滑动
                 isLeftSlide = chapterId == 1 && currentPager == 1;
                 //如果是最后章节并且是章节的最后一页不能往右滑动
-                isRightSlide = (chapterId == chapterTotal && pagerPosition == chapterPagerTotal - 1) ||
-                        pagerPosition == chapterPagerTotal - 1 && null == catalogInfos.get(currentChapterId + 1).getStrs();
-//                if (chapterId == chapterTotal && pagerPosition == chapterPagerTotal - 1) {
-//                    isRightSlide = true;
-//                }
+                isRightSlide = (chapterId == chapterTotal && pagerPosition == chapterPagerTotal - 1);
             }
         }
     }

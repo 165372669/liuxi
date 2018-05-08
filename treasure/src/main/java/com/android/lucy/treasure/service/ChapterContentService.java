@@ -99,13 +99,12 @@ public class ChapterContentService extends Service {
         MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + ChapterID);
         CatalogInfo catalogInfo = info.getCatalogInfos().get(ChapterID - 1);
         ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
-        if (null == pagerContentInfos) {
+        if (null == pagerContentInfos || pagerContentInfos.size() < 2) {
             pagerContentInfos = new ArrayList<>();
             catalogInfo.setStrs(pagerContentInfos);
             String chapterUrl = catalogInfo.getChapterUrl();
             ConfigInfo configInfo = new ConfigInfo(chapterNameHeight, bookNameHeight, chapterContentWidth,
                     chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
-            MyLogcat.myLog("排版需要的配置:" + configInfo.toString());
             cv_chapter_progress.setProgress(10);
             ThreadPool.getInstance().submitTask(new PbtxtChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
                     cv_chapter_progress));

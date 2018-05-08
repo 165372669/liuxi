@@ -22,7 +22,6 @@ import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
 import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ChapterIDAndName;
-import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.pager.ContentPager;
 import com.android.lucy.treasure.service.ChapterContentService;
 import com.android.lucy.treasure.service.ChapterContentService.OnChapterContentListener;
@@ -66,7 +65,8 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                 case 1://成功下载到章节并添加到页面集合
                     int loadChapterId = msg.arg2;
                     //下载完第一章后下载第二章
-                    if (loadChapterId == 1) {
+                    if (loadChapterId - 1 == adapter.getCurrentChapterId()) {
+                        MyLogcat.myLog("下载的章节id：" + loadChapterId + "，adapter的章节id：" + adapter.getCurrentChapterId());
                         adapter.notifyDataSetChanged();
                     }
                     break;
@@ -193,11 +193,13 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     @Override
     public void setChapterContent() {
 
-        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+        // MyLogcat.myLog("onPageScrolled >");
+        //滑动：onPageScrolled > instantiateItem
+        //点击：instantiateItem > onPageSelected >onPageScrolled
 
     }
 
