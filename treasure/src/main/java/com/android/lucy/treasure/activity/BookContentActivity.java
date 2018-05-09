@@ -32,7 +32,6 @@ import com.android.lucy.treasure.view.ChapterViewPager;
 import com.android.lucy.treasure.view.CircleProgress;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 小说内容页面,包含一个ViewPage，ViewPage里面添加ContentPagerView
@@ -56,8 +55,6 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     public class ChapterContentHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            MyLogcat.myLog("收到数据：" + msg.arg1);
-            cv_chapter_progress.setVisibility(View.INVISIBLE);
             switch (msg.arg1) {
                 case 0:
                     //获取数据失败
@@ -66,7 +63,8 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                     int loadChapterId = msg.arg2;
                     //下载完第一章后下载第二章
                     if (loadChapterId - 1 == adapter.getCurrentChapterId()) {
-                        MyLogcat.myLog("下载的章节id：" + loadChapterId + "，adapter的章节id：" + adapter.getCurrentChapterId());
+                        MyLogcat.myLog("下载的章节id" + (loadChapterId - 1) + "，适配器的章节id" + adapter.getCurrentChapterId());
+                        cv_chapter_progress.setVisibility(View.INVISIBLE);
                         adapter.notifyDataSetChanged();
                     }
                     break;
@@ -115,7 +113,6 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
             startService(intent);
             //绑定service服务
             connection = new ServiceConnection() {
-
                 //当activity跟service成功连接之后会调用这个方法
                 @Override
                 public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -207,7 +204,6 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     public void onPageSelected(int position) {
         int pagerPosition = adapter.getPagerPosition();
         int chapterId = adapter.getCurrentChapterId();
-        viewPager.setCurrentPagerPosition(pagerPosition);
         //MyLogcat.myLog("activiaty----" + "当前页面集合位置：" + pagerPosition);
         loadNextChapter(pagerPosition, chapterId);
     }
@@ -265,7 +261,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
             //目录点击
             case R.id.tv_chapter_catalog:
                 ArrayList<ChapterIDAndName> chapterIDAndNames = new ArrayList<>();
-                List<CatalogInfo> catalogInfos = bookDataInfo.getCatalogInfos();
+                ArrayList<CatalogInfo> catalogInfos = bookDataInfo.getCatalogInfos();
                 for (int i = 0; i < catalogInfos.size(); i++) {
                     CatalogInfo catalogInfo = catalogInfos.get(i);
                     chapterIDAndNames.add(new ChapterIDAndName(catalogInfo.getChapterId()

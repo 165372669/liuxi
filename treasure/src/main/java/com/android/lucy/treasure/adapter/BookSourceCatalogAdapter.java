@@ -30,8 +30,8 @@ public class BookSourceCatalogAdapter extends BaseAdapter<BaiduSearchDataInfo> {
         TextView tv_chapterName_new = myViewHolder.getView(R.id.tv_chapterName_new);
         TextView tv_sourceName_new = myViewHolder.getView(R.id.tv_sourceName_new);
         TextView tv_time_new = myViewHolder.getView(R.id.tv_time_new);
-        int maxSize = info.getCatalogInfos().size();
-        CatalogInfo catalogInfo = info.getCatalogInfos().get(maxSize - 1);
+        int size = info.getCatalogInfos().size();
+        CatalogInfo catalogInfo = info.getCatalogInfos().get(size - 1);
         tv_chapterName_new.setText(catalogInfo.getChapterName());
         tv_sourceName_new.setText(info.getSourceName());
         tv_time_new.setText("update-time");

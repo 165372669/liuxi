@@ -2,6 +2,7 @@ package com.android.lucy.treasure.runnable.catalog;
 
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
+import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 
@@ -22,7 +23,7 @@ public class LIABookCatalogThread extends BaseReadThread {
     private BaiduSearchDataInfo info;
 
     public LIABookCatalogThread(String url, BaiduSearchDataInfo info, MyHandler myHandler) {
-        super(url,myHandler);
+        super(url, myHandler);
         this.info = info;
     }
 
@@ -30,7 +31,7 @@ public class LIABookCatalogThread extends BaseReadThread {
     public void resoloveUrl(Document doc) {
         Elements metas = doc.select("meta[property]");
         if (metas.size() > 0) {
-            parseChapter(doc,metas);
+            parseChapter(doc, metas);
         } else {
             parseTextDownload(doc);
         }
@@ -49,7 +50,7 @@ public class LIABookCatalogThread extends BaseReadThread {
             try {
                 Document document = Jsoup.connect(chapterUrl).get();
                 Elements metas = document.select("meta[property]");
-                parseChapter(document,metas);
+                parseChapter(document, metas);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -57,26 +58,24 @@ public class LIABookCatalogThread extends BaseReadThread {
         }
     }
 
-    public void parseChapter(Document doc,Elements metas) {
+    public void parseChapter(Document doc, Elements metas) {
         String bookName = null;
-        if(metas.size()>0)
-        {
-            for(Element meta:metas)
-            {
-                String property=meta.attr("property");
-                if(property.equals("og:title"))
+        if (metas.size() > 0) {
+            for (Element meta : metas) {
+                String property = meta.attr("property");
+                if (property.equals("og:title"))
                     bookName = meta.attr("content");
             }
         }
-        if(null!=bookName && bookName.equals(info.getBookName()))
-        {
-            Elements lis=doc.select("li");
+        if (null != bookName && bookName.equals(info.getBookName())) {
+            Elements lis = doc.select("li");
             Elements rels = lis.select("a[rel]");
             int i = 1;
             for (Element rel : rels) {
                 String chapterUrl = rel.attr("href");
                 String chapterName = rel.text();
-                info.addCatalogInfo(chapterUrl,chapterName,i);
+                CatalogInfo catalogInfo = new CatalogInfo(chapterUrl, chapterName, i);
+                info.addCatalogInfo(catalogInfo);
                 i++;
             }
             sendObj(info);

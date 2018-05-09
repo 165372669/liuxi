@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.bean.TextInfo;
-import com.android.lucy.treasure.view.BookContentTextView;
+import com.android.lucy.treasure.view.ChapterContentTextView;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class ContentPager {
 
     private Activity mActivity;
     private View mRootView;
-    private BookContentTextView tv_chapter_content;
+    private ChapterContentTextView tv_chapter_content;
     private TextView tv_chapter_name;
     private TextView tv_chapter_time;
     private TextView tv_chapter_bookName;
@@ -80,8 +80,8 @@ public class ContentPager {
     /**
      * 页面内容重绘
      */
-    public void pagerContentInvali() {
-        tv_chapter_content.contentInvali();
+    public void pagerContentInvali(boolean isInvalidate) {
+        tv_chapter_content.contentInvali(isInvalidate);
     }
 
 

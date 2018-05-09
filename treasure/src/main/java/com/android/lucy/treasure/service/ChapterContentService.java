@@ -146,29 +146,6 @@ public class ChapterContentService extends Service {
         MyLogcat.myLog("NameHeight:" + chapterNameHeight + ",chapterContentHeight:" + chapterContentHeight + ",bookNameHeight:" + bookNameHeight);
     }
 
-    /**
-     * Viewpager集合添加数据
-     */
-    public void addPagerCotentInfo(int loadChapterId) {
-//        if (loadChapterId > currentChapterId) {
-//            int number = loadChapterId - 4;
-//            if (number > 0) {
-//                ArrayList<PagerContentInfo> pagerContentInfos = info.getCatalogInfos().get(number).getStrs();
-//                if (null != pagerContentInfos) {
-//                    pagerContentInfos.clear();
-//                    MyLogcat.myLog("删除章节：" + number);
-//                }
-//            }
-//        } else {
-//            int number = loadChapterId + 4;
-//            if (number < info.getCatalogInfos().size() - 1) {
-//                ArrayList<PagerContentInfo> pagerContentInfos = info.getCatalogInfos().get(number).getStrs();
-//                if (null != pagerContentInfos)
-//                    pagerContentInfos.clear();
-//            }
-//        }
-    }
-
 
     /*
      *计算字体的宽和高

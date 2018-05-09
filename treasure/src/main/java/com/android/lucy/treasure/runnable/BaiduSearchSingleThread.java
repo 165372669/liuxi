@@ -44,20 +44,20 @@ public class BaiduSearchSingleThread extends BaseReadThread {
             String sourceUrl = a.attr("href");
             String sourceNameTemp = a.text();
             String sourceName = shearSourceName(sourceNameTemp);
-            BaiduSearchDataInfo info = new BaiduSearchDataInfo(bookName, sourceUrl, sourceName, author);
+            BaiduSearchDataInfo baiduSearchDataInfo = new BaiduSearchDataInfo(bookName, sourceUrl, sourceName, author);
             //MyLogcat.myLog("sourceUrl:" + sourceUrl);
             //MyLogcat.myLog("sourceName:" + sourceName);
-            selectSource(info);
+            selectSource(baiduSearchDataInfo);
         }
     }
 
-    public void selectSource(BaiduSearchDataInfo info) {
-        String sourceName = info.getSourceName();
-        String sourceUrl = info.getSourceUrl();
+    public void selectSource(BaiduSearchDataInfo baiduSearchDataInfo) {
+        String sourceName = baiduSearchDataInfo.getSourceName();
+        String sourceUrl = baiduSearchDataInfo.getSourceUrl();
         if (Key.DDA_SOURCE.contains(sourceName)) {
-            ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, info, bookHandler));
+            ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, baiduSearchDataInfo, bookHandler));
         } else if (Key.LIA_SOURCE.contains(sourceName))
-            ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, info, bookHandler));
+            ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, baiduSearchDataInfo, bookHandler));
 
     }
 

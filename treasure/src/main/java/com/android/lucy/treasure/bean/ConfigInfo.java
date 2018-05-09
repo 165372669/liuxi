@@ -92,17 +92,5 @@ public class ConfigInfo {
         this.textHeight = textHeight;
     }
 
-    @Override
-    public String toString() {
-        return "ConfigInfo{" +
-                "chapterNameHeight=" + chapterNameHeight +
-                ", bookNameHeight=" + bookNameHeight +
-                ", chapterContentWidth=" + chapterContentWidth +
-                ", chapterContentHeight=" + chapterContentHeight +
-                ", pagerLine=" + pagerLine +
-                ", mTextPaint=" + mTextPaint +
-                ", textWidth=" + textWidth +
-                ", textHeight=" + textHeight +
-                '}';
-    }
+
 }

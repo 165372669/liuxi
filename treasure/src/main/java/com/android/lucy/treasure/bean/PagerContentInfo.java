@@ -1,5 +1,6 @@
 package com.android.lucy.treasure.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,19 +8,19 @@ import java.util.List;
  */
 
 public class PagerContentInfo {
-    private List<TextInfo> textInfos;  //页面内容数据
+    private ArrayList<TextInfo> textInfos;  //页面内容数据
     private int currentPager; //页面Id
 
-    public PagerContentInfo(List<TextInfo> textInfos, int currentPager) {
+    public PagerContentInfo(ArrayList<TextInfo> textInfos, int currentPager) {
         this.textInfos = textInfos;
         this.currentPager = currentPager;
     }
 
-    public List<TextInfo> getTextInfos() {
+    public ArrayList<TextInfo> getTextInfos() {
         return textInfos;
     }
 
-    public void setTextInfos(List<TextInfo> textInfos) {
+    public void setTextInfos(ArrayList<TextInfo> textInfos) {
         this.textInfos = textInfos;
     }
 
@@ -30,5 +31,6 @@ public class PagerContentInfo {
     public void setCurrentPager(int currentPager) {
         this.currentPager = currentPager;
     }
+
 
 }

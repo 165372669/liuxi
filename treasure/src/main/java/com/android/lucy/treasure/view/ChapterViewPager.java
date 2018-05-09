@@ -11,7 +11,6 @@ import com.android.lucy.treasure.activity.BookContentActivity;
 import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
-import com.android.lucy.treasure.utils.MyLogcat;
 
 import java.util.ArrayList;
 
@@ -27,7 +26,6 @@ public class ChapterViewPager extends ViewPager {
     //是否往右滑动
     private boolean isLeftSlide = false;
     private float slideX;
-    private int currentPagerPosition;
     private int chapterTotal;
     private float startY;
     private View titleBar;
@@ -70,7 +68,6 @@ public class ChapterViewPager extends ViewPager {
                 break;
             case MotionEvent.ACTION_UP:
                 int x = (int) Math.abs(ev.getX() - startX);
-                int y = (int) Math.abs(ev.getY() - startY);
                 long time = ev.getEventTime() - downTime;
                 if (x < 30 && time < 200) {
                     if (startX > getWidth() / 2 + disparityWidth) {
@@ -128,10 +125,6 @@ public class ChapterViewPager extends ViewPager {
 
     public void setChapterTotal(int chapterTotal) {
         this.chapterTotal = chapterTotal;
-    }
-
-    public void setCurrentPagerPosition(int currentPagerPosition) {
-        this.currentPagerPosition = currentPagerPosition;
     }
 
 

@@ -2,7 +2,6 @@ package com.android.lucy.treasure.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 百度搜索数据
@@ -10,10 +9,10 @@ import java.util.List;
 
 public class BaiduSearchDataInfo implements Serializable {
 
-    private String bookName;
-    private String author;
-    private String sourceUrl;
-    private String sourceName;
+    private String bookName; //书名
+    private String author;   //作者
+    private String sourceUrl; //书页url
+    private String sourceName; //来源网站名
     private ArrayList<CatalogInfo> catalogInfos;//章节集合
 
     private static final long serialVersionUID = 1;
@@ -62,27 +61,14 @@ public class BaiduSearchDataInfo implements Serializable {
         this.author = author;
     }
 
-    public void addCatalogInfo(String chapterUrl, String chapterName, int chapterId) {
-        catalogInfos.add(new CatalogInfo(chapterId, chapterUrl, chapterName));
+    public void addCatalogInfo(CatalogInfo catalogInfo) {
+        catalogInfos.add(catalogInfo);
     }
-
-
-
 
     @Override
     public boolean equals(Object obj) {
-        BaiduSearchDataInfo info = (BaiduSearchDataInfo) obj;
-        return this.sourceName.equals(info.getSourceName());
+        BaiduSearchDataInfo baiduSearchDataInfo = (BaiduSearchDataInfo) obj;
+        return this.sourceName.equals(baiduSearchDataInfo.getSourceName());
     }
 
-    @Override
-    public String toString() {
-        return "BaiduSearchDataInfo{" +
-                "bookName='" + bookName + '\'' +
-                "author='" + author + '\'' +
-                ", sourceUrl='" + sourceUrl + '\'' +
-                ", sourceName='" + sourceName + '\'' +
-                ", catalogInfos=" + catalogInfos.toString() +
-                '}';
-    }
 }

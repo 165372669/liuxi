@@ -14,20 +14,21 @@ public class CatalogInfo implements Comparable, Serializable {
     private int chapterId;  //章节id
     private String chapterUrl; //章节网址
     private String chapterName; //章节名
-    private int chapterPagerToatal; //章节总页面
-    private ArrayList<PagerContentInfo> strs; //页面内容集合
+    private int chapterPagerToatal; //章节总页面数
+    private ArrayList<PagerContentInfo> pagerContentInfos; //页面内容集合
 
     private static final long serialVersionUID = 2;
 
-    public CatalogInfo(int chapterId, String chapterUrl, String chapterName) {
-        this(chapterId, chapterUrl, chapterName, null);
+
+    public CatalogInfo(String chapterUrl, String chapterName, int chapterId) {
+        this(chapterUrl, chapterName, chapterId, null);
     }
 
-    public CatalogInfo(int chapterId, String chapterUrl, String chapterName, ArrayList<PagerContentInfo> strs) {
+    public CatalogInfo(String chapterUrl, String chapterName, int chapterId, ArrayList<PagerContentInfo> pagerContentInfos) {
         this.chapterId = chapterId;
         this.chapterUrl = chapterUrl;
         this.chapterName = chapterName;
-        this.strs = strs;
+        this.pagerContentInfos = pagerContentInfos;
     }
 
 
@@ -64,23 +65,13 @@ public class CatalogInfo implements Comparable, Serializable {
     }
 
     public ArrayList<PagerContentInfo> getStrs() {
-        return strs;
+        return pagerContentInfos;
     }
 
     public void setStrs(ArrayList<PagerContentInfo> strs) {
-        this.strs = strs;
+        this.pagerContentInfos = strs;
     }
 
-
-    @Override
-    public String toString() {
-        return "CatalogInfo{" +
-                "chapterId=" + chapterId +
-                ", chapterUrl='" + chapterUrl + '\'' +
-                ", chapterName='" + chapterName + '\'' +
-                ", strs=" + strs.toString() +
-                '}';
-    }
 
     @Override
     public int hashCode() {
@@ -94,8 +85,8 @@ public class CatalogInfo implements Comparable, Serializable {
     }
 
     @Override
-    public int compareTo(@NonNull Object o) {
-        CatalogInfo catalogInfo = (CatalogInfo) o;
+    public int compareTo(@NonNull Object obj) {
+        CatalogInfo catalogInfo = (CatalogInfo) obj;
         if (this.chapterId > catalogInfo.chapterId)
             return 1;
         if (this.chapterId == catalogInfo.chapterId)

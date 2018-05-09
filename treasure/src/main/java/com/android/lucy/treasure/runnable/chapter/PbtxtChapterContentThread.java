@@ -3,6 +3,7 @@ package com.android.lucy.treasure.runnable.chapter;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
 
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.CatalogInfo;
@@ -44,39 +45,37 @@ public class PbtxtChapterContentThread extends BaseReadThread {
 
     @Override
     public void resoloveUrl(Document doc) {
-        Elements divs = doc.select("div[id^=content]");
-        String str = divs.toString();
-        List<String> contents = new ArrayList<>();
-        String reg = "(\\“[\u4e00-\u9fa5]|[\u4e00-\u9fa5])(.)*";//以汉字开始或者以“汉字开始
-        //让规则封装成对象
-        Pattern p = Pattern.compile(reg);
-        //让正则对象和要作用的字符串相关联。获取匹配器对象。
-        Matcher m = p.matcher(str);
-        int progress = cv_chapter_progress.getProgress();
-        while (m.find()) {
-            String s = m.group();
-            if (progress < 100) {
-                progress += 10;
-                cv_chapter_progress.setProgress(progress);
+            Elements divs = doc.select("div[id^=content]");
+            String str = divs.toString();
+            List<String> contents = new ArrayList<>();
+            String reg = "(\\“[\u4e00-\u9fa5]|[\u4e00-\u9fa5])(.)*";//以汉字开始或者以“汉字开始
+            //让规则封装成对象
+            Pattern p = Pattern.compile(reg);
+            //让正则对象和要作用的字符串相关联。获取匹配器对象。
+            Matcher m = p.matcher(str);
+            int progress = cv_chapter_progress.getProgress();
+            while (m.find()) {
+                String s = m.group();
+                if (progress < 90) {
+                    progress += 1;
+                    cv_chapter_progress.setProgress(progress);
+                }
+                if (s.startsWith("下载地址："))
+                    break;
+                contents.add(s);
+                //System.out.println(m.group());
             }
-            if (s.startsWith("下载地址："))
-                break;
-            contents.add(s);
-            //System.out.println(m.group());
-        }
-        MyLogcat.myLog("平板电子书网返回数据:" + contents.size());
-        cv_chapter_progress.setProgress(100);
-        if (contents.size() > 0) {
-            spacingLineCount(contents);
-            int pagerTotal = catalogInfo.getStrs().size();
-            catalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
-        } else {
-            //没有获取到数据加一页面。
-            catalogInfo.getStrs().add(new PagerContentInfo(null, 0));
-        }
-        Message msg = Message.obtain();
-        MyLogcat.myLog("下载的章节id:" + catalogInfo.getChapterId());
-        sendObj(msg, 1, catalogInfo.getChapterId());
+            if (contents.size() > 0) {
+                spacingLineCount(contents);
+                int pagerTotal = catalogInfo.getStrs().size();
+                catalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
+            } else {
+                //没有获取到数据加一页面。
+                catalogInfo.getStrs().add(new PagerContentInfo(null, 0));
+            }
+            Message msg = Message.obtain();
+            sendObj(msg, 1, catalogInfo.getChapterId());
+            cv_chapter_progress.setProgress(100);
     }
 
     /*
@@ -102,8 +101,7 @@ public class PbtxtChapterContentThread extends BaseReadThread {
      */
     public void spacingLineCount(List<String> books) {
         int pager = 0;//当前段落页数
-        MyLogcat.myLog(books + ",size:" + books.size());
-        List<TextInfo> textInfos = new ArrayList<>();
+        ArrayList<TextInfo> textInfos = new ArrayList<>();
         int line = 1;//初始行数
         int lineWidth = 0; //一行宽度
         int z = 0;

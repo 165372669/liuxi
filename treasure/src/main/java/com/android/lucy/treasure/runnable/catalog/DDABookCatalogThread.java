@@ -2,6 +2,7 @@ package com.android.lucy.treasure.runnable.catalog;
 
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
+import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 
@@ -60,13 +61,10 @@ public class DDABookCatalogThread extends BaseReadThread {
             info.setSourceUrl(url);
             int i = 1;
             for (Element a : as) {
-
                 String chapterHref = url + a.attr("href");
                 String chapterName = a.text();
-
-//                MyLogcat.myLog("chapterHref:"+chapterHref);
-//                MyLogcat.myLog("chapterName:"+chapterName);
-                info.addCatalogInfo(chapterHref, chapterName, i);
+                CatalogInfo catalogInfo = new CatalogInfo(chapterHref, chapterName, i);
+                info.addCatalogInfo(catalogInfo);
                 i++;
             }
             sendObj(info);

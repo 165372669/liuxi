@@ -22,20 +22,21 @@ import java.util.List;
  * 根据字体大小分页
  */
 
-public class BookContentTextView extends View {
+public class ChapterContentTextView extends View {
 
     private Paint textPaint;
     private List<TextInfo> books; //章节内容
+    private boolean isInvalidate;
 
-    public BookContentTextView(Context context) {
+    public ChapterContentTextView(Context context) {
         this(context, null, 0);
     }
 
-    public BookContentTextView(Context context, @Nullable AttributeSet attrs) {
+    public ChapterContentTextView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BookContentTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ChapterContentTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView(attrs);
     }
@@ -71,13 +72,14 @@ public class BookContentTextView extends View {
         * */
     @Override
     protected void onDraw(Canvas canvas) {
-        if (null != books && books.size() > 0) {
+        if (!isInvalidate && null != books && books.size() > 0) {
             for (int i = 0; i < books.size(); i++) {
                 TextInfo textInfo = books.get(i);
                 canvas.drawText(textInfo.getS(), textInfo.getX(), textInfo.getY(), textPaint);
             }
         } else {
             canvas.drawText("", 0, 0, textPaint);
+            isInvalidate = false;
         }
     }
 
@@ -89,10 +91,8 @@ public class BookContentTextView extends View {
     /**
      * 清空内容
      */
-    public void contentInvali() {
-        if (null != books && books.size() > 0) {
-            books.clear();
-        }
+    public void contentInvali(boolean isInvalidate) {
+        this.isInvalidate = isInvalidate;
         invalidateView();
     }
 
