@@ -110,6 +110,15 @@ public class ChapterViewPager extends ViewPager {
         }
     }
 
+    /**
+     * 隐藏标题栏和设置栏，状态栏
+     */
+    public void popUpMenu() {
+            ((BookContentActivity) activity).flagsVisibility(false);
+            titleBar.setVisibility(INVISIBLE);
+            setings.setVisibility(INVISIBLE);
+    }
+
     public void setOtherView(View setings, View titleBar) {
         this.titleBar = titleBar;
         this.setings = setings;

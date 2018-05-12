@@ -1,20 +1,17 @@
 package com.android.lucy.treasure.adapter;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.base.BaseAdapter;
 import com.android.lucy.treasure.base.BaseViewHolder;
 import com.android.lucy.treasure.bean.ChapterIDAndName;
-import com.android.lucy.treasure.utils.MyLogcat;
 
 import java.util.List;
 
-public class ChapterCatalogAdapter extends BaseAdapter<ChapterIDAndName> implements AdapterView.OnItemClickListener {
+public class ChapterCatalogAdapter extends BaseAdapter<ChapterIDAndName> {
 
     public ChapterCatalogAdapter(Context context, List<ChapterIDAndName> datas, int laoyoutId) {
         super(context, datas, laoyoutId);
@@ -42,10 +39,5 @@ public class ChapterCatalogAdapter extends BaseAdapter<ChapterIDAndName> impleme
     @Override
     public void getDatas(List mDatas) {
 
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        MyLogcat.myLog("i:" + position + ",l:" + l);
     }
 }

@@ -83,11 +83,24 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
             flagsVisibility(false);
             MyLogcat.myLog("状态栏的高度：" + getStatusBarHeight(this.getBaseContext()));
         }
+        MyLogcat.myLog("BookContentActivity-启动activity");
         initViews();
         initDatas();
         initEvent();
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        int chapterId = intent.getExtras().getInt("chapterid", -1);
+        MyLogcat.myLog("BookContentActivity-切回前台" + chapterId);
+        viewPager.popUpMenu();
+        if (chapterId != -1) {
+            adapter.setCurrentChapterId(chapterId);
+            adapter.notifyDataSetChanged();
+        }
+
+    }
 
     private void initViews() {
         viewPager = findViewById(R.id.vp_book_content);
@@ -144,7 +157,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
             contentPager.setBookName(bookName);
             contentPagers.add(contentPager);
         }
-        adapter = new BookContentPagerAdapter(contentPagers, bookDataInfo.getCatalogInfos(), viewPager, this);
+        adapter = new BookContentPagerAdapter(contentPagers, bookDataInfo.getCatalogInfos(), viewPager, this, chapterTotal);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(contentPagers.size() * 100, false);
         viewPager.setChapterDatas(bookDataInfo.getCatalogInfos());
@@ -173,6 +186,12 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         return result;
     }
 
+    /**
+     * 下载章节
+     *
+     * @param chapterId 章节id
+     * @param flag      是否显示圆形加载
+     */
     public void loadChapter(int chapterId, boolean flag) {
         if (flag) {
             cv_chapter_progress.setVisibility(View.VISIBLE);
@@ -267,7 +286,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                     chapterIDAndNames.add(new ChapterIDAndName(catalogInfo.getChapterId()
                             , catalogInfo.getChapterName()));
                 }
-                Intent intent = new Intent(this, BookChapterCatalog.class);
+                Intent intent = new Intent(this, BookChapterListActivity.class);
                 intent.putParcelableArrayListExtra("chapterIDAndNames", chapterIDAndNames);
                 startActivity(intent);
                 break;

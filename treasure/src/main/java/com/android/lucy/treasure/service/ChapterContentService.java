@@ -96,18 +96,20 @@ public class ChapterContentService extends Service {
      */
     public void startThreadProgress(int ChapterID) {
         this.loadChapterId = ChapterID;
-        MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + ChapterID);
+        MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + (ChapterID - 1));
         CatalogInfo catalogInfo = info.getCatalogInfos().get(ChapterID - 1);
         ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
-        if (null == pagerContentInfos || pagerContentInfos.size() < 2) {
+        if (null == pagerContentInfos) {
             pagerContentInfos = new ArrayList<>();
             catalogInfo.setStrs(pagerContentInfos);
             String chapterUrl = catalogInfo.getChapterUrl();
             ConfigInfo configInfo = new ConfigInfo(chapterNameHeight, bookNameHeight, chapterContentWidth,
                     chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
             cv_chapter_progress.setProgress(10);
-            ThreadPool.getInstance().submitTask(new PbtxtChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
-                    cv_chapter_progress));
+            if (!ThreadPool.getInstance().isexistTask("chapter-" + ChapterID)) {
+                ThreadPool.getInstance().submitTask(new PbtxtChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
+                        cv_chapter_progress));
+            }
         }
     }
 

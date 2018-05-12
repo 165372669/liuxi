@@ -3,14 +3,12 @@ package com.android.lucy.treasure.runnable.chapter;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
 
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ConfigInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.bean.TextInfo;
-import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.StringUtils;
 import com.android.lucy.treasure.view.CircleProgress;
 
@@ -24,7 +22,8 @@ import java.util.regex.Pattern;
 
 
 /**
- * www.pbtxt.com  平板电子书网
+ * www.pbtxt.com             平板电子书网
+ * https://www.xxbiquge.com/ 新笔趣阁
  * 获取章节内容线程
  */
 
@@ -40,42 +39,42 @@ public class PbtxtChapterContentThread extends BaseReadThread {
         this.catalogInfo = catalogInfo;
         this.configInfo = configInfo;
         this.cv_chapter_progress = cv_chapter_progress;
-        flag = "chapter-temp";
+        flag = "chapter-" + catalogInfo.getChapterId();
     }
 
     @Override
     public void resoloveUrl(Document doc) {
-            Elements divs = doc.select("div[id^=content]");
-            String str = divs.toString();
-            List<String> contents = new ArrayList<>();
-            String reg = "(\\“[\u4e00-\u9fa5]|[\u4e00-\u9fa5])(.)*";//以汉字开始或者以“汉字开始
-            //让规则封装成对象
-            Pattern p = Pattern.compile(reg);
-            //让正则对象和要作用的字符串相关联。获取匹配器对象。
-            Matcher m = p.matcher(str);
-            int progress = cv_chapter_progress.getProgress();
-            while (m.find()) {
-                String s = m.group();
-                if (progress < 90) {
-                    progress += 1;
-                    cv_chapter_progress.setProgress(progress);
-                }
-                if (s.startsWith("下载地址："))
-                    break;
-                contents.add(s);
-                //System.out.println(m.group());
+        Elements divs = doc.select("div[id^=content]");
+        String str = divs.toString();
+        List<String> contents = new ArrayList<>();
+        String reg = "(\\“[\u4e00-\u9fa5]|[\u4e00-\u9fa5])(.)*";//以汉字开始或者以“汉字开始
+        //让规则封装成对象
+        Pattern p = Pattern.compile(reg);
+        //让正则对象和要作用的字符串相关联。获取匹配器对象。
+        Matcher m = p.matcher(str);
+        int progress = cv_chapter_progress.getProgress();
+        while (m.find()) {
+            String s = m.group();
+            if (progress < 90) {
+                progress += 1;
+                cv_chapter_progress.setProgress(progress);
             }
-            if (contents.size() > 0) {
-                spacingLineCount(contents);
-                int pagerTotal = catalogInfo.getStrs().size();
-                catalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
-            } else {
-                //没有获取到数据加一页面。
-                catalogInfo.getStrs().add(new PagerContentInfo(null, 0));
-            }
-            Message msg = Message.obtain();
-            sendObj(msg, 1, catalogInfo.getChapterId());
-            cv_chapter_progress.setProgress(100);
+            if (s.startsWith("下载地址："))
+                break;
+            contents.add(s);
+            //System.out.println(m.group());
+        }
+        if (contents.size() > 0) {
+            spacingLineCount(contents);
+            int pagerTotal = catalogInfo.getStrs().size();
+            catalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
+        } else {
+            //没有获取到数据加一页面。
+            catalogInfo.getStrs().add(new PagerContentInfo(null, 0));
+        }
+        Message msg = Message.obtain();
+        sendObj(msg, 1, catalogInfo.getChapterId());
+        cv_chapter_progress.setProgress(100);
     }
 
     /*

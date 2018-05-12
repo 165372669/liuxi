@@ -48,32 +48,71 @@ public class ThreadPool {
         runnables.remove(runnable);
     }
 
+    /**
+     * 是否有该标志的任务。
+     *
+     * @param flag 任务标志
+     * @return
+     */
+    public boolean isexistTask(String flag) {
+        if (runnables.size() > 0) {
+            for (BaseReadThread task : runnables) {
+                if (null != task && null != flag && task.getFlag().equals(flag)) {
+                    MyLogcat.myLog(task.getClass().getName() + "，任务重复：" + flag);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /*
     * 取消线程
     * */
     public void cancelTask() {
         if (runnables.size() > 0) {
             for (BaseReadThread task : runnables) {
-                MyLogcat.myLog(task.getClass().getName() + "取消任务");
+                MyLogcat.myLog(task.getClass().getName() + "，取消任务");
                 task.cancel();
             }
         }
     }
 
-    /*
-* 取消读取章节线程
-* */
+
+    /**
+     * 取消读取章节线程
+     *
+     * @param flag 章节标志
+     */
     public void cancelTask(String flag) {
         if (runnables.size() > 0) {
             for (BaseReadThread task : runnables) {
                 if (null != task && task.getFlag().equals(flag)) {
-                    MyLogcat.myLog(task.getClass().getName() + "取消任务");
+                    MyLogcat.myLog(task.getClass().getName() + "，取消任务");
                     task.cancel();
                 }
 
             }
         }
     }
+
+    /**
+     * 留下有章节标志的线程，其余线程取消
+     *
+     * @param flag 章节标志
+     */
+    public void removeTask(String flag) {
+        if (runnables.size() > 0) {
+            for (BaseReadThread task : runnables) {
+                if (!(null != task && task.getFlag().equals(flag))) {
+                    MyLogcat.myLog(task.getClass().getName() + "：取消任务：" + flag);
+                    task.cancel();
+                }
+
+            }
+        }
+    }
+
 
     public void clear() {
         executorService.shutdownNow();

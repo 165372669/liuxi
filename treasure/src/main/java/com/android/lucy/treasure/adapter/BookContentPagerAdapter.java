@@ -9,6 +9,7 @@ import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.pager.ContentPager;
 import com.android.lucy.treasure.utils.MyLogcat;
+import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.view.ChapterViewPager;
 
 import java.util.ArrayList;
@@ -23,15 +24,17 @@ public class BookContentPagerAdapter extends PagerAdapter {
     private List<ContentPager> contentPagers;
     private ArrayList<CatalogInfo> catalogInfos;
     private ChapterViewPager viewPager;
+    private int chapterTotal;
     private int currentChapterId = 0;
     private int pagerPosition;
 
     public BookContentPagerAdapter(List<ContentPager> contentPagers, ArrayList<CatalogInfo> catalogInfos, ChapterViewPager viewPager,
-                                   BookContentActivity activity) {
+                                   BookContentActivity activity, int chapterTotal) {
         this.contentPagers = contentPagers;
         this.catalogInfos = catalogInfos;
         this.viewPager = viewPager;
         this.activity = activity;
+        this.chapterTotal = chapterTotal;
     }
 
     /*
@@ -69,11 +72,14 @@ public class BookContentPagerAdapter extends PagerAdapter {
         int tempCurrentItem = viewPager.getCurrentItem();
         int temp = position - tempCurrentItem;
         pagerPosition += temp;
+        MyLogcat.myLog(",pagerPosition:" + pagerPosition + ",Pager:" + (position % contentPagers.size()) + ",temp:" + temp);
         //向右翻页
         if (temp > 0) {
-            //页面位置等于章节的大小，说明翻到下一章了。章节的总页数等于0，说明上面一章没有加载完，继续翻下一章节。
-            if (null != pagerContentInfos && pagerPosition == pagerContentInfos.size() ||
+            //页面位置等于章节的大小，说明翻到下一章了。章节的总页数等于0，说明刚才的一章没有下载完，继续翻下一章节。
+            if (null != pagerContentInfos && pagerPosition == pagerContentInfos.size() && pagerContentInfos.size() > 0 ||
                     catalogInfo.getChapterPagerToatal() == 0 && pagerPosition == 1) {
+                //取消前面的下载任务
+                ThreadPool.getInstance().removeTask("chapter-" + currentChapterId);
                 currentChapterId++;
                 pagerPosition = 0;
                 catalogInfo = catalogInfos.get(currentChapterId);
@@ -84,17 +90,16 @@ public class BookContentPagerAdapter extends PagerAdapter {
                 } else {
                     pager--;
                 }
-                contentPager = contentPagers.get(pager);
                 //获取到当前显示的页面
+                contentPager = contentPagers.get(pager);
                 contentPager.pagerContentInvali(true);
                 contentPager.setChapterName(catalogInfo.getChapterName());
                 contentPager.setPagerTotal(1);
                 contentPager.setCurrentPager(1);
+                //恢复到下一页面
+                contentPager = contentPagers.get(position % contentPagers.size());
             }
-            //恢复到下一页面
-            contentPager = contentPagers.get(position % contentPagers.size());
         }
-        MyLogcat.myLog(",pagerPosition:" + pagerPosition + ",Pager:" + (position % contentPagers.size()));
         if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
             PagerContentInfo pagerContentInfo = null;
             if (pagerPosition >= 0) {
@@ -107,7 +112,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                     }
                 }
                 //11= 12 - 1 ，章节的最后一章了。
-                if (pagerPosition == pagerContentInfos.size() - 1) {
+                if (pagerPosition == pagerContentInfos.size() - 1 && currentChapterId < chapterTotal - 1) {
                     catalogInfo = catalogInfos.get(currentChapterId + 1);
                     pagerContentInfos = catalogInfo.getStrs();
                     if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
@@ -136,6 +141,16 @@ public class BookContentPagerAdapter extends PagerAdapter {
         }
         container.addView(view);
         return view;
+    }
+
+    /**
+     * 跳转到章节
+     *
+     * @param chapterId 章节id
+     */
+    public void setCurrentChapterId(int chapterId) {
+        this.currentChapterId = chapterId;
+        pagerPosition = 0;
     }
 
     @Override
