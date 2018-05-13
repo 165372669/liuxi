@@ -110,7 +110,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
             }
             if (temp < 0) {
                 if (null != pagerContentInfos && pagerContentInfos.size() > 0 && pagerPosition == -1 && currentChapterId != 0) {
-                    //取消前面的下载任务4
+                    //取消前面的下载任务
                     ThreadPool.getInstance().removeTask("chapter-" + currentChapterId);
                     currentChapterId--;
                     catalogInfo = catalogInfos.get(currentChapterId);
