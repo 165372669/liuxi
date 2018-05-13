@@ -57,5 +57,8 @@ public class TextInfo {
         isStringOneLine = stringOneLine;
     }
 
-
+    @Override
+    public String toString() {
+        return s;
+    }
 }

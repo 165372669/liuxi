@@ -32,6 +32,7 @@ public class ChapterViewPager extends ViewPager {
     private View setings;
     private Activity activity;
     private ArrayList<CatalogInfo> catalogInfos;
+    private boolean isDown = false; //是否按下
 
     public ChapterViewPager(Context context) {
         super(context);
@@ -46,15 +47,17 @@ public class ChapterViewPager extends ViewPager {
         int action = ev.getAction();
         float motionValue;
         int disparityWidth = getWidth() / 7;
-        int disparityHeight = getHeight() / 7;
+        int disparityHeight = getHeight() / 5;
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 downTime = ev.getDownTime();
                 startX = ev.getX();
                 startY = ev.getY();
                 slideX = ev.getX();
-                popUpMenu(disparityWidth, disparityHeight);
                 onClickChangePager();
+                if (popUpMenu(disparityWidth, disparityHeight)) {
+                    return false;
+                }
                 // MyLogcat.myLog("按下：" + ev.getX() + ",Id:" + posotion + ",width:" + getWidth());
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -94,7 +97,7 @@ public class ChapterViewPager extends ViewPager {
      * @param disparityWidth  宽间距
      * @param disparityHeight 高间距
      */
-    public void popUpMenu(float disparityWidth, float disparityHeight) {
+    public boolean popUpMenu(float disparityWidth, float disparityHeight) {
         if (startX > (getWidth() / 2 - disparityWidth) && startX < (getWidth() / 2 + disparityWidth)
                 && startY > (getHeight() / 2 - disparityHeight) && startY < (getHeight() / 2 + disparityHeight)) {
             ((BookContentActivity) activity).flagsVisibility(true);
@@ -103,20 +106,40 @@ public class ChapterViewPager extends ViewPager {
             }
             titleBar.setVisibility(titleBar.getVisibility() == INVISIBLE ? VISIBLE : INVISIBLE);
             setings.setVisibility(setings.getVisibility() == INVISIBLE ? VISIBLE : INVISIBLE);
+            return true;
         } else {
             ((BookContentActivity) activity).flagsVisibility(false);
             titleBar.setVisibility(INVISIBLE);
             setings.setVisibility(INVISIBLE);
+            isDown = true;
         }
+        return false;
     }
+
+    /**
+     * 设置是否按下
+     *
+     * @param isDown
+     */
+    public void setIsDown(boolean isDown) {
+        this.isDown = isDown;
+    }
+
+    /**
+     * 获取是否按下
+     */
+    public boolean getIsDown() {
+        return isDown;
+    }
+
 
     /**
      * 隐藏标题栏和设置栏，状态栏
      */
     public void popUpMenu() {
-            ((BookContentActivity) activity).flagsVisibility(false);
-            titleBar.setVisibility(INVISIBLE);
-            setings.setVisibility(INVISIBLE);
+        ((BookContentActivity) activity).flagsVisibility(false);
+        titleBar.setVisibility(INVISIBLE);
+        setings.setVisibility(INVISIBLE);
     }
 
     public void setOtherView(View setings, View titleBar) {
@@ -144,8 +167,8 @@ public class ChapterViewPager extends ViewPager {
             CatalogInfo catalogInfo = catalogInfos.get(currentChapterId);
             int chapterId = catalogInfo.getChapterId();
             ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
-            if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
-                int pagerPosition = adapter.getPagerPosition();
+            int pagerPosition = adapter.getPagerPosition();
+            if (null != pagerContentInfos && pagerContentInfos.size() > 0 && pagerPosition >= 0) {
                 if (pagerPosition >= pagerContentInfos.size()) {
                     pagerPosition = pagerContentInfos.size() - 1;
                 }

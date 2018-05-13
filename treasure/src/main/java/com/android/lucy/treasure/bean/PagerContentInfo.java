@@ -32,5 +32,11 @@ public class PagerContentInfo {
         this.currentPager = currentPager;
     }
 
-
+    @Override
+    public String toString() {
+        return "PagerContentInfo{" +
+                "textInfos=" + textInfos +
+                ", currentPager=" + currentPager +
+                '}';
+    }
 }

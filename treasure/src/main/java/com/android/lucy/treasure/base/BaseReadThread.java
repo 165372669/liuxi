@@ -32,6 +32,7 @@ public abstract class BaseReadThread implements Runnable {
     public BaseReadThread(String url, Handler myHandler) {
         this.url = url;
         this.myHandler = myHandler;
+        flag = "BaseReadThread";
     }
 
     @Override

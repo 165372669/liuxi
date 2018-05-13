@@ -57,10 +57,13 @@ public class ThreadPool {
     public boolean isexistTask(String flag) {
         if (runnables.size() > 0) {
             for (BaseReadThread task : runnables) {
-                if (null != task && null != flag && task.getFlag().equals(flag)) {
-                    MyLogcat.myLog(task.getClass().getName() + "，任务重复：" + flag);
-                    return true;
+                if (null != task) {
+                    if (task.getFlag().equals(flag)) {
+                        MyLogcat.myLog(task.getClass().getName() + "，任务重复：" + flag);
+                        return true;
+                    }
                 }
+
             }
         }
         return false;

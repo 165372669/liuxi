@@ -213,7 +213,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        // MyLogcat.myLog("onPageScrolled >");
+        //MyLogcat.myLog("onPageScrolled >");
         //滑动：onPageScrolled > instantiateItem
         //点击：instantiateItem > onPageSelected >onPageScrolled
 
@@ -223,7 +223,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     public void onPageSelected(int position) {
         int pagerPosition = adapter.getPagerPosition();
         int chapterId = adapter.getCurrentChapterId();
-        //MyLogcat.myLog("activiaty----" + "当前页面集合位置：" + pagerPosition);
+        //MyLogcat.myLog("activiaty----" + "当前章节id：" + chapterId + ",当前章节页面位置：" + pagerPosition);
         loadNextChapter(pagerPosition, chapterId);
     }
 

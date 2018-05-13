@@ -181,7 +181,9 @@ public class PbtxtChapterContentThread extends BaseReadThread {
             if (i == books.size() - 1 && str.length() > 0) {
                 pager++;
                 PagerContentInfo pagerContentInfo = new PagerContentInfo(textInfos, pager);
-                catalogInfo.getStrs().add(pagerContentInfo);
+                if (pagerContentInfo.getTextInfos().size() > 0) {
+                    catalogInfo.getStrs().add(pagerContentInfo);
+                }
             }
         }
     }

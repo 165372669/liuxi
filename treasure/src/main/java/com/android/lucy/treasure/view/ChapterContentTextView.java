@@ -101,6 +101,7 @@ public class ChapterContentTextView extends View {
     * 设置字符串数组
     * */
     public void setContentArrays(List<TextInfo> strs) {
+        isInvalidate = false;
         this.books = strs;
         invalidateView();
     }

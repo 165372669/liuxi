@@ -27,6 +27,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
     private int chapterTotal;
     private int currentChapterId = 0;
     private int pagerPosition;
+    private boolean isLeftPager;
 
     public BookContentPagerAdapter(List<ContentPager> contentPagers, ArrayList<CatalogInfo> catalogInfos, ChapterViewPager viewPager,
                                    BookContentActivity activity, int chapterTotal) {
@@ -71,35 +72,74 @@ public class BookContentPagerAdapter extends PagerAdapter {
         ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
         int tempCurrentItem = viewPager.getCurrentItem();
         int temp = position - tempCurrentItem;
-        pagerPosition += temp;
-        MyLogcat.myLog(",pagerPosition:" + pagerPosition + ",Pager:" + (position % contentPagers.size()) + ",temp:" + temp);
-        //向右翻页
-        if (temp > 0) {
-            //页面位置等于章节的大小，说明翻到下一章了。章节的总页数等于0，说明刚才的一章没有下载完，继续翻下一章节。
-            if (null != pagerContentInfos && pagerPosition == pagerContentInfos.size() && pagerContentInfos.size() > 0 ||
-                    catalogInfo.getChapterPagerToatal() == 0 && pagerPosition == 1) {
-                //取消前面的下载任务
-                ThreadPool.getInstance().removeTask("chapter-" + currentChapterId);
-                currentChapterId++;
-                pagerPosition = 0;
-                catalogInfo = catalogInfos.get(currentChapterId);
-                pagerContentInfos = catalogInfo.getStrs();
-                int pager = position % contentPagers.size();
-                if (pager == 0) {
-                    pager = 4;
-                } else {
-                    pager--;
-                }
-                //获取到当前显示的页面
-                contentPager = contentPagers.get(pager);
-                contentPager.pagerContentInvali(true);
-                contentPager.setChapterName(catalogInfo.getChapterName());
-                contentPager.setPagerTotal(1);
-                contentPager.setCurrentPager(1);
-                //恢复到下一页面
-                contentPager = contentPagers.get(position % contentPagers.size());
+        //MyLogcat.myLog("添加前：,pagerPosition:" + pagerPosition );
+        if (isLeftPager) {
+            if (null != pagerContentInfos) {
+                pagerPosition = pagerContentInfos.size() - 1;
             }
+            isLeftPager = false;
         }
+        if (viewPager.getIsDown()) {
+            pagerPosition += temp;
+            //向右翻页
+            if (temp > 0) {
+                //页面位置等于章节的大小，说明翻到下一章了。章节的总页数等于0，说明刚才的一章没有下载完，继续翻下一章节。
+                if (null != pagerContentInfos && pagerPosition == pagerContentInfos.size() && pagerContentInfos.size() > 0 ||
+                        catalogInfo.getChapterPagerToatal() == 0 && pagerPosition == 1) {
+                    //取消前面的下载任务
+                    ThreadPool.getInstance().removeTask("chapter-" + currentChapterId);
+                    currentChapterId++;
+                    pagerPosition = 0;
+                    catalogInfo = catalogInfos.get(currentChapterId);
+                    pagerContentInfos = catalogInfo.getStrs();
+                    int pager = position % contentPagers.size();
+                    if (pager == 0) {
+                        pager = 4;
+                    } else {
+                        pager--;
+                    }
+                    //获取到当前显示的页面
+                    contentPager = contentPagers.get(pager);
+                    contentPager.pagerContentInvali(true);
+                    contentPager.setChapterName(catalogInfo.getChapterName());
+                    contentPager.setPagerTotal(1);
+                    contentPager.setCurrentPager(1);
+                    //恢复下一页面
+                    contentPager = contentPagers.get(position % contentPagers.size());
+                }
+            }
+            if (temp < 0) {
+                if (null != pagerContentInfos && pagerContentInfos.size() > 0 && pagerPosition == -1 && currentChapterId != 0) {
+                    //取消前面的下载任务
+                    ThreadPool.getInstance().removeTask("chapter-" + currentChapterId);
+                    currentChapterId--;
+                    catalogInfo = catalogInfos.get(currentChapterId);
+                    pagerContentInfos = catalogInfo.getStrs();
+                    if (null != pagerContentInfos) {
+                        pagerPosition = pagerContentInfos.size() - 1;
+                    } else {
+                        int pager = position % contentPagers.size();
+                        if (pager == 4) {
+                            pager = 0;
+                        } else {
+                            pager++;
+                        }
+                        //获取到当前显示的页面
+                        contentPager = contentPagers.get(pager);
+                        contentPager.pagerContentInvali(true);
+                        contentPager.setChapterName(catalogInfo.getChapterName());
+                        contentPager.setPagerTotal(1);
+                        contentPager.setCurrentPager(1);
+                        //恢复下一页面
+                        contentPager = contentPagers.get(position % contentPagers.size());
+                        isLeftPager = true;
+                    }
+                }
+            }
+            viewPager.setIsDown(false);
+            //MyLogcat.myLog("点击后：,pagerPosition:" + pagerPosition + ",temp:" + temp + ",章节id：" + currentChapterId);
+        }
+        MyLogcat.myLog("添加后：,pagerPosition:" + pagerPosition + ",temp:" + temp + ",章节id：" + currentChapterId);
         if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
             PagerContentInfo pagerContentInfo = null;
             if (pagerPosition >= 0) {
@@ -111,16 +151,27 @@ public class BookContentPagerAdapter extends PagerAdapter {
                         pagerContentInfo = pagerContentInfos.get(pagerPosition - 1);
                     }
                 }
-                //11= 12 - 1 ，章节的最后一章了。
-                if (pagerPosition == pagerContentInfos.size() - 1 && currentChapterId < chapterTotal - 1) {
-                    catalogInfo = catalogInfos.get(currentChapterId + 1);
-                    pagerContentInfos = catalogInfo.getStrs();
-                    if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
-                        pagerContentInfo = pagerContentInfos.get(0);
-                    }
-                }
                 if (temp == 0) {
                     pagerContentInfo = pagerContentInfos.get(pagerPosition);
+                }
+
+                //11= 12 - 1 ，向右翻动，章节的最后一章了。
+                if (pagerPosition == pagerContentInfos.size() - 1 && pagerContentInfos.size() > 1) {
+                    if (currentChapterId < chapterTotal - 1 && temp > 0) {
+                        pagerContentInfos = catalogInfos.get(currentChapterId + 1).getStrs();
+                        if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
+                            pagerContentInfo = pagerContentInfos.get(0);
+                        }
+                    } else if (temp < 0) {
+                        pagerContentInfo = pagerContentInfos.get(pagerPosition - 1);
+                    }
+                }
+                // 0,章节的第一页，并且是往左翻。
+                if (pagerPosition == 0 && temp < 0 && currentChapterId != 0) {
+                    pagerContentInfos = catalogInfos.get(currentChapterId - 1).getStrs();
+                    if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
+                        pagerContentInfo = pagerContentInfos.get(pagerContentInfos.size() - 1);
+                    }
                 }
 
                 if (null != pagerContentInfo) {
@@ -142,6 +193,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
         container.addView(view);
         return view;
     }
+
 
     /**
      * 跳转到章节
