@@ -221,7 +221,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
     /**
      * 跳转到章节
      *
-     * @param chapterId 章节id
+     * @param chapterId 要跳转到的章节id
      */
     public void setCurrentChapterId(int chapterId) {
         this.currentChapterId = chapterId;
