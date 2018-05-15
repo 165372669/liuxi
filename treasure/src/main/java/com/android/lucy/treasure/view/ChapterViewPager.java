@@ -33,6 +33,7 @@ public class ChapterViewPager extends ViewPager {
     private Activity activity;
     private ArrayList<CatalogInfo> catalogInfos;
     private boolean isDown = false; //是否按下
+    private boolean isLoadComplete;//是否下载完成
 
     public ChapterViewPager(Context context) {
         super(context);
@@ -47,7 +48,7 @@ public class ChapterViewPager extends ViewPager {
         int action = ev.getAction();
         float motionValue;
         int disparityWidth = getWidth() / 7;
-        int disparityHeight = getHeight() / 5;
+        int disparityHeight = getHeight() / 4;
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 downTime = ev.getDownTime();
@@ -55,9 +56,6 @@ public class ChapterViewPager extends ViewPager {
                 startY = ev.getY();
                 slideX = ev.getX();
                 onClickChangePager();
-                if (popUpMenu(disparityWidth, disparityHeight)) {
-                    return false;
-                }
                 // MyLogcat.myLog("按下：" + ev.getX() + ",Id:" + posotion + ",width:" + getWidth());
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -72,6 +70,9 @@ public class ChapterViewPager extends ViewPager {
             case MotionEvent.ACTION_UP:
                 int x = (int) Math.abs(ev.getX() - startX);
                 long time = ev.getEventTime() - downTime;
+                if (popUpMenu(disparityWidth, disparityHeight, x)) {
+                    return false;
+                }
                 if (x < 30 && time < 200) {
                     if (startX > getWidth() / 2 + disparityWidth) {
                         if (isRightSlide)
@@ -96,10 +97,13 @@ public class ChapterViewPager extends ViewPager {
      *
      * @param disparityWidth  宽间距
      * @param disparityHeight 高间距
+     * @param x               滑动范围
+     * @return
      */
-    public boolean popUpMenu(float disparityWidth, float disparityHeight) {
+    public boolean popUpMenu(float disparityWidth, float disparityHeight, int x) {
         if (startX > (getWidth() / 2 - disparityWidth) && startX < (getWidth() / 2 + disparityWidth)
-                && startY > (getHeight() / 2 - disparityHeight) && startY < (getHeight() / 2 + disparityHeight)) {
+                && startY > (getHeight() / 2 - disparityHeight) && startY < (getHeight() / 2 + disparityHeight)
+                && x < 10) {
             ((BookContentActivity) activity).flagsVisibility(true);
             if (titleBar.getVisibility() == VISIBLE) {
                 ((BookContentActivity) activity).flagsVisibility(false);

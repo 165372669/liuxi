@@ -3,6 +3,7 @@ package com.android.lucy.treasure.utils;
 import com.android.lucy.treasure.base.BaseReadThread;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,15 +56,14 @@ public class ThreadPool {
      * @return
      */
     public boolean isexistTask(String flag) {
-        if (runnables.size() > 0) {
-            for (BaseReadThread task : runnables) {
-                if (null != task) {
-                    if (task.getFlag().equals(flag)) {
-                        MyLogcat.myLog(task.getClass().getName() + "，任务重复：" + flag);
-                        return true;
-                    }
+        Iterator<BaseReadThread> iterator = runnables.iterator();
+        while (iterator.hasNext()) {
+            BaseReadThread task = iterator.next();
+            if (null != task) {
+                if (task.getFlag().equals(flag)) {
+                    MyLogcat.myLog(task.getClass().getName() + "，任务重复：" + flag);
+                    return true;
                 }
-
             }
         }
         return false;
@@ -73,12 +73,15 @@ public class ThreadPool {
     * 取消线程
     * */
     public void cancelTask() {
-        if (runnables.size() > 0) {
-            for (BaseReadThread task : runnables) {
-                MyLogcat.myLog(task.getClass().getName() + "，取消任务");
+        Iterator<BaseReadThread> iterator = runnables.iterator();
+        while (iterator.hasNext()) {
+            BaseReadThread task = iterator.next();
+            if (null != task) {
                 task.cancel();
             }
         }
+
+
     }
 
 
@@ -88,13 +91,14 @@ public class ThreadPool {
      * @param flag 章节标志
      */
     public void cancelTask(String flag) {
-        if (runnables.size() > 0) {
-            for (BaseReadThread task : runnables) {
-                if (null != task && task.getFlag().equals(flag)) {
-                    MyLogcat.myLog(task.getClass().getName() + "，取消任务");
+        Iterator<BaseReadThread> iterator = runnables.iterator();
+        while (iterator.hasNext()) {
+            BaseReadThread task = iterator.next();
+            if (null != task) {
+                if (task.getFlag().equals(flag)) {
+                    MyLogcat.myLog(task.getClass().getName() + "，取消任务：" + flag);
                     task.cancel();
                 }
-
             }
         }
     }
@@ -105,13 +109,12 @@ public class ThreadPool {
      * @param flag 章节标志
      */
     public void removeTask(String flag) {
-        if (runnables.size() > 0) {
-            for (BaseReadThread task : runnables) {
-                if (!(null != task && task.getFlag().equals(flag))) {
-                    MyLogcat.myLog(task.getClass().getName() + "：取消任务：" + flag);
-                    task.cancel();
-                }
-
+        Iterator<BaseReadThread> iterator = runnables.iterator();
+        while (iterator.hasNext()) {
+            BaseReadThread task = iterator.next();
+            if (!(null != task && task.getFlag().equals(flag))) {
+                MyLogcat.myLog(task.getClass().getName() + "：取消任务：" + flag);
+                task.cancel();
             }
         }
     }

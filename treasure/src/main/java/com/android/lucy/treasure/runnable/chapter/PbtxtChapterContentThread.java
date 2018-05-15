@@ -108,6 +108,10 @@ public class PbtxtChapterContentThread extends BaseReadThread {
         float x = 0;
         float y = configInfo.getChapterNameHeight();
         for (int i = 0; i < books.size(); i++) {
+            if (getIsCancelled()) {
+                catalogInfo.clearStrs();
+                return;
+            }
             String str = books.get(i);
             str = removeEmpty(str);
             for (int j = 0; j < str.length(); j++) {

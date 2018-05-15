@@ -51,6 +51,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private int chapterTotal;
     private TextView tv_chapter_catalog;
     private CircleProgress cv_chapter_progress;
+    private int tempCurrentItem;
 
     public class ChapterContentHandler extends Handler {
         @Override
@@ -61,9 +62,8 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                     break;
                 case 1://成功下载到章节并添加到页面集合
                     int loadChapterId = msg.arg2;
-                    //下载完第一章后下载第二章
-                    if (loadChapterId - 1 == adapter.getCurrentChapterId()) {
-                        MyLogcat.myLog("下载的章节id" + (loadChapterId - 1) + "，适配器的章节id" + adapter.getCurrentChapterId());
+                    MyLogcat.myLog("下载的章节id:" + (loadChapterId - 1) + "，适配器的章节id:" + adapter.getCurrentChapterId());
+                    if (loadChapterId - 1 == adapter.getCurrentChapterId() ) {
                         cv_chapter_progress.setVisibility(View.INVISIBLE);
                         adapter.notifyDataSetChanged();
                     }
@@ -138,7 +138,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                     service.setOnChapterContentListener(BookContentActivity.this);
                     cv_chapter_progress.setVisibility(View.VISIBLE);
                     cv_chapter_progress.setProgress(5);
-                    service.startThreadProgress(1);
+                    service.startThreadProgress(0);
                 }
 
                 //当activity跟service的连接意外丢失的时候会调用
@@ -160,6 +160,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         adapter = new BookContentPagerAdapter(contentPagers, bookDataInfo.getCatalogInfos(), viewPager, this, chapterTotal);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(contentPagers.size() * 100, false);
+        tempCurrentItem = contentPagers.size() * 100;
         viewPager.setChapterDatas(bookDataInfo.getCatalogInfos());
         viewPager.setChapterTotal(chapterTotal);
     }
@@ -167,7 +168,6 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private void initEvent() {
         viewPager.addOnPageChangeListener(this);
         tv_chapter_catalog.setOnClickListener(this);
-
     }
 
     /**
@@ -202,6 +202,33 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         }
     }
 
+    /**
+     * 获取圆形进度
+     *
+     * @return
+     */
+    public CircleProgress getCircleProgress() {
+        return cv_chapter_progress;
+    }
+
+    /**
+     * 预加载章节
+     *
+     * @param chapterId 当前章节id
+     * @param temp      滑动方向
+     */
+    public void preLoading(int chapterId, int temp) {
+        int loadChapterid = chapterId + temp;
+        if (loadChapterid < chapterTotal && loadChapterid >= 0) {
+            //预加载章节
+            CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(loadChapterid);
+            if (catalogInfo.getChapterPagerToatal() == 0) {
+                MyLogcat.myLog("页面变更-" + "预加载章节id：" + loadChapterid);
+                loadChapter(loadChapterid, false);
+            }
+        }
+    }
+
 
     /*
      *加载章内容数据。和章节名等，是ChapterContentService的回调方法
@@ -221,51 +248,17 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 
     @Override
     public void onPageSelected(int position) {
-        int pagerPosition = adapter.getPagerPosition();
-        int chapterId = adapter.getCurrentChapterId();
-        //MyLogcat.myLog("activiaty----" + "当前章节id：" + chapterId + ",当前章节页面位置：" + pagerPosition);
-        loadNextChapter(pagerPosition, chapterId);
+        int temp = position - tempCurrentItem;
+        int chapterid = adapter.getCurrentChapterId();
+        preLoading(chapterid, temp);
+        preLoading(chapterid + temp, temp);
+        tempCurrentItem = position;
+
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
 
-    }
-
-    /**
-     * 功能：加载章节
-     *
-     * @param pagerPosition 当前章节页面位置
-     * @param chapterId     当前章节id
-     */
-    public void loadNextChapter(int pagerPosition, int chapterId) {
-//        CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(chapterId);
-//        ArrayList<PagerContentInfo> pagerContentInfo = catalogInfo.getStrs();
-//        int currentChapterId = catalogInfo.getChapterId();
-//        int currentChapterPager = pagerContentInfo.get(pagerPosition).getCurrentPager();
-//        int chapterPagerTotal = catalogInfo.getChapterPagerToatal();
-        // MyLogcat.myLog("当前章节id:" + currentChapterId + "，当前章节页面id:" + currentChapterPager);
-//        //章节id等于当前页面id的最后一页下载后二章
-//        if (currentChapterPager == chapterPagerTotal) {
-//            catalogInfo = bookDataInfo.getCatalogInfos().get(currentChapterId + 1);
-//            pagerContentInfo = catalogInfo.getStrs();
-//            if (null == pagerContentInfo) {
-//                service.startThread(currentChapterId + 1, currentChapterId);
-//            } else {
-//                service.startThread(currentChapterId + 2, currentChapterId);
-//            }
-//        }
-//        //章节id大于1并且当前页面id为第一页下载前 二章
-//        if (currentChapterId > 1 && currentChapterPager == 1) {
-//            catalogInfo = bookDataInfo.getCatalogInfos().get(currentChapterId - 1);
-//            pagerContentInfo = catalogInfo.getStrs();
-//            if (null == pagerContentInfo) {
-//                service.startThread(currentChapterId - 1, currentChapterId);
-//            }
-//            if (currentChapterId > 2) {
-//                service.startThread(currentChapterId - 2, currentChapterId);
-//            }
-//        }
     }
 
 
@@ -321,22 +314,5 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         ThreadPool.getInstance().cancelTask("chapter-temp");
     }
 
-
-    //
-//    public void setCurrentItem(int index) {
-//        //先强制设定跳转到指定页面
-//        try {
-//            Field field = viewPager.getClass().getField("mCurItem");//参数mCurItem是系统自带的
-//            field.setAccessible(true);
-//            field.setInt(viewPager, index);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        //然后调用下面的函数刷新数据
-//        adapter.notifyDataSetChanged();
-//        //再调用setCurrentItem()函数设置一次
-//        viewPager.setCurrentItem(index, false);
-//    }
 
 }

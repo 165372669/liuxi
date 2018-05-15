@@ -69,6 +69,15 @@ public abstract class BaseReadThread implements Runnable {
         this.isCancelled = true;
     }
 
+    /**
+     * 获取取消线程标志
+     *
+     * @return
+     */
+    public boolean getIsCancelled() {
+        return isCancelled;
+    }
+
     /*
     * 返回标志
     * */

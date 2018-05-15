@@ -72,6 +72,11 @@ public class CatalogInfo implements Comparable, Serializable {
         this.pagerContentInfos = strs;
     }
 
+    public void clearStrs() {
+        pagerContentInfos.clear();
+        pagerContentInfos = null;
+    }
+
 
     @Override
     public int hashCode() {
