@@ -8,8 +8,6 @@ import com.android.lucy.treasure.activity.BookContentActivity;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.pager.ContentPager;
-import com.android.lucy.treasure.utils.MyLogcat;
-import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.view.ChapterViewPager;
 
 import java.util.ArrayList;

@@ -34,7 +34,7 @@ import java.util.List;
  * 小说详情页面
  */
 
-public class BookIntroducedActivity extends Activity implements BaseReadAsyncTask.OnUpdateDataLisetener,View.OnClickListener{
+public class BookIntroducedActivity extends Activity implements BaseReadAsyncTask.OnUpdateDataLisetener, View.OnClickListener {
 
     private ImageView iv_cover;
     private TextView tv_author_book;
@@ -51,11 +51,12 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     private List<BaiduSearchDataInfo> baiduSearchDataInfos;
     private BookSourceCatalogAdapter bookSourceCatalogAdapter;
     private BookHandler bookHandler;
+    private ImageView iv_book_back;
 
 
     class BookHandler extends MyHandler<BookIntroducedActivity> {
 
-        private boolean bt_flag=true;
+        private boolean bt_flag = true;
 
         public BookHandler(BookIntroducedActivity bookIntroducedActivity) {
             super(bookIntroducedActivity);
@@ -64,9 +65,9 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         @Override
         public void myHandleMessage(Message msg) {
 
-            if(bt_flag){
-                mActivity.get().setButtonState(true,"开始阅读");
-                bt_flag=false;
+            if (bt_flag) {
+                mActivity.get().setButtonState(true, "开始阅读");
+                bt_flag = false;
             }
             BaiduSearchDataInfo info = (BaiduSearchDataInfo) msg.obj;
             mActivity.get().addInfo(info);
@@ -100,14 +101,15 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 
 
         iv_cover = findViewById(R.id.iv_cover);
+        iv_book_back = findViewById(R.id.iv_book_back);
         tv_bookName_book = findViewById(R.id.tv_bookName_book);
         tv_author_book = findViewById(R.id.tv_author_book);
         tv_type_book = findViewById(R.id.tv_type_book);
         tv_size_book = findViewById(R.id.tv_size_book);
         tv_timeUpdate_book = findViewById(R.id.tv_timeUpdate_book);
         tv_desc_book = findViewById(R.id.tv_desc_book);
-        bt_start_book = findViewById(R.id.bt_start_book);
-        setButtonState(false,"寻找来源");
+        bt_start_book = findViewById(R.id.bt_book_read);
+        setButtonState(false, "寻找来源");
         lv_source_book = findViewById(R.id.lv_source_book);
     }
 
@@ -118,9 +120,9 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         SearchDataInfo searchDataInfo = intent.getParcelableExtra("searchDataInfo");
         //启动百度线程，查找小说来源
         String bookName = searchDataInfo.getBookName();
-        String author=searchDataInfo.getAuthor();
+        String author = searchDataInfo.getAuthor();
         String url = URLUtils.BAiDU_SEARCH_URL_ + bookName;
-        ThreadPool.getInstance().submitTask(new BaiduSearchSingleThread(url, bookName, author,bookHandler));
+        ThreadPool.getInstance().submitTask(new BaiduSearchSingleThread(url, bookName, author, bookHandler));
         //启动追书线程，获取字数和最新更新章节
         zhuiShuDataAsync = new ZhuiShuDataAsync(searchDataInfo);
         zhuiShuDataAsync.execute(URLUtils.ZHUISHU_URL + searchDataInfo.getBookUrl_ZhuiShu());
@@ -133,12 +135,22 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 
     private void initEvent() {
         bt_start_book.setOnClickListener(this);
+        iv_book_back.setOnClickListener(this);
+
     }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.bt_start_book:
+            case R.id.bt_book_read:
                 bookRead();
+                break;
+            case R.id.iv_book_back:
+                finish();
+                Intent intent = new Intent(this, SearchActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.putExtra("visibility", true);
+                startActivity(intent);
                 break;
         }
     }
@@ -153,7 +165,12 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         ThreadPool.getInstance().cancelTask();
     }
 
-    //更新小说详情数据
+    /**
+     * 更新小说详细数据
+     * 包括作者，书名，类型，更新时间，字数
+     *
+     * @param searchDataInfo 搜索的数据对象
+     */
     @Override
     public void setData(SearchDataInfo searchDataInfo) {
         tv_bookName_book.setText(searchDataInfo.getBookName());
@@ -165,11 +182,11 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         progressBar.setVisibility(View.INVISIBLE);
         ll_book_detail.setVisibility(View.VISIBLE);
     }
+
     /*
     * 设置按钮状态
     * */
-    public void setButtonState(boolean state,String text)
-    {
+    public void setButtonState(boolean state, String text) {
         bt_start_book.setEnabled(state);
         bt_start_book.setText(text);
     }
@@ -179,7 +196,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 * 开始阅读
 * */
     private void bookRead() {
-        Intent intent=new Intent(this,BookContentActivity.class);
+        Intent intent = new Intent(this, BookContentActivity.class);
         BaiduSearchDataInfo baiduSearchDataInfo = baiduSearchDataInfos.get(0);
         intent.putExtra("baiduInfo", baiduSearchDataInfo);
         startActivity(intent);

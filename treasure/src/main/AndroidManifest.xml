@@ -21,9 +21,11 @@
         </activity>
         <activity
             android:name=".activity.SearchActivity"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".activity.BookIntroducedActivity"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
             android:name=".activity.BookContentActivity"

@@ -3,6 +3,7 @@ package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Gravity;
@@ -129,9 +130,22 @@ public class SearchActivity extends Activity implements BaseReadAsyncTask.OnUpda
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        boolean visibility = intent.getBooleanExtra("visibility", false);
+        if (visibility) {
+            et_search_content.setText("");
+            lv_search.setVisibility(View.INVISIBLE);
+            rl_search_history.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String historyName = historys.get(position);
         if (!historyName.isEmpty()) {
+            et_search_content.setText(historyName);
+            et_search_content.setSelection(historyName.length());//光标移到文字末尾
             rl_search_history.setVisibility(View.INVISIBLE);
             sdThread = new SearchDataAsync(lv_search);
             sdThread.execute(URLUtils.ZHUISHU_SEARCH_URL + historyName);
