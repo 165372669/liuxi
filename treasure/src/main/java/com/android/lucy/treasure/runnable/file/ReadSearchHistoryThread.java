@@ -2,9 +2,8 @@ package com.android.lucy.treasure.runnable.file;
 
 import android.os.Message;
 
-import com.android.lucy.treasure.MyApp;
+import com.android.lucy.treasure.application.MyApp;
 import com.android.lucy.treasure.utils.MyHandler;
-import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.SDCardHelper;
 
 import java.io.BufferedReader;
@@ -12,7 +11,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**

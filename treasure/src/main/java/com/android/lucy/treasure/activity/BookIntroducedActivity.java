@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.BookSourceCatalogAdapter;
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
-import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
+import com.android.lucy.treasure.bean.BookDataInfo;
 import com.android.lucy.treasure.bean.SearchDataInfo;
 import com.android.lucy.treasure.runnable.BaiduSearchSingleThread;
 import com.android.lucy.treasure.runnable.BookImageAsync;
@@ -48,7 +48,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     private ZhuiShuDataAsync zhuiShuDataAsync;
     private ProgressBar progressBar;
     private ListView lv_source_book;
-    private List<BaiduSearchDataInfo> baiduSearchDataInfos;
+    private List<BookDataInfo> bookDataInfos;
     private BookSourceCatalogAdapter bookSourceCatalogAdapter;
     private BookHandler bookHandler;
     private ImageView iv_book_back;
@@ -69,7 +69,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                 mActivity.get().setButtonState(true, "开始阅读");
                 bt_flag = false;
             }
-            BaiduSearchDataInfo info = (BaiduSearchDataInfo) msg.obj;
+            BookDataInfo info = (BookDataInfo) msg.obj;
             mActivity.get().addInfo(info);
             mActivity.get().refurbishApter();
         }
@@ -115,7 +115,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 
     private void initDatas() {
         bookHandler = new BookHandler(this);
-        baiduSearchDataInfos = new ArrayList<>();
+        bookDataInfos = new ArrayList<>();
         Intent intent = getIntent();
         SearchDataInfo searchDataInfo = intent.getParcelableExtra("searchDataInfo");
         //启动百度线程，查找小说来源
@@ -129,7 +129,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         zhuiShuDataAsync.setOnUpdateDataListener(this);
 
         new BookImageAsync(iv_cover).execute(searchDataInfo.getImgUrl());
-        bookSourceCatalogAdapter = new BookSourceCatalogAdapter(this, baiduSearchDataInfos, R.layout.source_list_item);
+        bookSourceCatalogAdapter = new BookSourceCatalogAdapter(this, bookDataInfos, R.layout.source_list_item);
         lv_source_book.setAdapter(bookSourceCatalogAdapter);
     }
 
@@ -197,18 +197,18 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 * */
     private void bookRead() {
         Intent intent = new Intent(this, BookContentActivity.class);
-        BaiduSearchDataInfo baiduSearchDataInfo = baiduSearchDataInfos.get(0);
-        intent.putExtra("baiduInfo", baiduSearchDataInfo);
+        BookDataInfo bookDataInfo = bookDataInfos.get(0);
+        intent.putExtra("baiduInfo", bookDataInfo);
         startActivity(intent);
     }
 
     /**
      * 添加小说来源数据
      */
-    public void addInfo(BaiduSearchDataInfo info) {
+    public void addInfo(BookDataInfo info) {
         //没有包含同一个来源
-        if (!baiduSearchDataInfos.contains(info))
-            baiduSearchDataInfos.add(info);
+        if (!bookDataInfos.contains(info))
+            bookDataInfos.add(info);
     }
 
     /*

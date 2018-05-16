@@ -1,6 +1,6 @@
 package com.android.lucy.treasure.runnable.file;
 
-import com.android.lucy.treasure.MyApp;
+import com.android.lucy.treasure.application.MyApp;
 import com.android.lucy.treasure.utils.SDCardHelper;
 
 import java.io.BufferedWriter;

@@ -1,6 +1,5 @@
 package com.android.lucy.treasure.utils;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -8,7 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.lucy.treasure.MyApp;
+import com.android.lucy.treasure.application.MyApp;
 
 /**
  * Drawable工具类

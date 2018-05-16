@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * 百度搜索数据
  */
 
-public class BaiduSearchDataInfo implements Serializable {
+public class BookDataInfo implements Serializable {
 
     private String bookName; //书名
     private String author;   //作者
@@ -17,7 +17,7 @@ public class BaiduSearchDataInfo implements Serializable {
 
     private static final long serialVersionUID = 1;
 
-    public BaiduSearchDataInfo(String bookName, String sourceUrl, String sourceName, String author) {
+    public BookDataInfo(String bookName, String sourceUrl, String sourceName, String author) {
         this.bookName = bookName;
         this.sourceUrl = sourceUrl;
         this.sourceName = sourceName;
@@ -67,8 +67,8 @@ public class BaiduSearchDataInfo implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        BaiduSearchDataInfo baiduSearchDataInfo = (BaiduSearchDataInfo) obj;
-        return this.sourceName.equals(baiduSearchDataInfo.getSourceName());
+        BookDataInfo bookDataInfo = (BookDataInfo) obj;
+        return this.sourceName.equals(bookDataInfo.getSourceName());
     }
 
 }

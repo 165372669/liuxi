@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
-import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
+import com.android.lucy.treasure.bean.BookDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ChapterIDAndName;
 import com.android.lucy.treasure.pager.ContentPager;
@@ -44,7 +44,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private ServiceConnection connection;
     private ChapterContentService service;
     private ContentPager contentPagerView;
-    private BaiduSearchDataInfo bookDataInfo;
+    private BookDataInfo bookDataInfo;
     private ChapterViewPager viewPager;
     private BookContentPagerAdapter adapter;
     private ArrayList<ContentPager> contentPagers;
@@ -116,7 +116,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private void initDatas() {
         contentPagerView = new ContentPager(this);
         contentPagers = new ArrayList<>();
-        bookDataInfo = (BaiduSearchDataInfo) getIntent().getSerializableExtra("baiduInfo");
+        bookDataInfo = (BookDataInfo) getIntent().getSerializableExtra("baiduInfo");
         String bookName = bookDataInfo.getBookName();
         chapterTotal = bookDataInfo.getCatalogInfos().size();
         MyLogcat.myLog("chapterTotal:" + chapterTotal);

@@ -12,7 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.android.lucy.treasure.activity.BookContentActivity;
-import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
+import com.android.lucy.treasure.bean.BookDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ConfigInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class ChapterContentService extends Service {
 
     private MyBinder mBinder;
-    private BaiduSearchDataInfo info;
+    private BookDataInfo info;
     private OnChapterContentListener onChapterContentListener;
     private int chapterNameHeight;    //章节名View高
     private int bookNameHeight;       //书名View高
@@ -138,7 +138,7 @@ public class ChapterContentService extends Service {
      * @param contentPagerView      章节内容View
      * @param chapterContentHandler
      */
-    public void setData(BaiduSearchDataInfo info, ContentPager contentPagerView, BookContentActivity.ChapterContentHandler chapterContentHandler) {
+    public void setData(BookDataInfo info, ContentPager contentPagerView, BookContentActivity.ChapterContentHandler chapterContentHandler) {
         this.info = info;
         this.chapterContentHandler = chapterContentHandler;
         textInfoCount();

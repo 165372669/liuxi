@@ -1,7 +1,7 @@
 package com.android.lucy.treasure.runnable.catalog;
 
 import com.android.lucy.treasure.base.BaseReadThread;
-import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
+import com.android.lucy.treasure.bean.BookDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
@@ -18,9 +18,9 @@ import org.jsoup.select.Elements;
 
 public class DDABookCatalogThread extends BaseReadThread {
 
-    private BaiduSearchDataInfo info;
+    private BookDataInfo info;
 
-    public DDABookCatalogThread(String url, BaiduSearchDataInfo info, MyHandler myHandler) {
+    public DDABookCatalogThread(String url, BookDataInfo info, MyHandler myHandler) {
         super(url, myHandler);
         this.info = info;
     }

@@ -1,7 +1,7 @@
 package com.android.lucy.treasure.runnable;
 
 import com.android.lucy.treasure.base.BaseReadThread;
-import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
+import com.android.lucy.treasure.bean.BookDataInfo;
 import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
 import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.utils.Key;
@@ -44,20 +44,20 @@ public class BaiduSearchSingleThread extends BaseReadThread {
             String sourceUrl = a.attr("href");
             String sourceNameTemp = a.text();
             String sourceName = shearSourceName(sourceNameTemp);
-            BaiduSearchDataInfo baiduSearchDataInfo = new BaiduSearchDataInfo(bookName, sourceUrl, sourceName, author);
+            BookDataInfo bookDataInfo = new BookDataInfo(bookName, sourceUrl, sourceName, author);
             //MyLogcat.myLog("sourceUrl:" + sourceUrl);
             //MyLogcat.myLog("sourceName:" + sourceName);
-            selectSource(baiduSearchDataInfo);
+            selectSource(bookDataInfo);
         }
     }
 
-    public void selectSource(BaiduSearchDataInfo baiduSearchDataInfo) {
-        String sourceName = baiduSearchDataInfo.getSourceName();
-        String sourceUrl = baiduSearchDataInfo.getSourceUrl();
+    public void selectSource(BookDataInfo bookDataInfo) {
+        String sourceName = bookDataInfo.getSourceName();
+        String sourceUrl = bookDataInfo.getSourceUrl();
         if (Key.DDA_SOURCE.contains(sourceName)) {
-            ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, baiduSearchDataInfo, bookHandler));
+            ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, bookDataInfo, bookHandler));
         } else if (Key.LIA_SOURCE.contains(sourceName))
-            ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, baiduSearchDataInfo, bookHandler));
+            ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, bookDataInfo, bookHandler));
 
     }
 

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.widget.AbsListView;
 import android.widget.TextView;
 
-import com.android.lucy.treasure.MyApp;
+import com.android.lucy.treasure.application.MyApp;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.base.BaseAdapter;
 import com.android.lucy.treasure.base.BaseViewHolder;

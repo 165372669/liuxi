@@ -1,7 +1,6 @@
 package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.android.lucy.treasure.MyApp;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.ChapterCatalogAdapter;
 import com.android.lucy.treasure.bean.ChapterIDAndName;

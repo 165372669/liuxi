@@ -1,32 +1,30 @@
 package com.android.lucy.treasure.adapter;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.AbsListView;
 import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.base.BaseAdapter;
 import com.android.lucy.treasure.base.BaseViewHolder;
-import com.android.lucy.treasure.bean.BaiduSearchDataInfo;
+import com.android.lucy.treasure.bean.BookDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 小说来源列表适配器
  */
 
-public class BookSourceCatalogAdapter extends BaseAdapter<BaiduSearchDataInfo> {
+public class BookSourceCatalogAdapter extends BaseAdapter<BookDataInfo> {
 
 
-    public BookSourceCatalogAdapter(Context context, List<BaiduSearchDataInfo> datas, int laoyoutId) {
+    public BookSourceCatalogAdapter(Context context, List<BookDataInfo> datas, int laoyoutId) {
         super(context, datas, laoyoutId);
     }
 
     @Override
-    public void convert(BaseViewHolder myViewHolder, BaiduSearchDataInfo info, int position) {
+    public void convert(BaseViewHolder myViewHolder, BookDataInfo info, int position) {
         TextView tv_chapterName_new = myViewHolder.getView(R.id.tv_chapterName_new);
         TextView tv_sourceName_new = myViewHolder.getView(R.id.tv_sourceName_new);
         TextView tv_time_new = myViewHolder.getView(R.id.tv_time_new);
@@ -48,7 +46,7 @@ public class BookSourceCatalogAdapter extends BaseAdapter<BaiduSearchDataInfo> {
     }
 
     @Override
-    public void getDatas(List<BaiduSearchDataInfo> mDatas) {
+    public void getDatas(List<BookDataInfo> mDatas) {
 
     }
 

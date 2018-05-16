@@ -1,10 +1,6 @@
-package com.android.lucy.treasure;
+package com.android.lucy.treasure.application;
 
-import android.app.Application;
-
-
-
-public class MyApp extends Application {
+public class MyApp extends LitePalApplication {
     private static MyApp instance;
 
     public static MyApp getContext(){

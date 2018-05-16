@@ -31,4 +31,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('libs/commons-lang3-3.7.jar')
     implementation files('libs/jsoup-1.11.2.jar')
+    implementation files('libs/litepal-1.6.1')
 }

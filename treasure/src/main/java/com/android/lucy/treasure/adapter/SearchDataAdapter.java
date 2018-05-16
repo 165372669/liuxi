@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.lucy.treasure.MyApp;
+import com.android.lucy.treasure.application.MyApp;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.activity.BookIntroducedActivity;
 import com.android.lucy.treasure.base.BaseAdapter;

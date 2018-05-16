@@ -3,7 +3,7 @@ package com.android.lucy.treasure.base;
 import android.os.Handler;
 import android.os.Message;
 
-import com.android.lucy.treasure.MyApp;
+import com.android.lucy.treasure.application.MyApp;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
 
