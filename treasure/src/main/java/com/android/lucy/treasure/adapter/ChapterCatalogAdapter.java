@@ -1,6 +1,7 @@
 package com.android.lucy.treasure.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.widget.AbsListView;
 import android.widget.TextView;
 
@@ -13,6 +14,8 @@ import java.util.List;
 
 public class ChapterCatalogAdapter extends BaseAdapter<ChapterIDAndName> {
 
+    private int readChapterid;
+
     public ChapterCatalogAdapter(Context context, List<ChapterIDAndName> datas, int laoyoutId) {
         super(context, datas, laoyoutId);
     }
@@ -24,6 +27,14 @@ public class ChapterCatalogAdapter extends BaseAdapter<ChapterIDAndName> {
         TextView tv_catalog_chapter_name = myViewHolder.getView(R.id.tv_catalog_chapter_name);
         tv_chapter_id.setText(chapterIDAndName.getChapterId() + ".");
         tv_catalog_chapter_name.setText(chapterIDAndName.getChapterName());
+        //设置当前章节在章节目录中颜色高亮
+        if (position == readChapterid) {
+            tv_chapter_id.setTextColor(context.getResources().getColor(R.color.chenghongse));
+            tv_catalog_chapter_name.setTextColor(context.getResources().getColor(R.color.chenghongse));
+        } else {
+            tv_chapter_id.setTextColor(context.getResources().getColor(R.color.black));
+            tv_catalog_chapter_name.setTextColor(context.getResources().getColor(R.color.black));
+        }
     }
 
     @Override
@@ -39,5 +50,13 @@ public class ChapterCatalogAdapter extends BaseAdapter<ChapterIDAndName> {
     @Override
     public void getDatas(List mDatas) {
 
+    }
+
+    /**
+     * 获取正在阅读的章节id
+     * * @param readChapterid
+     */
+    public void setReadChapterid(int readChapterid) {
+        this.readChapterid = readChapterid;
     }
 }

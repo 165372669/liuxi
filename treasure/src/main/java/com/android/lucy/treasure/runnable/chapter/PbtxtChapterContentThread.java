@@ -44,6 +44,7 @@ public class PbtxtChapterContentThread extends BaseReadThread {
 
     @Override
     public void resoloveUrl(Document doc) {
+        cv_chapter_progress.setProgress(25);
         Elements divs = doc.select("div[id^=content]");
         String str = divs.toString();
         List<String> contents = new ArrayList<>();
@@ -52,18 +53,14 @@ public class PbtxtChapterContentThread extends BaseReadThread {
         Pattern p = Pattern.compile(reg);
         //让正则对象和要作用的字符串相关联。获取匹配器对象。
         Matcher m = p.matcher(str);
-        int progress = cv_chapter_progress.getProgress();
         while (m.find()) {
             String s = m.group();
-            if (progress < 90) {
-                progress += 1;
-                cv_chapter_progress.setProgress(progress);
-            }
             if (s.startsWith("下载地址："))
                 break;
             contents.add(s);
             //System.out.println(m.group());
         }
+        cv_chapter_progress.setProgress(50);
         if (contents.size() > 0) {
             spacingLineCount(contents);
             int pagerTotal = catalogInfo.getStrs().size();
@@ -118,17 +115,24 @@ public class PbtxtChapterContentThread extends BaseReadThread {
                 char ch = str.charAt(j);
                 String s = String.valueOf(ch);
                 TextInfo textInfo = new TextInfo(s);
-                int strWidth = configInfo.getTextWidth() + 5;
+                int strWidth = configInfo.getTextWidth() + 3;
                 //段落的第一行加上两个字的宽度
                 if (j == 0) {
                     lineWidth = lineWidth + strWidth * 2;
                     textInfo.setStringOneLine(true);
                 }
                 //字母或者数字，一些符号重新赋值宽度，使其紧凑。
-                if (StringUtils.isNumOrLetters(s) || s.equals(".") || s.equals("“") || s.equals("”")) {
+                if (s.equals(".") || s.equals("“") || s.equals("”") || s.equals("*") ||
+                        s.equals("(") || s.equals(")") || s.equals("+") || s.equals("-") ||
+                        s.equals("/")) {
                     Rect rect = new Rect();
                     configInfo.getmTextPaint().getTextBounds(s, 0, 1, rect);
                     strWidth = rect.width() + 2;
+                }
+                if (StringUtils.isNumOrLetters(s)) {
+                    Rect rect = new Rect();
+                    configInfo.getmTextPaint().getTextBounds(s, 0, 1, rect);
+                    strWidth = rect.width() + 5;
                 }
                 textInfo.setWidth(strWidth);
                 lineWidth += strWidth;

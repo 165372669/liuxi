@@ -104,6 +104,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                         pagerContentInfos = catalogInfo.getStrs();
                     }
                 }
+                //向左翻页
                 if (temp < 0) {
                     if (pagerPosition == -1 && currentChapterId != 0) {
                         currentChapterId--;

@@ -7,5 +7,15 @@ import android.app.Application;
  */
 
 public class LitePalApplication extends Application {
+    private static LitePalApplication instance;
 
+    public static LitePalApplication getContext() {
+        return instance;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        instance = this;
+    }
 }

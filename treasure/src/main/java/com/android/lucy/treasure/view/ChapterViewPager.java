@@ -33,7 +33,6 @@ public class ChapterViewPager extends ViewPager {
     private Activity activity;
     private ArrayList<CatalogInfo> catalogInfos;
     private boolean isDown = false; //是否按下
-    private boolean isLoadComplete;//是否下载完成
 
     public ChapterViewPager(Context context) {
         super(context);
@@ -74,11 +73,16 @@ public class ChapterViewPager extends ViewPager {
                     return false;
                 }
                 if (x < 30 && time < 200) {
-                    if (startX > getWidth() / 2 + disparityWidth) {
+
+                    if (startX > getWidth() / 2 + disparityWidth
+                            || startY > (getHeight() / 2 + disparityHeight) && startX > getWidth() / 2
+                            || startY < (getHeight() / 2 - disparityHeight) && startX > getWidth() / 2) {
                         if (isRightSlide)
                             return false;
                         setCurrentItem(getCurrentItem() + 1, false);
-                    } else if (startX < getWidth() / 2 - disparityWidth) {
+                    } else if (startX < getWidth() / 2 - disparityWidth
+                            || startY > (getHeight() / 2 + disparityHeight) && startX < getWidth() / 2
+                            || startY < (getHeight() / 2 - disparityHeight) && startX < getWidth() / 2) {
                         if (isLeftSlide)
                             return false;
                         setCurrentItem(getCurrentItem() - 1, false);

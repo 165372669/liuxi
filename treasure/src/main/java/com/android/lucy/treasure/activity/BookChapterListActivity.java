@@ -31,13 +31,19 @@ public class BookChapterListActivity extends Activity implements AdapterView.OnI
 
     private void initView() {
         lv_chapter_catalog = findViewById(R.id.lv_chapter_catalog);
+        lv_chapter_catalog.setDividerHeight(0);
     }
 
     private void initData() {
         chapterIDAndNames = getIntent().getParcelableArrayListExtra("chapterIDAndNames");
+        int readChapterId = getIntent().getIntExtra("readChapterId", 0);
         ChapterCatalogAdapter chapterCatalogAdapter = new ChapterCatalogAdapter(this, chapterIDAndNames,
                 R.layout.chapter_catalog_list_item);
         lv_chapter_catalog.setAdapter(chapterCatalogAdapter);
+        if (readChapterId > 5) {
+            lv_chapter_catalog.setSelection(readChapterId - 5);
+        }
+        chapterCatalogAdapter.setReadChapterid(readChapterId);
     }
 
     private void initEvent() {

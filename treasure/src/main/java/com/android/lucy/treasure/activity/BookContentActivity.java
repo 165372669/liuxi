@@ -63,8 +63,9 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                 case 1://成功下载到章节并添加到页面集合
                     int loadChapterId = msg.arg2;
                     MyLogcat.myLog("下载的章节id:" + (loadChapterId - 1) + "，适配器的章节id:" + adapter.getCurrentChapterId());
-                    if (loadChapterId - 1 == adapter.getCurrentChapterId() ) {
+                    if (loadChapterId - 1 == adapter.getCurrentChapterId()) {
                         cv_chapter_progress.setVisibility(View.INVISIBLE);
+                        cv_chapter_progress.setProgress(0);
                         adapter.notifyDataSetChanged();
                     }
                     break;
@@ -281,6 +282,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                 }
                 Intent intent = new Intent(this, BookChapterListActivity.class);
                 intent.putParcelableArrayListExtra("chapterIDAndNames", chapterIDAndNames);
+                intent.putExtra("readChapterId",adapter.getCurrentChapterId());
                 startActivity(intent);
                 break;
 

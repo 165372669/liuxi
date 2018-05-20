@@ -6,9 +6,11 @@
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="hailanse">#32cd99</color>
+    <color name="lvse">#00FF00</color>
     <color name="zhonglanse">#3232cd</color>
     <color name="rad">#ff0000</color>
     <color name="huise">#a8a8a8</color>
     <color name="white2">#f5f3f3</color>
     <color name="colorRed">#d50f09</color>
+    <color name="chenghongse">#FF2400</color>
 </resources>

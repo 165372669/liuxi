@@ -116,13 +116,21 @@ public class CircleProgress extends View {
 
     //设置进度
     public void setProgress(int progress) {
-        mProgress = progress;
-        postInvalidate();//重绘
+        if (progress > mProgress) {
+            int tempProgress = progress - mProgress;
+            for (int i = 0; i < tempProgress; i++) {
+                mProgress += i;
+                postInvalidate();//重绘
+            }
+        } else {
+            mProgress = progress;
+        }
     }
 
 
     /**
      * 获取进度
+     *
      * @return
      */
     public int getProgress() {
