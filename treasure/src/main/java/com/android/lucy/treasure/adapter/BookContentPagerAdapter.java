@@ -8,6 +8,7 @@ import com.android.lucy.treasure.activity.BookContentActivity;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.pager.ContentPager;
+import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.view.ChapterViewPager;
 
 import java.util.ArrayList;
@@ -78,22 +79,9 @@ public class BookContentPagerAdapter extends PagerAdapter {
             }
         }
         if (viewPager.getIsDown()) {
-
-            if (catalogInfo.getChapterPagerToatal() != 0) {
-                activity.getCircleProgress().setVisibility(View.INVISIBLE);
-                if (pagerPosition > pagerContentInfos.size() - 1) {
-                    pagerPosition = pagerContentInfos.size() - 1;
-                }
-
-            } else {
-                if (pagerPosition > 4 || pagerPosition < 0) {
-                    pagerPosition = 0;
-                }
-                contentPager = currentPagerEmpty(temp, position, catalogInfo);
-            }
-            //MyLogcat.myLog("点击后：,pagerPosition:" + pagerPosition + ",章节id：" + currentChapterId + ",章节总页面：" + catalogInfo.getChapterPagerToatal());
             pagerPosition += temp;
             if (catalogInfo.getChapterPagerToatal() != 0) {
+                activity.getCircleProgress().setVisibility(View.INVISIBLE);
                 //向右翻页
                 if (temp > 0) {
                     //页面位置等于章节的大小，说明翻到下一章了。
@@ -106,7 +94,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                 }
                 //向左翻页
                 if (temp < 0) {
-                    if (pagerPosition == -1 && currentChapterId != 0) {
+                    if (pagerPosition == -1 && currentChapterId != 0 && !isLeftPager) {
                         currentChapterId--;
                         catalogInfo = catalogInfos.get(currentChapterId);
                         pagerContentInfos = catalogInfo.getStrs();
@@ -120,11 +108,26 @@ public class BookContentPagerAdapter extends PagerAdapter {
                 if (null == pagerContentInfos) {
                     contentPager = currentPagerEmpty(temp, position, catalogInfo);
                 }
+            } else {
+                if (temp > 0 && pagerPosition > 0) {
+                    pagerPosition = 0;
+                } else if (temp < 0 && pagerPosition < 0 && currentChapterId != 0 && !isLeftPager) {
+                    currentChapterId--;
+                    catalogInfo = catalogInfos.get(currentChapterId);
+                    pagerContentInfos = catalogInfo.getStrs();
+                    if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
+                        pagerPosition = pagerContentInfos.size() - 1;
+                    } else {
+                        isLeftPager = true;
+                    }
+                }
+                contentPager = currentPagerEmpty(temp, position, catalogInfo);
             }
             viewPager.setIsDown(false);
         }
+        MyLogcat.myLog("点击后：,pagerPosition:" + pagerPosition + ",章节id：" + currentChapterId + ",章节总页面：" + catalogInfo.getChapterPagerToatal());
         //预加载
-        if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
+        if (null != pagerContentInfos && pagerContentInfos.size() > 0 && catalogInfo.getChapterPagerToatal() != 0) {
             PagerContentInfo pagerContentInfo = null;
             if (pagerPosition >= 0) {
                 if (pagerPosition > pagerContentInfos.size() - 1) {
@@ -209,10 +212,10 @@ public class BookContentPagerAdapter extends PagerAdapter {
         }
         //获取到当前显示的页面
         ContentPager contentPager = contentPagers.get(pager);
-        contentPager.pagerContentInvali(true);
         contentPager.setChapterName(catalogInfo.getChapterName());
         contentPager.setPagerTotal(1);
         contentPager.setCurrentPager(1);
+        contentPager.pagerContentInvali(true);
         return contentPagers.get(position % contentPagers.size());
     }
 
@@ -224,6 +227,15 @@ public class BookContentPagerAdapter extends PagerAdapter {
      */
     public void setCurrentChapterId(int chapterId) {
         this.currentChapterId = chapterId;
+        int position = viewPager.getCurrentItem();
+        int pager = position % contentPagers.size();
+        //获取到当前显示的页面
+        ContentPager contentPager = contentPagers.get(pager);
+        CatalogInfo catalogInfo = catalogInfos.get(currentChapterId);
+        contentPager.setChapterName(catalogInfo.getChapterName());
+        contentPager.setPagerTotal(1);
+        contentPager.setCurrentPager(1);
+        contentPager.pagerContentInvali(true);
         pagerPosition = 0;
     }
 

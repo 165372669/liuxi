@@ -251,9 +251,12 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     public void onPageSelected(int position) {
         int temp = position - tempCurrentItem;
         int chapterid = adapter.getCurrentChapterId();
-        preLoading(chapterid, temp);
-        preLoading(chapterid + temp, temp);
-        tempCurrentItem = position;
+        int currentPagerPosition = adapter.getPagerPosition();
+        if (currentPagerPosition > 1) {
+            preLoading(chapterid, temp);
+            preLoading(chapterid + temp, temp);
+            tempCurrentItem = position;
+        }
 
     }
 
@@ -264,7 +267,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 
 
     /**
-     * 点击事件
+     * 设置栏点击事件
      *
      * @param view
      */
@@ -282,7 +285,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                 }
                 Intent intent = new Intent(this, BookChapterListActivity.class);
                 intent.putParcelableArrayListExtra("chapterIDAndNames", chapterIDAndNames);
-                intent.putExtra("readChapterId",adapter.getCurrentChapterId());
+                intent.putExtra("readChapterId", adapter.getCurrentChapterId());
                 startActivity(intent);
                 break;
 
