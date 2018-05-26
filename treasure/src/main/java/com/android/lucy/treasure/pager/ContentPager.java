@@ -56,6 +56,10 @@ public class ContentPager {
         tv_chapter_name.setText(chapterName);
     }
 
+    public String getChapterName() {
+        return tv_chapter_name.getText().toString();
+    }
+
     public void setPagerTotal(int total) {
         tv_chapter_pagerTotal.setText(String.valueOf(total));
     }
@@ -73,8 +77,15 @@ public class ContentPager {
     }
 
     public void setCurrentPager(int currentPager) {
+        tv_chapter_pager.setText(String.valueOf(currentPager));
+    }
 
-        tv_chapter_pager.setText(currentPager + "/");
+    public int getCurrentPager() {
+        String pager = tv_chapter_pager.getText().toString();
+        if (!pager.isEmpty()) {
+            return Integer.parseInt(pager);
+        }
+        return -1;
     }
 
     /**

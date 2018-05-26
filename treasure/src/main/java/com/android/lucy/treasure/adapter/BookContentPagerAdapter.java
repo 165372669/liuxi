@@ -68,6 +68,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
         ContentPager contentPager = contentPagers.get(position % contentPagers.size());
 
         CatalogInfo catalogInfo = catalogInfos.get(currentChapterId);
+
         ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
         int tempCurrentItem = viewPager.getCurrentItem();
         int temp = position - tempCurrentItem;
@@ -80,10 +81,11 @@ public class BookContentPagerAdapter extends PagerAdapter {
         }
         if (viewPager.getIsDown()) {
             pagerPosition += temp;
-            if (catalogInfo.getChapterPagerToatal() != 0) {
-                activity.getCircleProgress().setVisibility(View.INVISIBLE);
-                //向右翻页
-                if (temp > 0) {
+            //向右翻页
+            if (temp > 0) {
+                if (catalogInfo.getChapterPagerToatal() != 0) {
+                    activity.getCircleProgress().setVisibility(View.INVISIBLE);
+                    //当前章节有内容
                     //页面位置等于章节的大小，说明翻到下一章了。
                     if (pagerPosition == pagerContentInfos.size()) {
                         currentChapterId++;
@@ -91,36 +93,62 @@ public class BookContentPagerAdapter extends PagerAdapter {
                         catalogInfo = catalogInfos.get(currentChapterId);
                         pagerContentInfos = catalogInfo.getStrs();
                     }
+                } else {
+                    contentPager = currentPagerEmpty(temp, position, catalogInfo);
+                    if (temp > 0 && pagerPosition > 0) {
+                        pagerPosition = 0;
+                    }
                 }
                 //向左翻页
-                if (temp < 0) {
+            } else if (temp < 0) {
+                if (catalogInfo.getChapterPagerToatal() != 0) {
+                    activity.getCircleProgress().setVisibility(View.INVISIBLE);
+                    //当前章节有内容
                     if (pagerPosition == -1 && currentChapterId != 0 && !isLeftPager) {
+                        currentChapterId--;
+                        pagerPosition = -99;
+                        catalogInfo = catalogInfos.get(currentChapterId);
+                        pagerContentInfos = catalogInfo.getStrs();
+                        if (catalogInfo.getChapterPagerToatal() != 0) {
+                            pagerPosition = pagerContentInfos.size() - 1;
+                        } else {
+                            isLeftPager = true;
+                        }
+                    }
+                    //获取当前页面
+                    contentPager = getCurrentContetnPager(temp, position);
+                    //页面内容不对,页面id不等于当前id，页面的章节名不等于当前章节名
+                    if (catalogInfo.getChapterPagerToatal() != 0 && pagerPosition == pagerContentInfos.size() - 1
+                            && contentPager.getCurrentPager() - 1 != pagerPosition
+                            && !contentPager.getChapterName().equals(catalogInfo.getChapterName())) {
+                        MyLogcat.myLog("页面id:" + (contentPager.getCurrentPager() - 1) + ",当前id:" + pagerPosition +
+                                ",页面章节名:" + contentPager.getChapterName() + ",章节名：" + catalogInfo.getChapterName());
+                        PagerContentInfo pagerContentInfo = pagerContentInfos.get(pagerPosition);
+                        if (null != pagerContentInfo) {
+                            contentPager.setChapterName(catalogInfo.getChapterName());
+                            contentPager.setPagerTotal(catalogInfo.getChapterPagerToatal());
+                            contentPager.setCurrentPager(pagerContentInfo.getCurrentPager());
+                            contentPager.setPagerContent(pagerContentInfo.getTextInfos());
+                        }
+                    }
+                    //恢复页面
+                    contentPager = contentPagers.get(position % contentPagers.size());
+                } else {
+                    contentPager = currentPagerEmpty(temp, position, catalogInfo);
+                    if (temp < 0 && pagerPosition < 0 && currentChapterId != 0 && !isLeftPager) {
                         currentChapterId--;
                         catalogInfo = catalogInfos.get(currentChapterId);
                         pagerContentInfos = catalogInfo.getStrs();
-                        if (null != pagerContentInfos) {
+                        if (catalogInfo.getChapterPagerToatal() != 0) {
                             pagerPosition = pagerContentInfos.size() - 1;
                         } else {
                             isLeftPager = true;
                         }
                     }
                 }
-                if (null == pagerContentInfos) {
-                    contentPager = currentPagerEmpty(temp, position, catalogInfo);
-                }
-            } else {
-                if (temp > 0 && pagerPosition > 0) {
-                    pagerPosition = 0;
-                } else if (temp < 0 && pagerPosition < 0 && currentChapterId != 0 && !isLeftPager) {
-                    currentChapterId--;
-                    catalogInfo = catalogInfos.get(currentChapterId);
-                    pagerContentInfos = catalogInfo.getStrs();
-                    if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
-                        pagerPosition = pagerContentInfos.size() - 1;
-                    } else {
-                        isLeftPager = true;
-                    }
-                }
+
+            }
+            if (null == pagerContentInfos || catalogInfo.getChapterPagerToatal() == 0) {
                 contentPager = currentPagerEmpty(temp, position, catalogInfo);
             }
             viewPager.setIsDown(false);
@@ -150,7 +178,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                     if (currentChapterId < chapterTotal - 1 && temp > 0) {
                         catalogInfo = catalogInfos.get(currentChapterId + 1);
                         pagerContentInfos = catalogInfo.getStrs();
-                        if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
+                        if (catalogInfo.getChapterPagerToatal() != 0) {
                             pagerContentInfo = pagerContentInfos.get(0);
                         }
                     } else if (temp < 0) {
@@ -161,7 +189,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                 if (pagerPosition == 0 && temp < 0 && currentChapterId != 0) {
                     catalogInfo = catalogInfos.get(currentChapterId - 1);
                     pagerContentInfos = catalogInfo.getStrs();
-                    if (null != pagerContentInfos && pagerContentInfos.size() > 0) {
+                    if (catalogInfo.getChapterPagerToatal() != 0) {
                         pagerContentInfo = pagerContentInfos.get(pagerContentInfos.size() - 1);
                     }
                 }
@@ -187,14 +215,13 @@ public class BookContentPagerAdapter extends PagerAdapter {
     }
 
     /**
-     * 清空当前页面内容
+     * 获取当前页面
      *
-     * @param temp        左右翻页？
-     * @param position    页面坐标
-     * @param catalogInfo 章节对象
-     * @return
+     * @param temp     左右
+     * @param position 页面posiotn
+     * @return ContentPager 页面
      */
-    public ContentPager currentPagerEmpty(int temp, int position, CatalogInfo catalogInfo) {
+    public ContentPager getCurrentContetnPager(int temp, int position) {
         int pager = position % contentPagers.size();
 
         if (temp > 0) {
@@ -211,7 +238,20 @@ public class BookContentPagerAdapter extends PagerAdapter {
             }
         }
         //获取到当前显示的页面
-        ContentPager contentPager = contentPagers.get(pager);
+        return contentPagers.get(pager);
+    }
+
+    /**
+     * 清空当前页面内容
+     *
+     * @param temp        左右翻页？
+     * @param position    页面坐标
+     * @param catalogInfo 章节对象
+     * @return
+     */
+    public ContentPager currentPagerEmpty(int temp, int position, CatalogInfo catalogInfo) {
+        //获取到当前显示的页面
+        ContentPager contentPager = getCurrentContetnPager(temp, position);
         contentPager.setChapterName(catalogInfo.getChapterName());
         contentPager.setPagerTotal(1);
         contentPager.setCurrentPager(1);

@@ -51,7 +51,6 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private int chapterTotal;
     private TextView tv_chapter_catalog;
     private CircleProgress cv_chapter_progress;
-    private int tempCurrentItem;
 
     public class ChapterContentHandler extends Handler {
         @Override
@@ -161,7 +160,6 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         adapter = new BookContentPagerAdapter(contentPagers, bookDataInfo.getCatalogInfos(), viewPager, this, chapterTotal);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(contentPagers.size() * 100, false);
-        tempCurrentItem = contentPagers.size() * 100;
         viewPager.setChapterDatas(bookDataInfo.getCatalogInfos());
         viewPager.setChapterTotal(chapterTotal);
     }
@@ -216,18 +214,25 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
      * 预加载章节
      *
      * @param chapterId 当前章节id
-     * @param temp      滑动方向
      */
-    public void preLoading(int chapterId, int temp) {
-        int loadChapterid = chapterId + temp;
-        if (loadChapterid < chapterTotal && loadChapterid >= 0) {
+    public void preLoading(int chapterId) {
+        int nextChapterid = chapterId + 1;
+        int lastChapterid = chapterId - 1;
+        if (nextChapterid < chapterTotal) {
             //预加载章节
-            CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(loadChapterid);
+            CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(nextChapterid);
             if (catalogInfo.getChapterPagerToatal() == 0) {
-                MyLogcat.myLog("页面变更-" + "预加载章节id：" + loadChapterid);
-                loadChapter(loadChapterid, false);
+                loadChapter(nextChapterid, false);
             }
         }
+        if (lastChapterid >= 0) {
+            //预加载章节
+            CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(lastChapterid);
+            if (catalogInfo.getChapterPagerToatal() == 0) {
+                loadChapter(lastChapterid, false);
+            }
+        }
+
     }
 
 
@@ -249,13 +254,10 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 
     @Override
     public void onPageSelected(int position) {
-        int temp = position - tempCurrentItem;
         int chapterid = adapter.getCurrentChapterId();
         int currentPagerPosition = adapter.getPagerPosition();
         if (currentPagerPosition > 1) {
-            preLoading(chapterid, temp);
-            preLoading(chapterid + temp, temp);
-            tempCurrentItem = position;
+            preLoading(chapterid);
         }
 
     }

@@ -51,13 +51,19 @@ public class BaiduSearchSingleThread extends BaseReadThread {
         }
     }
 
-    public void selectSource(BookDataInfo bookDataInfo) {
+    private void selectSource(BookDataInfo bookDataInfo) {
         String sourceName = bookDataInfo.getSourceName();
         String sourceUrl = bookDataInfo.getSourceUrl();
-        if (Key.DDA_SOURCE.contains(sourceName)) {
-            ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, bookDataInfo, bookHandler));
-        } else if (Key.LIA_SOURCE.contains(sourceName))
-            ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, bookDataInfo, bookHandler));
+        String[] dda_sources = Key.DDA_SOURCE.split(",");
+        String[] lia_sources = Key.LIA_SOURCE.split(",");
+        for (int i = 0; i < dda_sources.length; i++) {
+            if (sourceName.equals(dda_sources[i]))
+                ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, bookDataInfo, bookHandler));
+        }
+        for (int i = 0; i < lia_sources.length; i++) {
+            if (sourceName.equals(lia_sources[i]))
+                ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, bookDataInfo, bookHandler));
+        }
 
     }
 
@@ -65,7 +71,7 @@ public class BaiduSearchSingleThread extends BaseReadThread {
     /*
     * 来源网址截取名称。
     * */
-    public String shearSourceName(String sourceName) {
+    private String shearSourceName(String sourceName) {
         if (sourceName.startsWith("http")) {
             int start = sourceName.indexOf("//") + 2;
             int end = sourceName.indexOf("/", start);

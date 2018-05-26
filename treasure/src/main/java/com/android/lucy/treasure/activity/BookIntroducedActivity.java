@@ -52,6 +52,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     private BookSourceCatalogAdapter bookSourceCatalogAdapter;
     private BookHandler bookHandler;
     private ImageView iv_book_back;
+    private ProgressBar pb_source_book;
 
 
     class BookHandler extends MyHandler<BookIntroducedActivity> {
@@ -66,7 +67,9 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         public void myHandleMessage(Message msg) {
 
             if (bt_flag) {
-                mActivity.get().setButtonState(true, "开始阅读");
+                mActivity.get().setButtonState(true);
+                lv_source_book.setVisibility(View.VISIBLE);
+                pb_source_book.setVisibility(View.INVISIBLE);
                 bt_flag = false;
             }
             BookDataInfo info = (BookDataInfo) msg.obj;
@@ -109,8 +112,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         tv_timeUpdate_book = findViewById(R.id.tv_timeUpdate_book);
         tv_desc_book = findViewById(R.id.tv_desc_book);
         bt_start_book = findViewById(R.id.bt_book_read);
-        setButtonState(false, "寻找来源");
         lv_source_book = findViewById(R.id.lv_source_book);
+        pb_source_book = findViewById(R.id.pb_source_book);
     }
 
     private void initDatas() {
@@ -129,6 +132,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         zhuiShuDataAsync.setOnUpdateDataListener(this);
 
         new BookImageAsync(iv_cover).execute(searchDataInfo.getImgUrl());
+        lv_source_book.setVisibility(View.INVISIBLE);
+        pb_source_book.setVisibility(View.VISIBLE);
         bookSourceCatalogAdapter = new BookSourceCatalogAdapter(this, bookDataInfos, R.layout.source_list_item);
         lv_source_book.setAdapter(bookSourceCatalogAdapter);
     }
@@ -174,21 +179,22 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     @Override
     public void setData(SearchDataInfo searchDataInfo) {
         tv_bookName_book.setText(searchDataInfo.getBookName());
-        tv_author_book.setText(searchDataInfo.getAuthor() + "著");
-        tv_type_book.setText(searchDataInfo.getType());
+        tv_author_book.setText("作者：" + searchDataInfo.getAuthor());
+        tv_type_book.setText("类型：" + searchDataInfo.getType());
         tv_desc_book.setText(searchDataInfo.getDesc());
-        tv_size_book.setText(searchDataInfo.getBookSize());
+        tv_size_book.setText("总字数：" + searchDataInfo.getBookSize());
         tv_timeUpdate_book.setText(searchDataInfo.getBookUpdateTime());
         progressBar.setVisibility(View.INVISIBLE);
         ll_book_detail.setVisibility(View.VISIBLE);
+
     }
 
     /*
     * 设置按钮状态
     * */
-    public void setButtonState(boolean state, String text) {
+    public void setButtonState(boolean state) {
         bt_start_book.setEnabled(state);
-        bt_start_book.setText(text);
+        bt_start_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
     }
 
 
