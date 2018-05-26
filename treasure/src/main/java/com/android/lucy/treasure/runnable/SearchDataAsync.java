@@ -62,7 +62,7 @@ public class SearchDataAsync extends BaseReadAsyncTask<List<SearchDataInfo>> {
     }
 
     /*
-    获取搜索数据后放入ListView适配器。
+    获取搜索数据后放入ListView适配器
     */
     @Override
     protected void onPostExecute(List<SearchDataInfo> searchDataInfos) {
