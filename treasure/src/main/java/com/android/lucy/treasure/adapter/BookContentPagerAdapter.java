@@ -223,7 +223,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
     /**
      * 获取当前页面
      *
-     * @param temp     左右
+     * @param temp     滑动方向
      * @param position 页面posiotn
      * @return ContentPager 页面
      */
@@ -250,7 +250,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
     /**
      * 清空当前页面内容
      *
-     * @param temp        左右翻页？
+     * @param temp        滑动方向
      * @param position    页面坐标
      * @param catalogInfo 章节对象
      * @return
