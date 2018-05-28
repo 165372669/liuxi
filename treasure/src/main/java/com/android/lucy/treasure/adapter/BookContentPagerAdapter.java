@@ -133,7 +133,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                             contentPager.setUnreadChapterCount(catalogInfos.size(), currentChapterId + 1);
                         }
                     }
-                    //恢复页面
+                    //恢复到页面
                     contentPager = contentPagers.get(position % contentPagers.size());
                 } else {
                     contentPager = currentPagerEmpty(temp, position, catalogInfo);
@@ -227,7 +227,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
      * @param position 页面posiotn
      * @return ContentPager 页面
      */
-    public ContentPager getCurrentContetnPager(int temp, int position) {
+    private ContentPager getCurrentContetnPager(int temp, int position) {
         int pager = position % contentPagers.size();
 
         if (temp > 0) {
@@ -253,9 +253,9 @@ public class BookContentPagerAdapter extends PagerAdapter {
      * @param temp        滑动方向
      * @param position    页面坐标
      * @param catalogInfo 章节对象
-     * @return
+     * @return ContentPager
      */
-    public ContentPager currentPagerEmpty(int temp, int position, CatalogInfo catalogInfo) {
+    private ContentPager currentPagerEmpty(int temp, int position, CatalogInfo catalogInfo) {
         //获取到当前显示的页面
         ContentPager contentPager = getCurrentContetnPager(temp, position);
         contentPager.setChapterName(catalogInfo.getChapterName());
