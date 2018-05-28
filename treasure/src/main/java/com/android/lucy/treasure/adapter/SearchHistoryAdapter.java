@@ -4,7 +4,7 @@ import android.content.Context;
 import android.widget.AbsListView;
 import android.widget.TextView;
 
-import com.android.lucy.treasure.application.MyApp;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.base.BaseAdapter;
 import com.android.lucy.treasure.base.BaseViewHolder;
@@ -25,7 +25,7 @@ public class SearchHistoryAdapter extends BaseAdapter<String> {
     @Override
     public void convert(BaseViewHolder myViewHolder, String s, int position) {
         TextView tv_history_item = myViewHolder.getView(R.id.tv_history_item);
-        tv_history_item.setCompoundDrawablePadding(MyMathUtils.dip2px(MyApp.getContext(), 10));//设置图片之间的间距
+        tv_history_item.setCompoundDrawablePadding(MyMathUtils.dip2px(MyApplication.getContext(), 10));//设置图片之间的间距
         tv_history_item.setText(s);
     }
 

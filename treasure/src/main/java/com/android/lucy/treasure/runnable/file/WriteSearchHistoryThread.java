@@ -1,6 +1,6 @@
 package com.android.lucy.treasure.runnable.file;
 
-import com.android.lucy.treasure.application.MyApp;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.utils.SDCardHelper;
 
 import java.io.BufferedWriter;
@@ -25,7 +25,7 @@ public class WriteSearchHistoryThread implements Runnable {
     public void run() {
         if (!SDCardHelper.isSDCardMounted())
             return;
-        String filesDir = SDCardHelper.getSDCardPrivateFilesDir(MyApp.getContext(), "history");
+        String filesDir = SDCardHelper.getSDCardPrivateFilesDir(MyApplication.getContext(), "history");
         File historyFile = new File(filesDir + File.separator + "search_history");
         BufferedWriter bw = null;
         try {

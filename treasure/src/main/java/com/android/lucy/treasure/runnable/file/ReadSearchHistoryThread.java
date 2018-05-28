@@ -2,8 +2,7 @@ package com.android.lucy.treasure.runnable.file;
 
 import android.os.Message;
 
-import com.android.lucy.treasure.application.LitePalApplication;
-import com.android.lucy.treasure.application.MyApp;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.SDCardHelper;
 
@@ -30,7 +29,7 @@ public class ReadSearchHistoryThread implements Runnable {
     public void run() {
         if (!SDCardHelper.isSDCardMounted())
             return;
-        String filesDir = SDCardHelper.getSDCardPrivateFilesDir(LitePalApplication.getContext(), "history");
+        String filesDir = SDCardHelper.getSDCardPrivateFilesDir(MyApplication.getContext(), "history");
         File historyFile = new File(filesDir + File.separator + "search_history");
         if (!SDCardHelper.isFileExists(historyFile))
             return;

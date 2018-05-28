@@ -18,7 +18,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.lucy.treasure.application.MyApp;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.SearchHistoryAdapter;
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
@@ -194,7 +194,7 @@ public class SearchActivity extends Activity implements BaseReadAsyncTask.OnUpda
         if (!SDCardHelper.isSDCardMounted())
             return;
         if (null != historys && historys.size() > 0) {
-            String filesDir = SDCardHelper.getSDCardPrivateFilesDir(MyApp.getContext(), "history");
+            String filesDir = SDCardHelper.getSDCardPrivateFilesDir(MyApplication.getContext(), "history");
             File historyFile = new File(filesDir + File.separator + "search_history");
             SDCardHelper.removeFileFromSDCard(historyFile);
             historys.clear();

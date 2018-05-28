@@ -7,7 +7,9 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.lucy.treasure.application.MyApp;
+import com.android.lucy.treasure.application.MyApplication;
+
+import org.litepal.LitePalApplication;
 
 /**
  * Drawable工具类
@@ -22,7 +24,7 @@ public class BitmapUtils {
      * @return
      */
     public static Drawable bitmapToDrawable(Bitmap bitmap) {
-        return new BitmapDrawable(MyApp.getContext().getResources(), bitmap);
+        return new BitmapDrawable(MyApplication.getContext().getResources(), bitmap);
     }
 
     //dstWidth和dstHeight分别为目标ImageView的宽高

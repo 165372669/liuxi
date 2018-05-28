@@ -41,7 +41,10 @@ public class ThreadPool {
     }
 
     public void submitTask(Runnable runnable) {
-        runnables.add((BaseReadThread) runnable);
+        if (runnable instanceof BaseReadThread) {
+            runnables.add((BaseReadThread) runnable);
+
+        }
         executorService.submit(runnable);
     }
 

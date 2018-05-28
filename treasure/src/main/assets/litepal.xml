@@ -4,5 +4,7 @@
 
     <version value="1"></version>
 
-    <list></list>
+    <list>
+        <mapping class="com.android.lucy.treasure.bean.BookDataInfo"></mapping>>
+    </list>
 </litepal>

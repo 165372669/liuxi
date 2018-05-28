@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.lucy.treasure.application.MyApp;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.activity.BookIntroducedActivity;
 import com.android.lucy.treasure.base.BaseAdapter;
@@ -111,7 +111,7 @@ public class SearchDataAdapter extends BaseAdapter<SearchDataInfo> implements Ad
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         //读取更新时间和总字数
         SearchDataInfo searchDataInfo = mDatas.get(position);
-        Context context = MyApp.getContext();
+        Context context = MyApplication.getContext();
         Intent intent = new Intent(context, BookIntroducedActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("searchDataInfo", searchDataInfo);

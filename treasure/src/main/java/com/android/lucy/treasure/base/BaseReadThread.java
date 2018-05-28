@@ -3,7 +3,7 @@ package com.android.lucy.treasure.base;
 import android.os.Handler;
 import android.os.Message;
 
-import com.android.lucy.treasure.application.MyApp;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
 
@@ -116,7 +116,7 @@ public abstract class BaseReadThread implements Runnable {
     public void writeFile(Object obj) {
         BufferedWriter bw = null;
         try {
-            File file = new File(MyApp.getContext().getExternalCacheDir(), "obj.txt");
+            File file = new File(MyApplication.getContext().getExternalCacheDir(), "obj.txt");
             MyLogcat.myLog("file:" + file.getPath());
             bw = new BufferedWriter(new FileWriter(file));
             bw.write(obj.toString());

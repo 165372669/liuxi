@@ -2,7 +2,7 @@ package com.android.lucy.treasure.runnable;
 
 import android.widget.ListView;
 
-import com.android.lucy.treasure.application.MyApp;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.SearchDataAdapter;
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
@@ -73,7 +73,7 @@ public class SearchDataAsync extends BaseReadAsyncTask<List<SearchDataInfo>> {
             onUpdateUIListener.setVisibility();
         if (null != searchDataInfos && searchDataInfos.size() > 0) {
             ImageDownloadManager imageDownloadManager = new ImageDownloadManager(lv_search, searchDataInfos);
-            SearchDataAdapter searchDataAdapter = new SearchDataAdapter(MyApp.getContext(), searchDataInfos, R.layout.search_list_item, imageDownloadManager);
+            SearchDataAdapter searchDataAdapter = new SearchDataAdapter(MyApplication.getContext(), searchDataInfos, R.layout.search_list_item, imageDownloadManager);
             //设置动画
             searchDataAdapter.setIsAnimation(true, "translationY", 300, 0, 200);
             lv_search.setAdapter(searchDataAdapter);

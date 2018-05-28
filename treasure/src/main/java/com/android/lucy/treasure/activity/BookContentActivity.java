@@ -154,7 +154,6 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         for (int i = 0; i < 5; i++) {
             ContentPager contentPager = new ContentPager(this);
             contentPager.setTextSize(MyMathUtils.dip2px(this, 20));
-            contentPager.setBookName(bookName);
             contentPagers.add(contentPager);
         }
         adapter = new BookContentPagerAdapter(contentPagers, bookDataInfo.getCatalogInfos(), viewPager, this, chapterTotal);

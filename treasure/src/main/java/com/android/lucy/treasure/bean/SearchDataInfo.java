@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * 搜索数据对象
+ * 搜索小说数据对象
  */
 
 public class SearchDataInfo implements Parcelable {

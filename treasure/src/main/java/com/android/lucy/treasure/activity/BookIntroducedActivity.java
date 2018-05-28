@@ -2,6 +2,8 @@ package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Gravity;
@@ -22,10 +24,14 @@ import com.android.lucy.treasure.bean.SearchDataInfo;
 import com.android.lucy.treasure.runnable.BaiduSearchSingleThread;
 import com.android.lucy.treasure.runnable.BookImageAsync;
 import com.android.lucy.treasure.runnable.ZhuiShuDataAsync;
+import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
+import com.android.lucy.treasure.sql.BookSQLiteOpenHelper;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.utils.URLUtils;
+
+import org.litepal.tablemanager.Connector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +59,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     private BookHandler bookHandler;
     private ImageView iv_book_back;
     private ProgressBar pb_source_book;
+    private Button bt_add_book;
 
 
     class BookHandler extends MyHandler<BookIntroducedActivity> {
@@ -112,6 +119,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         tv_timeUpdate_book = findViewById(R.id.tv_timeUpdate_book);
         tv_desc_book = findViewById(R.id.tv_desc_book);
         bt_start_book = findViewById(R.id.bt_book_read);
+        bt_add_book = findViewById(R.id.bt_book_add);
         lv_source_book = findViewById(R.id.lv_source_book);
         pb_source_book = findViewById(R.id.pb_source_book);
     }
@@ -141,6 +149,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     private void initEvent() {
         bt_start_book.setOnClickListener(this);
         iv_book_back.setOnClickListener(this);
+        bt_add_book.setOnClickListener(this);
 
     }
 
@@ -156,6 +165,12 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 intent.putExtra("visibility", true);
                 startActivity(intent);
+                break;
+            case R.id.bt_book_add:
+                SQLiteDatabase db = Connector.getDatabase();
+                boolean is = bookDataInfos.get(0).save();
+                MyLogcat.myLog("插入数据成功了吗：" + is);
+                ThreadPool.getInstance().submitTask(new WriteDataFileThread());
                 break;
         }
     }
@@ -195,6 +210,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     public void setButtonState(boolean state) {
         bt_start_book.setEnabled(state);
         bt_start_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
+        bt_add_book.setEnabled(state);
+        bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
     }
 
 

@@ -1,18 +1,26 @@
 package com.android.lucy.treasure.bean;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.Serializable;
+import java.sql.Date;
 import java.util.ArrayList;
 
 /**
- * 百度搜索数据
+ * 小说对象
  */
 
-public class BookDataInfo implements Serializable {
+public class BookDataInfo extends DataSupport implements Serializable {
 
-    private String bookName; //书名
-    private String author;   //作者
-    private String sourceUrl; //书页url
-    private String sourceName; //来源网站名
+    private String bookName; //小说名称
+    private String author;   //作者名称
+    private String sourceUrl; //来源网址
+    private String sourceName; //来源名称
+    private int newChapterId; //最新章节id
+    private int readChapterid;//已读章节id
+    private Date closeTime;   //关闭时间
+    private int chapterTotal; //章节总数
+    private int unreadSeveral;//未读章节数
     private ArrayList<CatalogInfo> catalogInfos;//章节集合
 
     private static final long serialVersionUID = 1;
@@ -63,6 +71,46 @@ public class BookDataInfo implements Serializable {
 
     public void addCatalogInfo(CatalogInfo catalogInfo) {
         catalogInfos.add(catalogInfo);
+    }
+
+    public int getNewChapterId() {
+        return newChapterId;
+    }
+
+    public void setNewChapterId(int newChapterId) {
+        this.newChapterId = newChapterId;
+    }
+
+    public int getReadChapterid() {
+        return readChapterid;
+    }
+
+    public void setReadChapterid(int readChapterid) {
+        this.readChapterid = readChapterid;
+    }
+
+    public Date getCloseTime() {
+        return closeTime;
+    }
+
+    public void setCloseTime(Date closeTime) {
+        this.closeTime = closeTime;
+    }
+
+    public int getChapterTotal() {
+        return chapterTotal;
+    }
+
+    public void setChapterTotal(int chapterTotal) {
+        this.chapterTotal = chapterTotal;
+    }
+
+    public int getUnreadSeveral() {
+        return unreadSeveral;
+    }
+
+    public void setUnreadSeveral(int unreadSeveral) {
+        this.unreadSeveral = unreadSeveral;
     }
 
     @Override

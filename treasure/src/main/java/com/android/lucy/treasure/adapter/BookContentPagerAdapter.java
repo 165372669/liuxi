@@ -27,6 +27,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
     private int currentChapterId = 0;
     private int pagerPosition;
     private boolean isLeftPager;
+    private int unreadCount;
 
     public BookContentPagerAdapter(List<ContentPager> contentPagers, ArrayList<CatalogInfo> catalogInfos, ChapterViewPager viewPager,
                                    BookContentActivity activity, int chapterTotal) {
@@ -129,6 +130,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                             contentPager.setPagerTotal(catalogInfo.getChapterPagerToatal());
                             contentPager.setCurrentPager(pagerContentInfo.getCurrentPager());
                             contentPager.setPagerContent(pagerContentInfo.getTextInfos());
+                            contentPager.setUnreadChapterCount(catalogInfos.size(), currentChapterId + 1);
                         }
                     }
                     //恢复页面
@@ -154,6 +156,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
             viewPager.setIsDown(false);
         }
         MyLogcat.myLog("点击后：,pagerPosition:" + pagerPosition + ",章节id：" + currentChapterId + ",章节总页面：" + catalogInfo.getChapterPagerToatal());
+        unreadCount = currentChapterId;
         //预加载
         if (null != pagerContentInfos && pagerContentInfos.size() > 0 && catalogInfo.getChapterPagerToatal() != 0) {
             PagerContentInfo pagerContentInfo = null;
@@ -180,6 +183,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                         pagerContentInfos = catalogInfo.getStrs();
                         if (catalogInfo.getChapterPagerToatal() != 0) {
                             pagerContentInfo = pagerContentInfos.get(0);
+                            unreadCount++;
                         }
                     } else if (temp < 0) {
                         pagerContentInfo = pagerContentInfos.get(pagerPosition - 1);
@@ -191,6 +195,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                     pagerContentInfos = catalogInfo.getStrs();
                     if (catalogInfo.getChapterPagerToatal() != 0) {
                         pagerContentInfo = pagerContentInfos.get(pagerContentInfos.size() - 1);
+                        unreadCount--;
                     }
                 }
 
@@ -199,6 +204,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
                     contentPager.setPagerTotal(catalogInfo.getChapterPagerToatal());
                     contentPager.setCurrentPager(pagerContentInfo.getCurrentPager());
                     contentPager.setPagerContent(pagerContentInfo.getTextInfos());
+                    contentPager.setUnreadChapterCount(catalogInfos.size(), unreadCount + 1);
                 }
             }
         } else {
@@ -255,6 +261,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
         contentPager.setChapterName(catalogInfo.getChapterName());
         contentPager.setPagerTotal(1);
         contentPager.setCurrentPager(1);
+        contentPager.setUnreadChapterCount(0, 0);
         contentPager.pagerContentInvali(true);
         return contentPagers.get(position % contentPagers.size());
     }
