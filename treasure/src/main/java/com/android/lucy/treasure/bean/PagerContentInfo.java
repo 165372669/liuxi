@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 页面内容
+ * 页面内容对象
  */
 
 public class PagerContentInfo {

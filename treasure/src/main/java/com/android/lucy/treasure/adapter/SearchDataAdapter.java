@@ -10,9 +10,9 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.activity.BookIntroducedActivity;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.base.BaseAdapter;
 import com.android.lucy.treasure.base.BaseViewHolder;
 import com.android.lucy.treasure.bean.SearchDataInfo;

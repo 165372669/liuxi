@@ -31,7 +31,10 @@ import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.view.ChapterViewPager;
 import com.android.lucy.treasure.view.CircleProgress;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 小说内容页面,包含一个ViewPage，ViewPage里面添加ContentPagerView
@@ -318,6 +321,14 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 /*        Intent intent = new Intent(this, ChapterContentService.class);
         stopService(intent);*/
         ThreadPool.getInstance().cancelTask("chapter-temp");
+        List<BookDataInfo> booklist = DataSupport.select("bookName")
+                .where("bookName=?", "仙界律师")
+                .find(BookDataInfo.class);
+        if (booklist.size() > 0) {
+            MyLogcat.myLog("有书籍数据");
+        } else {
+            MyLogcat.myLog("无书籍数据");
+        }
     }
 
 

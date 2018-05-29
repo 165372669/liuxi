@@ -2,9 +2,9 @@ package com.android.lucy.treasure.runnable;
 
 import android.widget.ListView;
 
-import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.SearchDataAdapter;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
 import com.android.lucy.treasure.bean.SearchDataInfo;
 import com.android.lucy.treasure.manager.ImageDownloadManager;
