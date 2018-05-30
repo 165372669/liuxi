@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 
 public class BookDataInfo extends DataSupport implements Serializable {
+    private int id;
     private String bookName; //小说名称
     private String author;   //作者名称
     private String sourceUrl; //来源网址
@@ -23,6 +24,9 @@ public class BookDataInfo extends DataSupport implements Serializable {
 
     private static final long serialVersionUID = 1;
 
+    public BookDataInfo() {
+    }
+
     public BookDataInfo(String bookName, String sourceUrl, String sourceName, String author) {
         this.bookName = bookName;
         this.sourceUrl = sourceUrl;
@@ -30,6 +34,15 @@ public class BookDataInfo extends DataSupport implements Serializable {
         this.author = author;
         catalogInfos = new ArrayList<>();
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getBookName() {
         return bookName;
     }

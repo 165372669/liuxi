@@ -1,6 +1,7 @@
 package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -29,8 +30,6 @@ import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.utils.URLUtils;
 
-import org.litepal.LitePal;
-import org.litepal.crud.ClusterQuery;
 import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
@@ -73,16 +72,15 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 
         @Override
         public void myHandleMessage(Message msg) {
-
+            BookDataInfo info = (BookDataInfo) msg.obj;
+            mActivity.get().addInfo(info);
+            mActivity.get().refurbishApter();
             if (bt_flag) {
                 mActivity.get().setButtonState(true);
                 lv_source_book.setVisibility(View.VISIBLE);
                 pb_source_book.setVisibility(View.INVISIBLE);
                 bt_flag = false;
             }
-            BookDataInfo info = (BookDataInfo) msg.obj;
-            mActivity.get().addInfo(info);
-            mActivity.get().refurbishApter();
         }
     }
 
@@ -145,6 +143,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         pb_source_book.setVisibility(View.VISIBLE);
         bookSourceCatalogAdapter = new BookSourceCatalogAdapter(this, bookDataInfos, R.layout.source_list_item);
         lv_source_book.setAdapter(bookSourceCatalogAdapter);
+
     }
 
     private void initEvent() {
@@ -168,28 +167,49 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                 startActivity(intent);
                 break;
             case R.id.bt_book_add:
+                String bookName = bookDataInfos.get(0).getBookName();
                 //查询数据
                 List<BookDataInfo> booklist = DataSupport.select("bookName")
-                        .where("bookName=?", "仙界律师")
+                        .where("bookName=?", bookName)
                         .limit(1)
                         .find(BookDataInfo.class);
                 if (booklist.size() > 0) {
                     //删除数据
                     BookDataInfo bookData = booklist.get(0);
-                    bookData.save();
                     int delete = bookData.delete();
                     MyLogcat.myLog("删除数据！" + delete);
-                    bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
-                    bt_add_book.setText("加入书架");
+                    if (delete > 0) {
+                        bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
+                        bt_add_book.setText("加入书架");
+                    }
                 } else {
-                    boolean result = bookDataInfos.get(0).save();
+                    long result = saveBookData(bookDataInfos.get(0));
                     MyLogcat.myLog("插入数据成功了吗：" + result);
-                    bt_add_book.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                    bt_add_book.setText("移除书籍");
+                    if (result > 0) {
+                        bt_add_book.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                        bt_add_book.setText("移除书籍");
+                    }
                 }
                 ThreadPool.getInstance().submitTask(new WriteDataFileThread());
                 break;
         }
+    }
+
+    /**
+     * 保存书籍数据到数据库
+     *
+     * @param bookDataInfo 书籍对象
+     * @return 返回书籍的id号
+     */
+    public long saveBookData(BookDataInfo bookDataInfo) {
+        SQLiteDatabase db = Connector.getDatabase();
+        ContentValues values = new ContentValues();
+        values.put("bookName", bookDataInfo.getBookName());
+        values.put("author", bookDataInfo.getAuthor());
+        values.put("sourceUrl", bookDataInfo.getSourceUrl());
+        values.put("sourceName", bookDataInfo.getSourceName());
+        values.put("readChapterid", 0);
+        return db.insert("bookdatainfo", null, values);
     }
 
     @Override
@@ -227,8 +247,20 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     public void setButtonState(boolean state) {
         bt_start_book.setEnabled(state);
         bt_start_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
+        String bookName = bookDataInfos.get(0).getBookName();
+        //查询数据
+        List<BookDataInfo> booklist = DataSupport.select("bookName")
+                .where("bookName=?", bookName)
+                .limit(1)
+                .find(BookDataInfo.class);
+        if (booklist.size() > 0) {
+            bt_add_book.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            bt_add_book.setText("移除书籍");
+        } else {
+            bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
+            bt_add_book.setText("加入书架");
+        }
         bt_add_book.setEnabled(state);
-        bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
     }
 
 
@@ -238,6 +270,16 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     private void bookRead() {
         Intent intent = new Intent(this, BookContentActivity.class);
         BookDataInfo bookDataInfo = bookDataInfos.get(0);
+        //查询数据
+        List<BookDataInfo> booklist = DataSupport.select("bookName")
+                .where("bookName=?", bookDataInfo.getBookName())
+                .limit(1)
+                .find(BookDataInfo.class);
+        if (booklist.size() > 0) {
+            int readchapterid = booklist.get(0).getReadChapterid();
+            bookDataInfo.setReadChapterid(readchapterid);
+            MyLogcat.myLog("readchapterid:" + readchapterid);
+        }
         intent.putExtra("baiduInfo", bookDataInfo);
         startActivity(intent);
     }

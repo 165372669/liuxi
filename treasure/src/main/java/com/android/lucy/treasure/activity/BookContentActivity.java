@@ -2,9 +2,11 @@ package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +34,7 @@ import com.android.lucy.treasure.view.ChapterViewPager;
 import com.android.lucy.treasure.view.CircleProgress;
 
 import org.litepal.crud.DataSupport;
+import org.litepal.tablemanager.Connector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,46 +123,44 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         contentPagerView = new ContentPager(this);
         contentPagers = new ArrayList<>();
         bookDataInfo = (BookDataInfo) getIntent().getSerializableExtra("baiduInfo");
-        String bookName = bookDataInfo.getBookName();
         chapterTotal = bookDataInfo.getCatalogInfos().size();
-        MyLogcat.myLog("chapterTotal:" + chapterTotal);
-        if (null != bookDataInfo) {
-            //启动服务
-            Intent intent = new Intent(this, ChapterContentService.class);
-            startService(intent);
-            //绑定service服务
-            connection = new ServiceConnection() {
-                //当activity跟service成功连接之后会调用这个方法
-                @Override
-                public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                    ChapterContentService.MyBinder mBinder = (ChapterContentService.MyBinder) iBinder;
-                    service = mBinder.getService();
-                    MyLogcat.myLog("Activity-onServiceConnected");
-                    ChapterContentHandler chapterContentHandler = new ChapterContentHandler();
-                    service.setData(bookDataInfo, contentPagerView, chapterContentHandler);
-                    service.setView(cv_chapter_progress);
-                    service.setOnChapterContentListener(BookContentActivity.this);
-                    cv_chapter_progress.setVisibility(View.VISIBLE);
-                    cv_chapter_progress.setProgress(5);
-                    service.startThreadProgress(0);
-                }
+        MyLogcat.myLog("chapterTotal:" + chapterTotal + "readChapterid:" + bookDataInfo.getReadChapterid());
+        //启动服务
+        Intent intent = new Intent(this, ChapterContentService.class);
+        startService(intent);
+        //绑定service服务
+        connection = new ServiceConnection() {
+            //当activity跟service成功连接之后会调用这个方法
+            @Override
+            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+                ChapterContentService.MyBinder mBinder = (ChapterContentService.MyBinder) iBinder;
+                service = mBinder.getService();
+                MyLogcat.myLog("Activity-onServiceConnected");
+                ChapterContentHandler chapterContentHandler = new ChapterContentHandler();
+                service.setData(bookDataInfo, contentPagerView, chapterContentHandler);
+                service.setView(cv_chapter_progress);
+                service.setOnChapterContentListener(BookContentActivity.this);
+                cv_chapter_progress.setVisibility(View.VISIBLE);
+                cv_chapter_progress.setProgress(5);
+                service.startThreadProgress(bookDataInfo.getReadChapterid());
+            }
 
-                //当activity跟service的连接意外丢失的时候会调用
-                //比如service崩溃了，或被强行杀死了
-                @Override
-                public void onServiceDisconnected(ComponentName componentName) {
+            //当activity跟service的连接意外丢失的时候会调用
+            //比如service崩溃了，或被强行杀死了
+            @Override
+            public void onServiceDisconnected(ComponentName componentName) {
 
-                }
-            };
-            //启动绑定服务
-            bindService(intent, connection, BIND_AUTO_CREATE);
-        }
+            }
+        };
+        //启动绑定服务
+        bindService(intent, connection, BIND_AUTO_CREATE);
         for (int i = 0; i < 5; i++) {
             ContentPager contentPager = new ContentPager(this);
             contentPager.setTextSize(MyMathUtils.dip2px(this, 20));
             contentPagers.add(contentPager);
         }
         adapter = new BookContentPagerAdapter(contentPagers, bookDataInfo.getCatalogInfos(), viewPager, this, chapterTotal);
+        adapter.setCurrentChapterId(bookDataInfo.getReadChapterid());
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(contentPagers.size() * 100, false);
         viewPager.setChapterDatas(bookDataInfo.getCatalogInfos());
@@ -321,11 +322,16 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 /*        Intent intent = new Intent(this, ChapterContentService.class);
         stopService(intent);*/
         ThreadPool.getInstance().cancelTask("chapter-temp");
+
         List<BookDataInfo> booklist = DataSupport.select("bookName")
-                .where("bookName=?", "仙界律师")
+                .where("bookName=?", bookDataInfo.getBookName())
+                .limit(1)
                 .find(BookDataInfo.class);
         if (booklist.size() > 0) {
-            MyLogcat.myLog("有书籍数据");
+            BookDataInfo bookDataInfo = booklist.get(0);
+            bookDataInfo.setReadChapterid(adapter.getCurrentChapterId());
+            boolean update = bookDataInfo.save();
+            MyLogcat.myLog("id:" + bookDataInfo.getId() + ",readChapterid:" + adapter.getCurrentChapterId() + ",update:" + update);
         } else {
             MyLogcat.myLog("无书籍数据");
         }
