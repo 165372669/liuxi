@@ -3,7 +3,6 @@ package com.android.lucy.treasure.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Gravity;
@@ -25,12 +24,14 @@ import com.android.lucy.treasure.runnable.BaiduSearchSingleThread;
 import com.android.lucy.treasure.runnable.BookImageAsync;
 import com.android.lucy.treasure.runnable.ZhuiShuDataAsync;
 import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
-import com.android.lucy.treasure.sql.BookSQLiteOpenHelper;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.utils.URLUtils;
 
+import org.litepal.LitePal;
+import org.litepal.crud.ClusterQuery;
+import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
 import java.util.ArrayList;
@@ -167,9 +168,25 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                 startActivity(intent);
                 break;
             case R.id.bt_book_add:
-                SQLiteDatabase db = Connector.getDatabase();
-                boolean is = bookDataInfos.get(0).save();
-                MyLogcat.myLog("插入数据成功了吗：" + is);
+                //查询数据
+                List<BookDataInfo> booklist = DataSupport.select("bookName")
+                        .where("bookName=?", "仙界律师")
+                        .limit(1)
+                        .find(BookDataInfo.class);
+                if (booklist.size() > 0) {
+                    //删除数据
+                    BookDataInfo bookData = booklist.get(0);
+                    bookData.save();
+                    int delete = bookData.delete();
+                    MyLogcat.myLog("删除数据！" + delete);
+                    bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
+                    bt_add_book.setText("加入书架");
+                } else {
+                    boolean result = bookDataInfos.get(0).save();
+                    MyLogcat.myLog("插入数据成功了吗：" + result);
+                    bt_add_book.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    bt_add_book.setText("移除书籍");
+                }
                 ThreadPool.getInstance().submitTask(new WriteDataFileThread());
                 break;
         }
@@ -205,8 +222,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     }
 
     /*
-    * 设置按钮状态
-    * */
+     * 设置按钮状态
+     * */
     public void setButtonState(boolean state) {
         bt_start_book.setEnabled(state);
         bt_start_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
@@ -216,8 +233,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 
 
     /*
-* 开始阅读
-* */
+     * 开始阅读
+     * */
     private void bookRead() {
         Intent intent = new Intent(this, BookContentActivity.class);
         BookDataInfo bookDataInfo = bookDataInfos.get(0);
@@ -235,8 +252,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     }
 
     /*
-    * 刷新适配器
-    * */
+     * 刷新适配器
+     * */
     public void refurbishApter() {
         if (null != bookSourceCatalogAdapter)
             bookSourceCatalogAdapter.notifyDataSetChanged();

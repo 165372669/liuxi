@@ -19,6 +19,8 @@ import com.android.lucy.treasure.view.ChangeColorIconWithText;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.fragment.TabFragment;
 
+import org.litepal.tablemanager.Connector;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -59,7 +61,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void initDatas() {
-
+        //创建书架数据库
+        Connector.getDatabase();
         String[] mTitles = new String[]{"First Fragment !", "Second Fragment !", "Th",
                 "Fourth Fragment !"};
         final List<Fragment> mTabs = new ArrayList<>();

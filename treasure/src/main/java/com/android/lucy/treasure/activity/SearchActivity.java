@@ -18,9 +18,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.SearchHistoryAdapter;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
 import com.android.lucy.treasure.manager.AsyncManager;
 import com.android.lucy.treasure.runnable.SearchDataAsync;

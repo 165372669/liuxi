@@ -21,10 +21,10 @@ public class WriteDataFileThread implements Runnable {
     @Override
     public void run() {
         File dbFile = new File(Environment.getDataDirectory().getAbsolutePath()
-                + "/data/com.android.lucy.androidapp/databases/book.db");
+                + "/data/com.android.lucy.androidapp/databases/bookData.db");
         MyLogcat.myLog("dbFile:" + dbFile.getPath());
         String filesDir = SDCardHelper.getSDCardPrivateFilesDir(MyApplication.getContext(), "db");
-        File historyFile = new File(filesDir + File.separator + "book.db");
+        File historyFile = new File(filesDir + File.separator + "bookData.db");
         MyLogcat.myLog("historyFile:" + historyFile.getPath());
         FileInputStream fis = null;
         FileOutputStream fos = null;
