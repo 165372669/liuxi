@@ -128,6 +128,7 @@ public class DDABookCatalogThread extends BaseReadThread {
                             sb.append(line);
                         }
                         resoloveUrl(Jsoup.parse(sb.toString(), baseUrl));
+                        return false;
                     }
                 }
             } catch (IOException e) {
@@ -140,7 +141,6 @@ public class DDABookCatalogThread extends BaseReadThread {
                     e.printStackTrace();
                 }
             }
-            return false;
         }
         return true;
     }
