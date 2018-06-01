@@ -15,8 +15,7 @@ public class SearchDataInfo implements Parcelable {
     private String author;//作者
     private String type;//类型
     private String desc;//介绍
-    //追书页面介绍
-    private String bookUrl_ZhuiShu;
+    private String bookUrl_ZhuiShu;//追书页面介绍
     private String bookSize;//小说字数
     private String bookUpdateTime;//最后更新时间
     private String newChapter;//最新章节

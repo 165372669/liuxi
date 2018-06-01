@@ -64,7 +64,7 @@
                     android:layout_toRightOf="@id/iv_cover"
                     android:text="书名"
                     android:textColor="@color/hailanse"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -76,7 +76,7 @@
                     android:layout_marginTop="5dp"
                     android:text="末日刁民作"
                     android:textColor="@color/hailan"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
 
 
                 <TextView
@@ -88,7 +88,7 @@
                     android:layout_marginTop="5dp"
                     android:text="科幻"
                     android:textColor="@color/hailan"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
 
 
                 <TextView
@@ -100,7 +100,7 @@
                     android:layout_marginTop="5dp"
                     android:text="暂无字数"
                     android:textColor="@color/hailan"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_timeUpdate_book"
@@ -111,7 +111,7 @@
                     android:layout_marginTop="5dp"
                     android:text="暂无更新"
                     android:textColor="@color/hailan"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_progress_book"
@@ -122,7 +122,7 @@
                     android:layout_marginTop="5dp"
                     android:text="阅读进度："
                     android:textColor="@color/hailan"
-                    android:textSize="14sp" />
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -144,7 +144,7 @@
                         android:padding="10dp"
                         android:text="加入书架"
                         android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <Button
                         android:id="@+id/bt_book_read"
@@ -157,7 +157,7 @@
                         android:padding="10dp"
                         android:text="开始阅读"
                         android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <Button
                         android:id="@+id/bt_book_catalog"
@@ -170,7 +170,7 @@
                         android:padding="10dp"
                         android:text="章节目录"
                         android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
                     <Button
                         android:id="@+id/bt_book_cache"
@@ -183,7 +183,7 @@
                         android:padding="10dp"
                         android:text="缓存全书"
                         android:textColor="@color/white"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
                 </LinearLayout>
 
 

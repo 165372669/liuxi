@@ -89,7 +89,6 @@ public class SearchEditTextView extends android.support.v7.widget.AppCompatEditT
     * */
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        MyLogcat.myLog("onTextChanged");
         setClearIconVisible(getText().length() > 0);
     }
 

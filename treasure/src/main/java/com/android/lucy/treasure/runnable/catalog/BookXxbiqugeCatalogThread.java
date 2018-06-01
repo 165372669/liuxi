@@ -4,9 +4,12 @@ import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.IOException;
 
 
 /**
@@ -36,4 +39,5 @@ public class BookXxbiqugeCatalogThread extends BaseReadThread {
         }
 
     }
+
 }

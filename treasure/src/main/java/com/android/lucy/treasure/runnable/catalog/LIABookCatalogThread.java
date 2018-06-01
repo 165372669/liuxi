@@ -1,8 +1,8 @@
 package com.android.lucy.treasure.runnable.catalog;
 
 import com.android.lucy.treasure.base.BaseReadThread;
-import com.android.lucy.treasure.bean.BookDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
+import com.android.lucy.treasure.bean.SourceDataInfo;
 import com.android.lucy.treasure.utils.MyHandler;
 
 import org.jsoup.Jsoup;
@@ -19,11 +19,15 @@ import java.io.IOException;
 
 public class LIABookCatalogThread extends BaseReadThread {
 
-    private BookDataInfo info;
+    private SourceDataInfo sourceDataInfo;
+    private String bookName;
+    private String author;
 
-    public LIABookCatalogThread(String url, BookDataInfo info, MyHandler myHandler) {
+    public LIABookCatalogThread(String url, SourceDataInfo sourceDataInfo, String bookName, String author, MyHandler myHandler) {
         super(url, myHandler);
-        this.info = info;
+        this.sourceDataInfo = sourceDataInfo;
+        this.bookName = bookName;
+        this.author = author;
     }
 
     @Override
@@ -35,8 +39,8 @@ public class LIABookCatalogThread extends BaseReadThread {
             parseTextDownload(doc);
         }
 
-
     }
+
 
     public void parseTextDownload(Document doc) {
         Elements as = doc.select("a[class^=tools]");
@@ -66,7 +70,7 @@ public class LIABookCatalogThread extends BaseReadThread {
                     bookName = meta.attr("content");
             }
         }
-        if (null != bookName && bookName.equals(info.getBookName())) {
+        if (null != bookName && bookName.equals(this.bookName)) {
             Elements lis = doc.select("li");
             Elements rels = lis.select("a[rel]");
             int i = 1;
@@ -74,10 +78,12 @@ public class LIABookCatalogThread extends BaseReadThread {
                 String chapterUrl = rel.attr("href");
                 String chapterName = rel.text();
                 CatalogInfo catalogInfo = new CatalogInfo(chapterUrl, chapterName, i);
-                info.addCatalogInfo(catalogInfo);
+                sourceDataInfo.getCatalogInfos().add(catalogInfo);
                 i++;
             }
-            sendObj(info);
+            if (getIsCancelled())
+                return;
+            sendObj(1);
         }
     }
 }

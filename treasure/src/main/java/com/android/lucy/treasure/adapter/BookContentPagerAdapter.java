@@ -155,7 +155,7 @@ public class BookContentPagerAdapter extends PagerAdapter {
             }
             viewPager.setIsDown(false);
         }
-        MyLogcat.myLog("点击后：,pagerPosition:" + pagerPosition + ",章节id：" + currentChapterId + ",章节总页面：" + catalogInfo.getChapterPagerToatal());
+        //MyLogcat.myLog("点击后：,pagerPosition:" + pagerPosition + ",章节id：" + currentChapterId + ",章节总页面：" + catalogInfo.getChapterPagerToatal());
         unreadCount = currentChapterId;
         //预加载
         if (null != pagerContentInfos && pagerContentInfos.size() > 0 && catalogInfo.getChapterPagerToatal() != 0) {

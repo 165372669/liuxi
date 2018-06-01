@@ -17,7 +17,7 @@ import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ConfigInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.pager.ContentPager;
-import com.android.lucy.treasure.runnable.chapter.PbtxtChapterContentThread;
+import com.android.lucy.treasure.runnable.chapter.DDAChapterContentThread;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.MyMathUtils;
 import com.android.lucy.treasure.utils.ThreadPool;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class ChapterContentService extends Service {
 
     private MyBinder mBinder;
-    private BookDataInfo info;
+    private BookDataInfo bookDataInfo;
     private OnChapterContentListener onChapterContentListener;
     private int chapterNameHeight;    //章节名View高
     private int bookNameHeight;       //书名View高
@@ -92,21 +92,22 @@ public class ChapterContentService extends Service {
     /**
      * 带进度的下载章节
      *
-     * @param ChapterID 下载的章节id
+     * @param chapterID 下载的章节id
      */
-    public void startThreadProgress(int ChapterID) {
-        this.loadChapterId = ChapterID;
-        CatalogInfo catalogInfo = info.getCatalogInfos().get(ChapterID);
+    public void startThreadProgress(int chapterID) {
+        this.loadChapterId = chapterID;
+        int sourceid = bookDataInfo.getSourceid();
+        CatalogInfo catalogInfo = bookDataInfo.getSourceDataInfos().get(sourceid).getCatalogInfos().get(chapterID);
         ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
         if (null == pagerContentInfos) {
             pagerContentInfos = new ArrayList<>();
             catalogInfo.setStrs(pagerContentInfos);
             String chapterUrl = catalogInfo.getChapterUrl();
-            MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + ChapterID);
+            MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + chapterID);
             ConfigInfo configInfo = new ConfigInfo(chapterNameHeight, bookNameHeight, chapterContentWidth,
                     chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
             cv_chapter_progress.setProgress(10);
-            ThreadPool.getInstance().submitTask(new PbtxtChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
+            ThreadPool.getInstance().submitTask(new DDAChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
                     cv_chapter_progress));
         }
     }
@@ -134,12 +135,12 @@ public class ChapterContentService extends Service {
     /**
      * 获取数据
      *
-     * @param info                  小说对象
+     * @param bookDataInfo          小说对象
      * @param contentPagerView      章节内容View
      * @param chapterContentHandler
      */
-    public void setData(BookDataInfo info, ContentPager contentPagerView, BookContentActivity.ChapterContentHandler chapterContentHandler) {
-        this.info = info;
+    public void setData(BookDataInfo bookDataInfo, ContentPager contentPagerView, BookContentActivity.ChapterContentHandler chapterContentHandler) {
+        this.bookDataInfo = bookDataInfo;
         this.chapterContentHandler = chapterContentHandler;
         textInfoCount();
         myMeasured(contentPagerView);

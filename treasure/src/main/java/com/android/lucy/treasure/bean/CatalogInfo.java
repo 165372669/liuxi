@@ -17,7 +17,7 @@ public class CatalogInfo implements Comparable, Serializable {
     private int chapterPagerToatal; //章节总页面数
     private ArrayList<PagerContentInfo> pagerContentInfos; //页面内容集合
 
-    private static final long serialVersionUID = 2;
+    private static final long serialVersionUID = 3;
 
 
     public CatalogInfo(String chapterUrl, String chapterName, int chapterId) {

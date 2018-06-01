@@ -2,6 +2,7 @@ package com.android.lucy.treasure.runnable;
 
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookDataInfo;
+import com.android.lucy.treasure.bean.SourceDataInfo;
 import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
 import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.utils.Key;
@@ -9,9 +10,12 @@ import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.IOException;
 
 /**
  * 百度搜索
@@ -20,49 +24,54 @@ import org.jsoup.select.Elements;
 public class BaiduSearchSingleThread extends BaseReadThread {
 
 
-    private String bookName;
     private MyHandler bookHandler;
-    private String author;
+    private BookDataInfo bookDataInfo;
 
-    public BaiduSearchSingleThread(String url, String bookName, String author, MyHandler bookHandler) {
+    public BaiduSearchSingleThread(String url, BookDataInfo bookDataInfo, MyHandler bookHandler) {
         super(url, bookHandler);
-        this.bookName = bookName;
         this.bookHandler = bookHandler;
-        this.author = author;
-        this.author = author;
+        this.bookDataInfo = bookDataInfo;
     }
 
 
     @Override
     public void resoloveUrl(Document doc) {
-        if (null == doc)
-            return;
         //获取第一条网址
         Elements as = doc.select("a[class^=c-showurl]");
-        MyLogcat.myLog("bookName:" + bookName);
         for (Element a : as) {
             String sourceUrl = a.attr("href");
             String sourceNameTemp = a.text();
             String sourceName = shearSourceName(sourceNameTemp);
-            BookDataInfo bookDataInfo = new BookDataInfo(bookName, sourceUrl, sourceName, author);
+            SourceDataInfo sourceDataInfo = new SourceDataInfo(sourceName, sourceUrl);
             //MyLogcat.myLog("sourceUrl:" + sourceUrl);
             //MyLogcat.myLog("sourceName:" + sourceName);
-            selectSource(bookDataInfo);
+            selectSource(sourceDataInfo);
         }
+        MyLogcat.myLog("bookName:" + bookDataInfo.getBookName() + ",sourceDataSize:" + bookDataInfo.getSourceDataInfos());
     }
 
-    private void selectSource(BookDataInfo bookDataInfo) {
-        String sourceName = bookDataInfo.getSourceName();
-        String sourceUrl = bookDataInfo.getSourceUrl();
+    private void selectSource(SourceDataInfo sourceDataInfo) {
+        String sourceName = sourceDataInfo.getSourceName();
+        String sourceUrl = sourceDataInfo.getSourceUrl();
         String[] dda_sources = Key.DDA_SOURCE.split(",");
         String[] lia_sources = Key.LIA_SOURCE.split(",");
+        if (bookDataInfo.getSourceDataInfos().contains(sourceDataInfo)) {
+            //没有包含同一个来源
+            return;
+        }
         for (int i = 0; i < dda_sources.length; i++) {
-            if (sourceName.equals(dda_sources[i]))
-                ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, bookDataInfo, bookHandler));
+            if (sourceName.equals(dda_sources[i])) {
+                bookDataInfo.getSourceDataInfos().add(sourceDataInfo);
+                ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, sourceDataInfo,
+                        bookDataInfo.getBookName(), bookDataInfo.getAuthor(), bookHandler));
+            }
         }
         for (int i = 0; i < lia_sources.length; i++) {
-            if (sourceName.equals(lia_sources[i]))
-                ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, bookDataInfo, bookHandler));
+            if (sourceName.equals(lia_sources[i])) {
+                bookDataInfo.getSourceDataInfos().add(sourceDataInfo);
+                ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, sourceDataInfo,
+                        bookDataInfo.getBookName(), bookDataInfo.getAuthor(), bookHandler));
+            }
         }
 
     }

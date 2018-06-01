@@ -2,11 +2,9 @@ package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,7 +32,6 @@ import com.android.lucy.treasure.view.ChapterViewPager;
 import com.android.lucy.treasure.view.CircleProgress;
 
 import org.litepal.crud.DataSupport;
-import org.litepal.tablemanager.Connector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +54,9 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private int chapterTotal;
     private TextView tv_chapter_catalog;
     private CircleProgress cv_chapter_progress;
+    private int readChapterid;
+    private int sourceid;
+    private ArrayList<CatalogInfo> catalogInfos;
 
     public class ChapterContentHandler extends Handler {
         @Override
@@ -123,8 +123,19 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         contentPagerView = new ContentPager(this);
         contentPagers = new ArrayList<>();
         bookDataInfo = (BookDataInfo) getIntent().getSerializableExtra("baiduInfo");
-        chapterTotal = bookDataInfo.getCatalogInfos().size();
-        MyLogcat.myLog("chapterTotal:" + chapterTotal + "readChapterid:" + bookDataInfo.getReadChapterid());
+        sourceid = bookDataInfo.getSourceid();
+        catalogInfos = bookDataInfo.getSourceDataInfos().get(sourceid).getCatalogInfos();
+        chapterTotal = catalogInfos.size();
+        ThreadPool.getInstance().cancelTask("chapter-temp");
+
+        List<BookDataInfo> booklist = DataSupport.select("bookName")
+                .where("bookName=?", bookDataInfo.getBookName())
+                .find(BookDataInfo.class);
+        if (booklist.size() > 0) {
+            BookDataInfo bookDataInfo = booklist.get(0);
+            readChapterid = bookDataInfo.getReadChapterid();
+            MyLogcat.myLog("id:" + bookDataInfo.getId() + ",readChapterid:" + bookDataInfo.getReadChapterid() + ",size:" + booklist.size());
+        }
         //启动服务
         Intent intent = new Intent(this, ChapterContentService.class);
         startService(intent);
@@ -142,7 +153,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                 service.setOnChapterContentListener(BookContentActivity.this);
                 cv_chapter_progress.setVisibility(View.VISIBLE);
                 cv_chapter_progress.setProgress(5);
-                service.startThreadProgress(bookDataInfo.getReadChapterid());
+                service.startThreadProgress(readChapterid);
             }
 
             //当activity跟service的连接意外丢失的时候会调用
@@ -159,11 +170,11 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
             contentPager.setTextSize(MyMathUtils.dip2px(this, 20));
             contentPagers.add(contentPager);
         }
-        adapter = new BookContentPagerAdapter(contentPagers, bookDataInfo.getCatalogInfos(), viewPager, this, chapterTotal);
-        adapter.setCurrentChapterId(bookDataInfo.getReadChapterid());
+        adapter = new BookContentPagerAdapter(contentPagers, catalogInfos, viewPager, this, chapterTotal);
+        adapter.setCurrentChapterId(readChapterid);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(contentPagers.size() * 100, false);
-        viewPager.setChapterDatas(bookDataInfo.getCatalogInfos());
+        viewPager.setChapterDatas(catalogInfos);
         viewPager.setChapterTotal(chapterTotal);
     }
 
@@ -223,14 +234,14 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
         int lastChapterid = chapterId - 1;
         if (nextChapterid < chapterTotal) {
             //预加载章节
-            CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(nextChapterid);
+            CatalogInfo catalogInfo = catalogInfos.get(nextChapterid);
             if (catalogInfo.getChapterPagerToatal() == 0) {
                 loadChapter(nextChapterid, false);
             }
         }
         if (lastChapterid >= 0) {
             //预加载章节
-            CatalogInfo catalogInfo = bookDataInfo.getCatalogInfos().get(lastChapterid);
+            CatalogInfo catalogInfo = catalogInfos.get(lastChapterid);
             if (catalogInfo.getChapterPagerToatal() == 0) {
                 loadChapter(lastChapterid, false);
             }
@@ -282,7 +293,6 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
             //目录点击
             case R.id.tv_chapter_catalog:
                 ArrayList<ChapterIDAndName> chapterIDAndNames = new ArrayList<>();
-                ArrayList<CatalogInfo> catalogInfos = bookDataInfo.getCatalogInfos();
                 for (int i = 0; i < catalogInfos.size(); i++) {
                     CatalogInfo catalogInfo = catalogInfos.get(i);
                     chapterIDAndNames.add(new ChapterIDAndName(catalogInfo.getChapterId()

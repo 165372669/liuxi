@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.android.lucy.treasure.application.MyApplication;
+import com.android.lucy.treasure.interfaces.HTMLFollowRedirects;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
 
@@ -19,52 +20,55 @@ import java.io.IOException;
  * 获取网页数据基类
  */
 
-public abstract class BaseReadThread implements Runnable {
+public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
 
 
-    private String url;
+    protected String baseUrl;
     private Handler myHandler;
     private boolean isCancelled;
     protected String flag;//区分线程标志
 
     public abstract void resoloveUrl(Document doc);
 
-    public BaseReadThread(String url, Handler myHandler) {
-        this.url = url;
+
+    public BaseReadThread(String baseUrl, Handler myHandler) {
+        this.baseUrl = baseUrl;
         this.myHandler = myHandler;
         flag = "BaseReadThread";
     }
 
     @Override
     public void run() {
-        if (isCancelled)
-            return;
-        readUrl(url);
+        readUrl();
     }
 
-    public void readUrl(String url) {
-        MyLogcat.myLog("BaseUrl:" + url);
+    public void readUrl() {
         if (isCancelled)
             return;
-        if (url.isEmpty())
+        if (baseUrl.isEmpty())
             return;
-        Document doc;
         try {
-            doc = Jsoup.connect(url).get();
-            resoloveUrl(doc);
-            if (isCancelled)
-                return;
+            boolean isConnect = xxbuquge();
+            MyLogcat.myLog("BaseUrl:" + baseUrl);
+            if (isConnect) {
+                resoloveUrl(Jsoup.connect(baseUrl).get());
+            }
         } catch (IOException e) {
-            System.out.println(getClass().getName() + ":读取失败");
+            MyLogcat.myLog(baseUrl + "，网页读取失败！！！");
         } finally {
             //删除集合里的任务
             ThreadPool.getInstance().deleteRunnable(this);
         }
     }
 
+    @Override
+    public boolean xxbuquge() {
+        return true;
+    }
+
     /*
-    * 取消线程
-    * */
+        * 取消线程
+        * */
     public void cancel() {
         this.isCancelled = true;
     }
@@ -85,11 +89,11 @@ public abstract class BaseReadThread implements Runnable {
         return flag;
     }
 
-    /*
-    * 发送对象
-    * */
-    protected void sendObj(Object obj) {
-        sendObj(obj, 0);
+
+    protected void sendObj(int arg) {
+        Message msg = Message.obtain();
+        msg.arg1 = arg;
+        myHandler.sendMessage(msg);
     }
 
     /*
@@ -116,7 +120,7 @@ public abstract class BaseReadThread implements Runnable {
     public void writeFile(Object obj) {
         BufferedWriter bw = null;
         try {
-            File file = new File(MyApplication.getContext().getExternalCacheDir(), "obj.txt");
+            File file = new File(MyApplication.getContext().getExternalCacheDir(), "sv.txt");
             MyLogcat.myLog("file:" + file.getPath());
             bw = new BufferedWriter(new FileWriter(file));
             bw.write(obj.toString());

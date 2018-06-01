@@ -9,12 +9,19 @@ import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ConfigInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.bean.TextInfo;
+import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.StringUtils;
 import com.android.lucy.treasure.view.CircleProgress;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -27,14 +34,14 @@ import java.util.regex.Pattern;
  * 获取章节内容线程
  */
 
-public class PbtxtChapterContentThread extends BaseReadThread {
+public class DDAChapterContentThread extends BaseReadThread {
 
 
     private final CatalogInfo catalogInfo;
     private final ConfigInfo configInfo;
     private final CircleProgress cv_chapter_progress;
 
-    public PbtxtChapterContentThread(String url, Handler myHandler, CatalogInfo catalogInfo, ConfigInfo configInfo, CircleProgress cv_chapter_progress) {
+    public DDAChapterContentThread(String url, Handler myHandler, CatalogInfo catalogInfo, ConfigInfo configInfo, CircleProgress cv_chapter_progress) {
         super(url, myHandler);
         this.catalogInfo = catalogInfo;
         this.configInfo = configInfo;
@@ -74,9 +81,43 @@ public class PbtxtChapterContentThread extends BaseReadThread {
         cv_chapter_progress.setProgress(100);
     }
 
+    @Override
+    public boolean xxbuquge() {
+        if (baseUrl.startsWith("https://www.xxbiquge.com")) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            try {
+                urlConnection = (HttpURLConnection) new URL(baseUrl).openConnection();
+                urlConnection.setDoInput(true);
+                MyLogcat.myLog("statusCode:" + urlConnection.getResponseCode());
+                if (urlConnection.getResponseCode() == 200) {
+                    StringBuilder sb = new StringBuilder();
+                    reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    resoloveUrl(Jsoup.parse(sb.toString()));
+                }
+            } catch (IOException e) {
+                MyLogcat.myLog(baseUrl + "，网页读取失败！");
+            } finally {
+                try {
+                    if (null != urlConnection) urlConnection.disconnect();
+                    if (null != reader) reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return false;
+        }
+        return true;
+
+    }
+
     /*
-* 移除字符串中的空格
-* */
+    * 移除字符串中的空格
+    * */
     private String removeEmpty(String str) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < str.length(); i++) {

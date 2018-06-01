@@ -109,7 +109,6 @@ public class SearchDataAdapter extends BaseAdapter<SearchDataInfo> implements Ad
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        //读取更新时间和总字数
         SearchDataInfo searchDataInfo = mDatas.get(position);
         Context context = MyApplication.getContext();
         Intent intent = new Intent(context, BookIntroducedActivity.class);

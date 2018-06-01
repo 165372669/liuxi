@@ -13,26 +13,33 @@ public class BookDataInfo extends DataSupport implements Serializable {
     private int id;
     private String bookName; //小说名称
     private String author;   //作者名称
-    private String sourceUrl; //来源网址
-    private String sourceName; //来源名称
+    private int sourceid;    //来源选择
     private int newChapterId; //最新章节id
     private int readChapterid;//已读章节id
     private int closeTime;   //关闭时间
     private int chapterTotal; //章节总数
     private int unreadSeveral;//未读章节数
-    private ArrayList<CatalogInfo> catalogInfos;//章节集合
+    private ArrayList<SourceDataInfo> sourceDataInfos;//来源集合
 
     private static final long serialVersionUID = 1;
 
     public BookDataInfo() {
     }
 
-    public BookDataInfo(String bookName, String sourceUrl, String sourceName, String author) {
+    public BookDataInfo(String bookName, String author) {
+        this(bookName, author, 0, 0, 0, 0, 0, 0);
+    }
+
+    public BookDataInfo(String bookName, String author, int sourceid, int newChapterId, int readChapterid, int closeTime, int chapterTotal, int unreadSeveral) {
         this.bookName = bookName;
-        this.sourceUrl = sourceUrl;
-        this.sourceName = sourceName;
         this.author = author;
-        catalogInfos = new ArrayList<>();
+        this.sourceid = sourceid;
+        this.newChapterId = newChapterId;
+        this.readChapterid = readChapterid;
+        this.closeTime = closeTime;
+        this.chapterTotal = chapterTotal;
+        this.unreadSeveral = unreadSeveral;
+        sourceDataInfos = new ArrayList<>();
     }
 
     public int getId() {
@@ -59,22 +66,6 @@ public class BookDataInfo extends DataSupport implements Serializable {
         this.author = author;
     }
 
-    public String getSourceUrl() {
-        return sourceUrl;
-    }
-
-    public void setSourceUrl(String sourceUrl) {
-        this.sourceUrl = sourceUrl;
-    }
-
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    public void setSourceName(String sourceName) {
-        this.sourceName = sourceName;
-    }
-
     public int getNewChapterId() {
         return newChapterId;
     }
@@ -89,6 +80,14 @@ public class BookDataInfo extends DataSupport implements Serializable {
 
     public void setReadChapterid(int readChapterid) {
         this.readChapterid = readChapterid;
+    }
+
+    public int getSourceid() {
+        return sourceid;
+    }
+
+    public void setSourceid(int sourceid) {
+        this.sourceid = sourceid;
     }
 
     public int getCloseTime() {
@@ -115,23 +114,27 @@ public class BookDataInfo extends DataSupport implements Serializable {
         this.unreadSeveral = unreadSeveral;
     }
 
-    public ArrayList<CatalogInfo> getCatalogInfos() {
-        return catalogInfos;
+    public ArrayList<SourceDataInfo> getSourceDataInfos() {
+        return sourceDataInfos;
     }
 
-    public void setCatalogInfos(ArrayList<CatalogInfo> catalogInfos) {
-        this.catalogInfos = catalogInfos;
+    public void setSourceDataInfos(ArrayList<SourceDataInfo> sourceDataInfos) {
+        this.sourceDataInfos = sourceDataInfos;
     }
-
-    public void addCatalogInfo(CatalogInfo catalogInfo) {
-        catalogInfos.add(catalogInfo);
-    }
-
 
     @Override
-    public boolean equals(Object obj) {
-        BookDataInfo bookDataInfo = (BookDataInfo) obj;
-        return this.sourceName.equals(bookDataInfo.getSourceName());
+    public String toString() {
+        return "BookDataInfo{" +
+                "id=" + id +
+                ", bookName='" + bookName + '\'' +
+                ", author='" + author + '\'' +
+                ", sourceid=" + sourceid +
+                ", newChapterId=" + newChapterId +
+                ", readChapterid=" + readChapterid +
+                ", closeTime=" + closeTime +
+                ", chapterTotal=" + chapterTotal +
+                ", unreadSeveral=" + unreadSeveral +
+                ", sourceDataInfos=" + sourceDataInfos +
+                '}';
     }
-
 }
