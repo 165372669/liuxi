@@ -48,11 +48,8 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
         if (baseUrl.isEmpty())
             return;
         try {
-            boolean isConnect = xxbuquge();
             MyLogcat.myLog("BaseUrl:" + baseUrl);
-            if (isConnect) {
-                resoloveUrl(Jsoup.connect(baseUrl).get());
-            }
+            resoloveUrl(Jsoup.connect(baseUrl).get());
         } catch (IOException e) {
             MyLogcat.myLog(baseUrl + "，网页读取失败！！！");
         } finally {
@@ -62,8 +59,7 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
     }
 
     @Override
-    public boolean xxbuquge() {
-        return true;
+    public void xxbuquge() {
     }
 
     /*

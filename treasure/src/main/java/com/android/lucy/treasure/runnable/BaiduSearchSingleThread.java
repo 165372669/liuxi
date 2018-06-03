@@ -55,20 +55,14 @@ public class BaiduSearchSingleThread extends BaseReadThread {
         String sourceUrl = sourceDataInfo.getSourceUrl();
         String[] dda_sources = Key.DDA_SOURCE.split(",");
         String[] lia_sources = Key.LIA_SOURCE.split(",");
-        if (bookDataInfo.getSourceDataInfos().contains(sourceDataInfo)) {
-            //没有包含同一个来源
-            return;
-        }
         for (int i = 0; i < dda_sources.length; i++) {
             if (sourceName.equals(dda_sources[i])) {
-                bookDataInfo.getSourceDataInfos().add(sourceDataInfo);
                 ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, sourceDataInfo,
                         bookDataInfo.getBookName(), bookDataInfo.getAuthor(), bookHandler));
             }
         }
         for (int i = 0; i < lia_sources.length; i++) {
             if (sourceName.equals(lia_sources[i])) {
-                bookDataInfo.getSourceDataInfos().add(sourceDataInfo);
                 ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, sourceDataInfo,
                         bookDataInfo.getBookName(), bookDataInfo.getAuthor(), bookHandler));
             }

@@ -18,13 +18,18 @@ import java.io.IOException;
 
 public class WriteDataFileThread implements Runnable {
 
+    private final String dbName;
+
+    public WriteDataFileThread(String dbName) {
+        this.dbName = dbName;
+    }
+
     @Override
     public void run() {
         File dbFile = new File(Environment.getDataDirectory().getAbsolutePath()
-                + "/data/com.android.lucy.androidapp/databases/bookData.db");
-        MyLogcat.myLog("dbFile:" + dbFile.getPath());
+                + "/data/com.android.lucy.androidapp/databases/" + dbName);
         String filesDir = SDCardHelper.getSDCardPrivateFilesDir(MyApplication.getContext(), "db");
-        File historyFile = new File(filesDir + File.separator + "bookData.db");
+        File historyFile = new File(filesDir + File.separator + dbName);
         MyLogcat.myLog("historyFile:" + historyFile.getPath());
         FileInputStream fis = null;
         FileOutputStream fos = null;

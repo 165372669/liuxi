@@ -268,7 +268,33 @@ public class SDCardHelper {
 
     // 获取SD卡私有Files目录的路径
     public static String getSDCardPrivateFilesDir(Context context, String type) {
-        return context.getExternalFilesDir(type).getAbsolutePath();
+        if (null != context.getExternalFilesDir(type)) {
+            return context.getExternalFilesDir(type).getAbsolutePath();
+        } else {
+            return creatSDCardPrivateFilesDir(context, type);
+        }
+
+    }
+
+    /**
+     * 在/storage/sdcard/Android/data/com.android.lucy.androidapp/files/目录下创建type文件夹
+     *
+     * @param context 上下文
+     * @param type    文件名
+     * @return
+     */
+    public static String creatSDCardPrivateFilesDir(Context context, String type) {
+        String sdCardBaseDir = getSDCardBaseDir();
+        if (null != sdCardBaseDir) {
+            String packageName = AppUtils.getAppProcessName(context);
+            File file = new File(sdCardBaseDir + File.separator + "Android" + File.separator +
+                    "data" + File.separator + packageName + File.separator + "files" + File.separator + type);
+            if (!file.exists()) {
+                file.mkdirs();
+            }
+            sdCardBaseDir = file.getPath();
+        }
+        return sdCardBaseDir;
     }
 
     public static boolean isFileExist(String filePath) {

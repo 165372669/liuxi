@@ -82,7 +82,7 @@ public class DDAChapterContentThread extends BaseReadThread {
     }
 
     @Override
-    public boolean xxbuquge() {
+    public void xxbuquge() {
         if (baseUrl.startsWith("https://www.xxbiquge.com")) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -98,7 +98,6 @@ public class DDAChapterContentThread extends BaseReadThread {
                         sb.append(line);
                     }
                     resoloveUrl(Jsoup.parse(sb.toString()));
-                    return false;
                 }
             } catch (IOException e) {
                 MyLogcat.myLog(baseUrl + "，网页读取失败！");
@@ -111,7 +110,6 @@ public class DDAChapterContentThread extends BaseReadThread {
                 }
             }
         }
-        return true;
 
     }
 

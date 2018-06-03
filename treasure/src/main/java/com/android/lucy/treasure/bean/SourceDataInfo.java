@@ -1,5 +1,7 @@
 package com.android.lucy.treasure.bean;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -7,7 +9,8 @@ import java.util.ArrayList;
  * 小说来源对象
  */
 
-public class SourceDataInfo implements Serializable {
+public class SourceDataInfo extends DataSupport implements Serializable {
+    private BookDataInfo bookDataInfo;
     private String sourceUrl; //来源网址
     private String sourceName; //来源名称
     private ArrayList<CatalogInfo> catalogInfos;//章节集合
@@ -19,6 +22,14 @@ public class SourceDataInfo implements Serializable {
         this.sourceName = sourceName;
         this.sourceUrl = sourceUrl;
         catalogInfos = new ArrayList<>();
+    }
+
+    public BookDataInfo getBookDataInfo() {
+        return bookDataInfo;
+    }
+
+    public void setBookDataInfo(BookDataInfo bookDataInfo) {
+        this.bookDataInfo = bookDataInfo;
     }
 
     public String getSourceUrl() {

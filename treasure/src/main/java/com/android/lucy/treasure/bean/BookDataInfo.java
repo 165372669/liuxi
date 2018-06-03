@@ -16,6 +16,7 @@ public class BookDataInfo extends DataSupport implements Serializable {
     private int sourceid;    //来源选择
     private int newChapterId; //最新章节id
     private int readChapterid;//已读章节id
+    private int readChapterPager;//已读章节页面
     private int closeTime;   //关闭时间
     private int chapterTotal; //章节总数
     private int unreadSeveral;//未读章节数
@@ -27,15 +28,18 @@ public class BookDataInfo extends DataSupport implements Serializable {
     }
 
     public BookDataInfo(String bookName, String author) {
-        this(bookName, author, 0, 0, 0, 0, 0, 0);
+        this(bookName, author, 0, 0, 0, 0, 0,
+                0, 0);
     }
 
-    public BookDataInfo(String bookName, String author, int sourceid, int newChapterId, int readChapterid, int closeTime, int chapterTotal, int unreadSeveral) {
+    public BookDataInfo(String bookName, String author, int sourceid, int newChapterId, int readChapterid,
+                        int readChapterPager, int closeTime, int chapterTotal, int unreadSeveral) {
         this.bookName = bookName;
         this.author = author;
         this.sourceid = sourceid;
         this.newChapterId = newChapterId;
         this.readChapterid = readChapterid;
+        this.readChapterPager = readChapterPager;
         this.closeTime = closeTime;
         this.chapterTotal = chapterTotal;
         this.unreadSeveral = unreadSeveral;
@@ -80,6 +84,14 @@ public class BookDataInfo extends DataSupport implements Serializable {
 
     public void setReadChapterid(int readChapterid) {
         this.readChapterid = readChapterid;
+    }
+
+    public int getReadChapterPager() {
+        return readChapterPager;
+    }
+
+    public void setReadChapterPager(int readChapterPager) {
+        this.readChapterPager = readChapterPager;
     }
 
     public int getSourceid() {

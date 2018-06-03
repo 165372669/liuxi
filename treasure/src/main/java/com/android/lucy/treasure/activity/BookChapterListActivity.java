@@ -57,6 +57,5 @@ public class BookChapterListActivity extends Activity implements AdapterView.OnI
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra("chapterid", position);
         startActivity(intent);
-
     }
 }

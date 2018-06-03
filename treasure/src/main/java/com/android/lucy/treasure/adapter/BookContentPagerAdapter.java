@@ -258,12 +258,23 @@ public class BookContentPagerAdapter extends PagerAdapter {
     private ContentPager currentPagerEmpty(int temp, int position, CatalogInfo catalogInfo) {
         //获取到当前显示的页面
         ContentPager contentPager = getCurrentContetnPager(temp, position);
+        pagerContentEmpty(contentPager, catalogInfo);
+        return contentPagers.get(position % contentPagers.size());
+    }
+
+    /**
+     * 清空页面内容
+     *
+     * @param contentPager 需要清空的页面
+     * @param catalogInfo  章节对象
+     */
+    private void pagerContentEmpty(ContentPager contentPager, CatalogInfo catalogInfo) {
         contentPager.setChapterName(catalogInfo.getChapterName());
         contentPager.setPagerTotal(1);
         contentPager.setCurrentPager(1);
         contentPager.setUnreadChapterCount(0, 0);
         contentPager.pagerContentInvali(true);
-        return contentPagers.get(position % contentPagers.size());
+
     }
 
 
@@ -272,18 +283,20 @@ public class BookContentPagerAdapter extends PagerAdapter {
      *
      * @param chapterId 要跳转到的章节id
      */
-    public void setCurrentChapterId(int chapterId) {
+    public void setCurrentChapterId(int chapterId, int pagerPosition) {
         this.currentChapterId = chapterId;
         int position = viewPager.getCurrentItem();
         int pager = position % contentPagers.size();
         //获取到当前显示的页面
         ContentPager contentPager = contentPagers.get(pager);
         CatalogInfo catalogInfo = catalogInfos.get(currentChapterId);
-        contentPager.setChapterName(catalogInfo.getChapterName());
-        contentPager.setPagerTotal(1);
-        contentPager.setCurrentPager(1);
-        contentPager.pagerContentInvali(true);
-        pagerPosition = 0;
+        pagerContentEmpty(contentPager, catalogInfo);
+        int chapterPagerTotal = catalogInfo.getChapterPagerToatal();
+        if (chapterPagerTotal != 0 && pagerPosition > chapterPagerTotal) {
+            this.pagerPosition = 0;
+        } else {
+            this.pagerPosition = pagerPosition;
+        }
     }
 
     @Override

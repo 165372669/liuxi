@@ -7,5 +7,5 @@ import org.jsoup.nodes.Document;
  */
 
 public interface HTMLFollowRedirects {
-    boolean xxbuquge();//新笔趣阁网页重定向方法
+    void xxbuquge();//新笔趣阁网页重定向方法
 }

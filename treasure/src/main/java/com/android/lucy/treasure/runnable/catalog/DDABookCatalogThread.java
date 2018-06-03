@@ -61,6 +61,7 @@ public class DDABookCatalogThread extends BaseReadThread {
                 case "og:novel:read_url":
                     url = meta.attr("content");
                     MyLogcat.myLog("read_url:" + url);
+                    sourceDataInfo.setSourceUrl(url);
                     break;
                 case "og:novel:author":
                     author = meta.attr("content");
@@ -77,7 +78,6 @@ public class DDABookCatalogThread extends BaseReadThread {
         if ((null != bookName && bookName.equals(this.bookName)) || (null != author && author.equals(this.author))) {
             Elements dds = doc.select("dd");
             Elements as = dds.select("a");
-            sourceDataInfo.setSourceUrl(url);
             int i = 1;
             for (Element a : as) {
                 String chapterHref = url + a.attr("href");
@@ -88,7 +88,7 @@ public class DDABookCatalogThread extends BaseReadThread {
             }
             if (getIsCancelled())
                 return;
-            sendObj(1);
+            sendObj(sourceDataInfo, 1);
 //            MyLogcat.myLog("size:"+info.getCatalogInfos().size());
         }
 
@@ -96,7 +96,7 @@ public class DDABookCatalogThread extends BaseReadThread {
 
 
     @Override
-    public boolean xxbuquge() {
+    public void xxbuquge() {
         if (sourceDataInfo.getSourceName().contains("xxbiquge")) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -128,7 +128,6 @@ public class DDABookCatalogThread extends BaseReadThread {
                             sb.append(line);
                         }
                         resoloveUrl(Jsoup.parse(sb.toString(), baseUrl));
-                        return false;
                     }
                 }
             } catch (IOException e) {
@@ -142,6 +141,5 @@ public class DDABookCatalogThread extends BaseReadThread {
                 }
             }
         }
-        return true;
     }
 }
