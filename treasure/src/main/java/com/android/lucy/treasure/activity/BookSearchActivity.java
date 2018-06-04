@@ -39,7 +39,7 @@ import java.util.LinkedList;
  * 搜索页面
  */
 
-public class SearchActivity extends Activity implements BaseReadAsyncTask.OnUpdateUIListener, AdapterView.OnItemClickListener {
+public class BookSearchActivity extends Activity implements BaseReadAsyncTask.OnUpdateUIListener, AdapterView.OnItemClickListener {
 
     private EditText et_search_content;
     private ListView lv_search;
@@ -52,21 +52,21 @@ public class SearchActivity extends Activity implements BaseReadAsyncTask.OnUpda
     private SearchHistoryAdapter searchHistoryAdapter;
 
 
-    static class SearchHandler extends MyHandler<SearchActivity> {
-        private SearchActivity searchActivity;
+    static class SearchHandler extends MyHandler<BookSearchActivity> {
+        private BookSearchActivity bookSearchActivity;
 
-        SearchHandler(SearchActivity searchActivity) {
-            super(searchActivity);
-            this.searchActivity = searchActivity;
+        SearchHandler(BookSearchActivity bookSearchActivity) {
+            super(bookSearchActivity);
+            this.bookSearchActivity = bookSearchActivity;
         }
 
         @Override
         public void myHandleMessage(Message msg) {
 
-            searchActivity.historys = (LinkedList<String>) msg.obj;
-            searchActivity.searchHistoryAdapter = new SearchHistoryAdapter(searchActivity, searchActivity.historys,
+            bookSearchActivity.historys = (LinkedList<String>) msg.obj;
+            bookSearchActivity.searchHistoryAdapter = new SearchHistoryAdapter(bookSearchActivity, bookSearchActivity.historys,
                     R.layout.search_history_list_item);
-            searchActivity.lv_search_history.setAdapter(searchActivity.searchHistoryAdapter);
+            bookSearchActivity.lv_search_history.setAdapter(bookSearchActivity.searchHistoryAdapter);
         }
     }
 
@@ -86,6 +86,7 @@ public class SearchActivity extends Activity implements BaseReadAsyncTask.OnUpda
     private void initView() {
         fl_search_list = findViewById(R.id.fl_search_list);
 
+        //增加自定义滚动
         FrameLayout.LayoutParams prigress_layoutParams = new FrameLayout.LayoutParams(80, 80);
         progressBar = new ProgressBar(this);
         progressBar.setIndeterminateDrawable(getResources().getDrawable(R.drawable.progressbar_custom));
@@ -107,6 +108,7 @@ public class SearchActivity extends Activity implements BaseReadAsyncTask.OnUpda
     * 初始化数据
     * */
     private void initData() {
+        //读取历史搜索数据
         new Thread(new ReadSearchHistoryThread(new SearchHandler(this))).start();
     }
 
@@ -129,6 +131,11 @@ public class SearchActivity extends Activity implements BaseReadAsyncTask.OnUpda
         lv_search_history.setOnItemClickListener(this);
     }
 
+
+    /**
+     * Activity再次可见，顺序为onNewIntent->onRestart->onStart->onResume
+     * @param intent  意图
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);

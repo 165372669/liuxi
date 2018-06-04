@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
-import com.android.lucy.treasure.bean.BookDataInfo;
+import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ChapterIDAndName;
 import com.android.lucy.treasure.pager.ContentPager;
@@ -48,14 +48,13 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private ServiceConnection connection;
     private ChapterContentService service;
     private ContentPager contentPagerView;
-    private BookDataInfo bookDataInfo;
+    private BookInfo bookInfo;
     private ChapterViewPager viewPager;
     private BookContentPagerAdapter adapter;
     private ArrayList<ContentPager> contentPagers;
     private int chapterTotal;
     private TextView tv_chapter_catalog;
     private CircleProgress cv_chapter_progress;
-    private int sourceid;
     private ArrayList<CatalogInfo> catalogInfos;
 
     public class ChapterContentHandler extends Handler {
@@ -123,11 +122,10 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
     private void initDatas() {
         contentPagerView = new ContentPager(this);
         contentPagers = new ArrayList<>();
-        bookDataInfo = (BookDataInfo) getIntent().getSerializableExtra("baiduInfo");
-        sourceid = bookDataInfo.getSourceid();
-        int readChapterid = bookDataInfo.getReadChapterid();
-        int readChapterPager = bookDataInfo.getReadChapterPager();
-        catalogInfos = bookDataInfo.getSourceDataInfos().get(sourceid).getCatalogInfos();
+        bookInfo = (BookInfo) getIntent().getSerializableExtra("baiduInfo");
+        int readChapterid = bookInfo.getReadChapterid();
+        int readChapterPager = bookInfo.getReadChapterPager();
+        catalogInfos = bookInfo.getSourceInfos().get(0).getCatalogInfos();
         chapterTotal = catalogInfos.size();
         ThreadPool.getInstance().cancelTask("chapter-temp");
         //启动服务
@@ -142,7 +140,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                 service = mBinder.getService();
                 MyLogcat.myLog("Activity-onServiceConnected");
                 ChapterContentHandler chapterContentHandler = new ChapterContentHandler();
-                service.setData(bookDataInfo, contentPagerView, chapterContentHandler);
+                service.setData(bookInfo, contentPagerView, chapterContentHandler);
                 service.setView(cv_chapter_progress);
                 service.setOnChapterContentListener(BookContentActivity.this);
                 cv_chapter_progress.setVisibility(View.VISIBLE);
@@ -326,16 +324,16 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
 /*        Intent intent = new Intent(this, ChapterContentService.class);
         stopService(intent);*/
         ThreadPool.getInstance().cancelTask("chapter-temp");
-        List<BookDataInfo> booklist = DataSupport.select("bookName")
-                .where("bookName=?", bookDataInfo.getBookName())
+        List<BookInfo> booklist = DataSupport.select("bookName")
+                .where("bookName=?", bookInfo.getBookName())
                 .limit(1)
-                .find(BookDataInfo.class);
+                .find(BookInfo.class);
         if (booklist.size() > 0) {
             ContentValues values = new ContentValues();
             values.put("readChapterid", adapter.getCurrentChapterId());
             values.put("readChapterPager", adapter.getPagerPosition());
-            int update = DataSupport.update(BookDataInfo.class, values, bookDataInfo.getId());
-            MyLogcat.myLog("id:" + bookDataInfo.getId() + ",readChapterid:" + adapter.getCurrentChapterId() + ",update:" + update);
+            int update = DataSupport.update(BookInfo.class, values, bookInfo.getId());
+            MyLogcat.myLog("id:" + bookInfo.getId() + ",readChapterid:" + adapter.getCurrentChapterId() + ",update:" + update);
         } else {
             MyLogcat.myLog("无书籍数据");
         }

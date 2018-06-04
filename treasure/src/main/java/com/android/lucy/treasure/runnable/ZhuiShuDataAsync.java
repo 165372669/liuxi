@@ -1,9 +1,7 @@
 package com.android.lucy.treasure.runnable;
 
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
-import com.android.lucy.treasure.bean.SearchDataInfo;
-import com.android.lucy.treasure.manager.AsyncManager;
-import com.android.lucy.treasure.utils.MyLogcat;
+import com.android.lucy.treasure.bean.SearchInfo;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -12,17 +10,17 @@ import org.jsoup.select.Elements;
  * 获取追书页面小说的总字数和最后更新时间，最新章节
  */
 
-public class ZhuiShuDataAsync extends BaseReadAsyncTask<SearchDataInfo> {
+public class ZhuiShuDataAsync extends BaseReadAsyncTask<SearchInfo> {
 
 
-    private SearchDataInfo searchDataInfo;
+    private SearchInfo searchInfo;
 
-    public ZhuiShuDataAsync(SearchDataInfo searchDataInfo) {
-        this.searchDataInfo = searchDataInfo;
+    public ZhuiShuDataAsync(SearchInfo searchInfo) {
+        this.searchInfo = searchInfo;
     }
 
     @Override
-    public SearchDataInfo resoloveUrl(Document doc) {
+    public SearchInfo resoloveUrl(Document doc) {
         Elements divs = doc.select("div[class^=book]");
         if (isCancelled())
             return null;
@@ -40,19 +38,19 @@ public class ZhuiShuDataAsync extends BaseReadAsyncTask<SearchDataInfo> {
         if (as.size() > 0) {
             newChapter = as.get(2).text();
         }
-        searchDataInfo.setBookSize(bookSize);
-        searchDataInfo.setBookUpdateTime(bookUpdateTime);
-        searchDataInfo.setNewChapter(newChapter);
-        return searchDataInfo;
+        searchInfo.setBookSize(bookSize);
+        searchInfo.setBookUpdateTime(bookUpdateTime);
+        searchInfo.setNewChapter(newChapter);
+        return searchInfo;
     }
 
     @Override
-    protected void onPostExecute(SearchDataInfo searchDataInfo) {
+    protected void onPostExecute(SearchInfo searchInfo) {
         if (isCancelled())
             return;
         if (null != onUpdateDataLisetener)
-            onUpdateDataLisetener.setData(searchDataInfo);
-        super.onPostExecute(searchDataInfo);
+            onUpdateDataLisetener.setData(searchInfo);
+        super.onPostExecute(searchInfo);
     }
 
 

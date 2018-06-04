@@ -7,9 +7,8 @@ import android.widget.TextView;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.base.BaseAdapter;
 import com.android.lucy.treasure.base.BaseViewHolder;
-import com.android.lucy.treasure.bean.BookDataInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
-import com.android.lucy.treasure.bean.SourceDataInfo;
+import com.android.lucy.treasure.bean.SourceInfo;
 
 import java.util.List;
 
@@ -17,23 +16,23 @@ import java.util.List;
  * 小说来源列表适配器
  */
 
-public class BookSourceCatalogAdapter extends BaseAdapter<SourceDataInfo> {
+public class BookSourceCatalogAdapter extends BaseAdapter<SourceInfo> {
 
 
-    public BookSourceCatalogAdapter(Context context, List<SourceDataInfo> datas, int laoyoutId) {
+    public BookSourceCatalogAdapter(Context context, List<SourceInfo> datas, int laoyoutId) {
         super(context, datas, laoyoutId);
     }
 
     @Override
-    public void convert(BaseViewHolder myViewHolder, SourceDataInfo sourceDataInfo, int position) {
+    public void convert(BaseViewHolder myViewHolder, SourceInfo sourceInfo, int position) {
         TextView tv_chapterName_new = myViewHolder.getView(R.id.tv_chapterName_new);
         TextView tv_sourceName_new = myViewHolder.getView(R.id.tv_sourceName_new);
         TextView tv_time_new = myViewHolder.getView(R.id.tv_time_new);
-        int size = sourceDataInfo.getCatalogInfos().size();
+        int size = sourceInfo.getCatalogInfos().size();
         if (size > 0) {
-            CatalogInfo catalogInfo = sourceDataInfo.getCatalogInfos().get(size - 1);
+            CatalogInfo catalogInfo = sourceInfo.getCatalogInfos().get(size - 1);
             tv_chapterName_new.setText(catalogInfo.getChapterName());
-            tv_sourceName_new.setText(sourceDataInfo.getSourceName());
+            tv_sourceName_new.setText(sourceInfo.getSourceName());
             tv_time_new.setText("update-time");
         }
         //setAnimation(convertView,"translationX",500,0,500);
@@ -49,7 +48,7 @@ public class BookSourceCatalogAdapter extends BaseAdapter<SourceDataInfo> {
     }
 
     @Override
-    public void getDatas(List<SourceDataInfo> mDatas) {
+    public void getDatas(List<SourceInfo> mDatas) {
 
     }
 

@@ -12,7 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.android.lucy.treasure.activity.BookContentActivity;
-import com.android.lucy.treasure.bean.BookDataInfo;
+import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ConfigInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 public class ChapterContentService extends Service {
 
     private MyBinder mBinder;
-    private BookDataInfo bookDataInfo;
+    private BookInfo bookInfo;
     private OnChapterContentListener onChapterContentListener;
     private int chapterNameHeight;    //章节名View高
     private int bookNameHeight;       //书名View高
@@ -96,8 +96,7 @@ public class ChapterContentService extends Service {
      */
     public void startThreadProgress(int chapterID) {
         this.loadChapterId = chapterID;
-        int sourceid = bookDataInfo.getSourceid();
-        CatalogInfo catalogInfo = bookDataInfo.getSourceDataInfos().get(sourceid).getCatalogInfos().get(chapterID);
+        CatalogInfo catalogInfo = bookInfo.getSourceInfos().get(0).getCatalogInfos().get(chapterID);
         ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
         if (null == pagerContentInfos) {
             pagerContentInfos = new ArrayList<>();
@@ -135,12 +134,12 @@ public class ChapterContentService extends Service {
     /**
      * 获取数据
      *
-     * @param bookDataInfo          小说对象
+     * @param bookInfo          小说对象
      * @param contentPagerView      章节内容View
      * @param chapterContentHandler
      */
-    public void setData(BookDataInfo bookDataInfo, ContentPager contentPagerView, BookContentActivity.ChapterContentHandler chapterContentHandler) {
-        this.bookDataInfo = bookDataInfo;
+    public void setData(BookInfo bookInfo, ContentPager contentPagerView, BookContentActivity.ChapterContentHandler chapterContentHandler) {
+        this.bookInfo = bookInfo;
         this.chapterContentHandler = chapterContentHandler;
         textInfoCount();
         myMeasured(contentPagerView);

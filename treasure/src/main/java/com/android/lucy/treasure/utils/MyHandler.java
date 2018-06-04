@@ -12,6 +12,13 @@ import java.lang.ref.WeakReference;
 
 public abstract class MyHandler<T extends Activity> extends Handler{
 
+    public final static int KEY_SOURCE_NO = 0;
+
+    public final static int KEY_SOURCE_OK = 1;
+
+    public final static int KEY_SOURCE_AGAIN_OK = 2;
+
+
     public abstract void myHandleMessage(Message msg);
 
     protected WeakReference<T> mActivity;

@@ -15,7 +15,7 @@ import com.android.lucy.treasure.activity.BookIntroducedActivity;
 import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.base.BaseAdapter;
 import com.android.lucy.treasure.base.BaseViewHolder;
-import com.android.lucy.treasure.bean.SearchDataInfo;
+import com.android.lucy.treasure.bean.SearchInfo;
 import com.android.lucy.treasure.manager.AsyncManager;
 import com.android.lucy.treasure.manager.ImageDownloadManager;
 import com.android.lucy.treasure.utils.BitmapUtils;
@@ -27,18 +27,18 @@ import java.util.List;
  * 搜索List列表适配器
  */
 
-public class SearchDataAdapter extends BaseAdapter<SearchDataInfo> implements AdapterView.OnItemClickListener {
+public class SearchDataAdapter extends BaseAdapter<SearchInfo> implements AdapterView.OnItemClickListener {
 
 
     private ImageDownloadManager imageManager;
     private ImageLruCache lruCache;
     private int start;
     private int end;
-    private List<SearchDataInfo> mDatas;
+    private List<SearchInfo> mDatas;
     private boolean flag = true;
 
 
-    public SearchDataAdapter(Context context, List<SearchDataInfo> mDatas, int laoyoutId, ImageDownloadManager imageManager) {
+    public SearchDataAdapter(Context context, List<SearchInfo> mDatas, int laoyoutId, ImageDownloadManager imageManager) {
         super(context, mDatas, laoyoutId);
         this.imageManager = imageManager;
         this.mDatas = mDatas;
@@ -48,7 +48,7 @@ public class SearchDataAdapter extends BaseAdapter<SearchDataInfo> implements Ad
 
 
     @Override
-    public void convert(BaseViewHolder myViewHolder, SearchDataInfo searchDataInfo, int position) {
+    public void convert(BaseViewHolder myViewHolder, SearchInfo searchInfo, int position) {
         if (isAnimation)
             if (isScrollDown)
                 setAnimation(convertView);
@@ -58,22 +58,22 @@ public class SearchDataAdapter extends BaseAdapter<SearchDataInfo> implements Ad
         TextView tv_desc = myViewHolder.getView(R.id.tv_desc);
         ImageView iv_book = myViewHolder.getView(R.id.iv_book);
 
-        String imgUrl = searchDataInfo.getImgUrl();
+        String imgUrl = searchInfo.getImgUrl();
         iv_book.setTag(imgUrl);
         BitmapDrawable drawable = lruCache.getBitmapFromCache(imgUrl);
         if (null != drawable)
             iv_book.setImageDrawable(BitmapUtils.bitmapToDrawable(drawable.getBitmap()));
         else
             iv_book.setImageDrawable(ContextCompat.getDrawable(context, R.mipmap.ic_launcher));
-        tv_bookName.setText(searchDataInfo.getBookName());
-        tv_author.setText("作者：" + searchDataInfo.getAuthor());
-        tv_type.setText("类型：" + searchDataInfo.getType());
-        tv_desc.setText("简介:" + searchDataInfo.getDesc());
+        tv_bookName.setText(searchInfo.getBookName());
+        tv_author.setText("作者：" + searchInfo.getAuthor());
+        tv_type.setText("类型：" + searchInfo.getType());
+        tv_desc.setText("简介:" + searchInfo.getDesc());
     }
 
 
     @Override
-    public void getDatas(List<SearchDataInfo> mDatas) {
+    public void getDatas(List<SearchInfo> mDatas) {
     }
 
 
@@ -109,11 +109,11 @@ public class SearchDataAdapter extends BaseAdapter<SearchDataInfo> implements Ad
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        SearchDataInfo searchDataInfo = mDatas.get(position);
+        SearchInfo searchInfo = mDatas.get(position);
         Context context = MyApplication.getContext();
         Intent intent = new Intent(context, BookIntroducedActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("searchDataInfo", searchDataInfo);
+        intent.putExtra("searchInfo", searchInfo);
         context.startActivity(intent);
     }
 }

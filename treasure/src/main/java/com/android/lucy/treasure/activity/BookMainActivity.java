@@ -13,8 +13,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
 
-import com.android.lucy.treasure.manager.AsyncManager;
-import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.view.ChangeColorIconWithText;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.fragment.TabFragment;
@@ -26,7 +24,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
+public class BookMainActivity extends FragmentActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
     private ViewPager mViewPager;
     private FragmentPagerAdapter mAdapter;
@@ -124,7 +122,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.id_action_search:
-                Intent intent=new Intent(MainActivity.this,SearchActivity.class);
+                Intent intent=new Intent(BookMainActivity.this,BookSearchActivity.class);
                 startActivity(intent);
                 break;
         }

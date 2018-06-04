@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * 搜索小说数据对象
  */
 
-public class SearchDataInfo implements Parcelable {
+public class SearchInfo implements Parcelable {
 
 
     private String imgUrl;//图片链接
@@ -20,7 +20,7 @@ public class SearchDataInfo implements Parcelable {
     private String bookUpdateTime;//最后更新时间
     private String newChapter;//最新章节
 
-    public SearchDataInfo(String imgUrl, String bookName, String author, String type, String desc, String bookUrl_ZhuiShu) {
+    public SearchInfo(String imgUrl, String bookName, String author, String type, String desc, String bookUrl_ZhuiShu) {
         this.imgUrl = imgUrl;
         this.bookName = bookName;
         this.author = author;
@@ -29,7 +29,7 @@ public class SearchDataInfo implements Parcelable {
         this.bookUrl_ZhuiShu = bookUrl_ZhuiShu;
     }
 
-    protected SearchDataInfo(Parcel in) {
+    protected SearchInfo(Parcel in) {
         imgUrl = in.readString();
         bookName = in.readString();
         author = in.readString();
@@ -119,15 +119,15 @@ public class SearchDataInfo implements Parcelable {
         return imgUrl + bookName + author + type + desc + bookUrl_ZhuiShu;
     }
 
-    public static final Creator<SearchDataInfo> CREATOR = new Creator<SearchDataInfo>() {
+    public static final Creator<SearchInfo> CREATOR = new Creator<SearchInfo>() {
         @Override
-        public SearchDataInfo createFromParcel(Parcel in) {
-            return new SearchDataInfo(in);
+        public SearchInfo createFromParcel(Parcel in) {
+            return new SearchInfo(in);
         }
 
         @Override
-        public SearchDataInfo[] newArray(int size) {
-            return new SearchDataInfo[size];
+        public SearchInfo[] newArray(int size) {
+            return new SearchInfo[size];
         }
     };
 

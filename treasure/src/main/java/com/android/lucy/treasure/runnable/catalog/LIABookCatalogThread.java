@@ -1,8 +1,9 @@
 package com.android.lucy.treasure.runnable.catalog;
 
 import com.android.lucy.treasure.base.BaseReadThread;
+import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
-import com.android.lucy.treasure.bean.SourceDataInfo;
+import com.android.lucy.treasure.bean.SourceInfo;
 import com.android.lucy.treasure.utils.MyHandler;
 
 import org.jsoup.Jsoup;
@@ -19,13 +20,14 @@ import java.io.IOException;
 
 public class LIABookCatalogThread extends BaseReadThread {
 
-    private SourceDataInfo sourceDataInfo;
+    private SourceInfo sourceInfo;
     private String bookName;
     private String author;
 
-    public LIABookCatalogThread(String url, SourceDataInfo sourceDataInfo, String bookName, String author, MyHandler myHandler) {
+    public LIABookCatalogThread(String url, SourceInfo sourceInfo, String bookName, String author,
+                                MyHandler myHandler) {
         super(url, myHandler);
-        this.sourceDataInfo = sourceDataInfo;
+        this.sourceInfo = sourceInfo;
         this.bookName = bookName;
         this.author = author;
     }
@@ -77,8 +79,8 @@ public class LIABookCatalogThread extends BaseReadThread {
             for (Element rel : rels) {
                 String chapterUrl = rel.attr("href");
                 String chapterName = rel.text();
-                CatalogInfo catalogInfo = new CatalogInfo(chapterUrl, chapterName, i);
-                sourceDataInfo.getCatalogInfos().add(catalogInfo);
+                CatalogInfo catalogInfo = new CatalogInfo(sourceInfo, i, chapterUrl, chapterName, 0);
+                sourceInfo.getCatalogInfos().add(catalogInfo);
                 i++;
             }
             if (getIsCancelled())

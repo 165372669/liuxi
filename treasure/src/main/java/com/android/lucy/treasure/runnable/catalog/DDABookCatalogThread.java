@@ -1,8 +1,10 @@
 package com.android.lucy.treasure.runnable.catalog;
 
 import com.android.lucy.treasure.base.BaseReadThread;
+import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
-import com.android.lucy.treasure.bean.SourceDataInfo;
+import com.android.lucy.treasure.bean.SourceInfo;
+import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 
@@ -16,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,20 +31,21 @@ import java.util.Set;
 
 public class DDABookCatalogThread extends BaseReadThread {
 
-    private SourceDataInfo sourceDataInfo;
+    private SourceInfo sourceInfo;
     private String bookName;
     private String author;
 
-    public DDABookCatalogThread(String url, SourceDataInfo sourceDataInfo, String bookName, String author, MyHandler myHandler) {
+    public DDABookCatalogThread(String url, SourceInfo sourceInfo, String bookName, String author,
+                                MyHandler myHandler) {
         super(url, myHandler);
-        this.sourceDataInfo = sourceDataInfo;
+        this.sourceInfo = sourceInfo;
         this.bookName = bookName;
         this.author = author;
     }
 
     @Override
     public void resoloveUrl(Document doc) {
-        MyLogcat.myLog("sourceName:" + sourceDataInfo.getSourceName());
+        MyLogcat.myLog("sourceName:" + sourceInfo.getSourceName());
         Elements metas = doc.select("meta[property]");
         //og:title     书名
         //og:novel:read_url  书页Url
@@ -61,7 +63,7 @@ public class DDABookCatalogThread extends BaseReadThread {
                 case "og:novel:read_url":
                     url = meta.attr("content");
                     MyLogcat.myLog("read_url:" + url);
-                    sourceDataInfo.setSourceUrl(url);
+                    sourceInfo.setSourceUrl(url);
                     break;
                 case "og:novel:author":
                     author = meta.attr("content");
@@ -82,13 +84,17 @@ public class DDABookCatalogThread extends BaseReadThread {
             for (Element a : as) {
                 String chapterHref = url + a.attr("href");
                 String chapterName = a.text();
-                CatalogInfo catalogInfo = new CatalogInfo(chapterHref, chapterName, i);
-                sourceDataInfo.getCatalogInfos().add(catalogInfo);
+                CatalogInfo catalogInfo = new CatalogInfo(sourceInfo, i, chapterHref, chapterName, 0);
+                sourceInfo.getCatalogInfos().add(catalogInfo);
                 i++;
+                if (getIsCancelled())
+                    return;
             }
-            if (getIsCancelled())
-                return;
-            sendObj(sourceDataInfo, 1);
+            if (null == sourceInfo.getBookInfo()) {
+                sendObj(sourceInfo, MyHandler.KEY_SOURCE_OK);
+            } else {
+                sendObj(sourceInfo, MyHandler.KEY_SOURCE_AGAIN_OK);
+            }
 //            MyLogcat.myLog("size:"+info.getCatalogInfos().size());
         }
 
@@ -97,7 +103,7 @@ public class DDABookCatalogThread extends BaseReadThread {
 
     @Override
     public void xxbuquge() {
-        if (sourceDataInfo.getSourceName().contains("xxbiquge")) {
+        if (sourceInfo.getSourceName().contains("xxbiquge")) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             try {

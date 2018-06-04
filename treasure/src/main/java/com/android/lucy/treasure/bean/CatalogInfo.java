@@ -2,6 +2,8 @@ package com.android.lucy.treasure.bean;
 
 import android.support.annotation.NonNull;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,8 +11,8 @@ import java.util.ArrayList;
  * 章节详细信息
  */
 
-public class CatalogInfo implements Comparable, Serializable {
-
+public class CatalogInfo extends DataSupport implements Comparable, Serializable {
+    private SourceInfo sourceInfo;
     private int chapterId;  //章节id
     private String chapterUrl; //章节网址
     private String chapterName; //章节名
@@ -19,18 +21,29 @@ public class CatalogInfo implements Comparable, Serializable {
 
     private static final long serialVersionUID = 3;
 
-
-    public CatalogInfo(String chapterUrl, String chapterName, int chapterId) {
-        this(chapterUrl, chapterName, chapterId, null);
-    }
-
-    public CatalogInfo(String chapterUrl, String chapterName, int chapterId, ArrayList<PagerContentInfo> pagerContentInfos) {
+    public CatalogInfo( SourceInfo sourceInfo, int chapterId, String chapterUrl, String chapterName, int chapterPagerToatal) {
+        this.sourceInfo = sourceInfo;
         this.chapterId = chapterId;
         this.chapterUrl = chapterUrl;
         this.chapterName = chapterName;
-        this.pagerContentInfos = pagerContentInfos;
+        this.chapterPagerToatal = chapterPagerToatal;
     }
 
+    public SourceInfo getSourceInfo() {
+        return sourceInfo;
+    }
+
+    public void setSourceInfo(SourceInfo sourceInfo) {
+        this.sourceInfo = sourceInfo;
+    }
+
+    public ArrayList<PagerContentInfo> getPagerContentInfos() {
+        return pagerContentInfos;
+    }
+
+    public void setPagerContentInfos(ArrayList<PagerContentInfo> pagerContentInfos) {
+        this.pagerContentInfos = pagerContentInfos;
+    }
 
     public int getChapterId() {
         return chapterId;

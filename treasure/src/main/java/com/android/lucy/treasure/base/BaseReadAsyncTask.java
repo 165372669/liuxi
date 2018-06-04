@@ -2,7 +2,7 @@ package com.android.lucy.treasure.base;
 
 import android.os.AsyncTask;
 
-import com.android.lucy.treasure.bean.SearchDataInfo;
+import com.android.lucy.treasure.bean.SearchInfo;
 import com.android.lucy.treasure.manager.AsyncManager;
 
 import org.jsoup.Jsoup;
@@ -20,7 +20,7 @@ public abstract class BaseReadAsyncTask<T> extends AsyncTask<String, Object, T> 
     protected OnUpdateUIListener onUpdateUIListener;
 
     public interface OnUpdateDataLisetener {
-        void setData(SearchDataInfo searchDataInfo);
+        void setData(SearchInfo searchInfo);
     }
 
     public interface OnUpdateUIListener {

@@ -4,13 +4,15 @@ import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 小说来源对象
  */
 
-public class SourceDataInfo extends DataSupport implements Serializable {
-    private BookDataInfo bookDataInfo;
+public class SourceInfo extends DataSupport implements Serializable {
+    private int id;
+    private BookInfo bookInfo;
     private String sourceUrl; //来源网址
     private String sourceName; //来源名称
     private ArrayList<CatalogInfo> catalogInfos;//章节集合
@@ -18,18 +20,26 @@ public class SourceDataInfo extends DataSupport implements Serializable {
     private static final long serialVersionUID = 2;
 
 
-    public SourceDataInfo(String sourceName, String sourceUrl) {
+    public SourceInfo(String sourceName, String sourceUrl) {
         this.sourceName = sourceName;
         this.sourceUrl = sourceUrl;
         catalogInfos = new ArrayList<>();
     }
 
-    public BookDataInfo getBookDataInfo() {
-        return bookDataInfo;
+    public int getId() {
+        return id;
     }
 
-    public void setBookDataInfo(BookDataInfo bookDataInfo) {
-        this.bookDataInfo = bookDataInfo;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public BookInfo getBookInfo() {
+        return bookInfo;
+    }
+
+    public void setBookInfo(BookInfo bookInfo) {
+        this.bookInfo = bookInfo;
     }
 
     public String getSourceUrl() {
@@ -52,20 +62,25 @@ public class SourceDataInfo extends DataSupport implements Serializable {
         return catalogInfos;
     }
 
+    public List<CatalogInfo> getCatalogInfos(int id) {
+        return DataSupport.where("sourceinfo_id = ?", String.valueOf(id)).find(CatalogInfo.class);
+    }
+
     public void setCatalogInfos(ArrayList<CatalogInfo> catalogInfos) {
         this.catalogInfos = catalogInfos;
     }
 
+
     @Override
     public boolean equals(Object obj) {
-        SourceDataInfo sourceDataInfo = (SourceDataInfo) obj;
-        return sourceName.equals(sourceDataInfo.getSourceName());
+        SourceInfo sourceInfo = (SourceInfo) obj;
+        return sourceName.equals(sourceInfo.getSourceName());
 
     }
 
     @Override
     public String toString() {
-        return "SourceDataInfo{" +
+        return "SourceInfo{" +
                 "sourceUrl='" + sourceUrl + '\'' +
                 ", sourceName='" + sourceName + '\'' +
                 ", catalogInfos=" + catalogInfos +

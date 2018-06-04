@@ -4,46 +4,47 @@ import org.litepal.crud.DataSupport;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 小说对象
  */
 
-public class BookDataInfo extends DataSupport implements Serializable {
+public class BookInfo extends DataSupport implements Serializable {
     private int id;
     private String bookName; //小说名称
     private String author;   //作者名称
-    private int sourceid;    //来源选择
+    private String sourceName;    //来源选择
     private int newChapterId; //最新章节id
     private int readChapterid;//已读章节id
     private int readChapterPager;//已读章节页面
     private int closeTime;   //关闭时间
     private int chapterTotal; //章节总数
     private int unreadSeveral;//未读章节数
-    private ArrayList<SourceDataInfo> sourceDataInfos;//来源集合
+    private ArrayList<SourceInfo> sourceInfos;//来源集合
 
     private static final long serialVersionUID = 1;
 
-    public BookDataInfo() {
+    public BookInfo() {
     }
 
-    public BookDataInfo(String bookName, String author) {
-        this(bookName, author, 0, 0, 0, 0, 0,
+    public BookInfo(String bookName, String author) {
+        this(bookName, author, null, 0, 0, 0, 0,
                 0, 0);
     }
 
-    public BookDataInfo(String bookName, String author, int sourceid, int newChapterId, int readChapterid,
-                        int readChapterPager, int closeTime, int chapterTotal, int unreadSeveral) {
+    public BookInfo(String bookName, String author, String sourceName, int newChapterId, int readChapterid,
+                    int readChapterPager, int closeTime, int chapterTotal, int unreadSeveral) {
         this.bookName = bookName;
         this.author = author;
-        this.sourceid = sourceid;
+        this.sourceName = sourceName;
         this.newChapterId = newChapterId;
         this.readChapterid = readChapterid;
         this.readChapterPager = readChapterPager;
         this.closeTime = closeTime;
         this.chapterTotal = chapterTotal;
         this.unreadSeveral = unreadSeveral;
-        sourceDataInfos = new ArrayList<>();
+        sourceInfos = new ArrayList<>();
     }
 
     public int getId() {
@@ -94,12 +95,12 @@ public class BookDataInfo extends DataSupport implements Serializable {
         this.readChapterPager = readChapterPager;
     }
 
-    public int getSourceid() {
-        return sourceid;
+    public String getSourceName() {
+        return sourceName;
     }
 
-    public void setSourceid(int sourceid) {
-        this.sourceid = sourceid;
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 
     public int getCloseTime() {
@@ -126,27 +127,31 @@ public class BookDataInfo extends DataSupport implements Serializable {
         this.unreadSeveral = unreadSeveral;
     }
 
-    public ArrayList<SourceDataInfo> getSourceDataInfos() {
-        return sourceDataInfos;
+    public ArrayList<SourceInfo> getSourceInfos() {
+        return sourceInfos;
     }
 
-    public void setSourceDataInfos(ArrayList<SourceDataInfo> sourceDataInfos) {
-        this.sourceDataInfos = sourceDataInfos;
+    public List<SourceInfo> getSourceInfos(int id) {
+        return DataSupport.where("bookinfo_id = ?", String.valueOf(id)).find(SourceInfo.class);
+    }
+
+    public void setSourceInfos(ArrayList<SourceInfo> sourceInfos) {
+        this.sourceInfos = sourceInfos;
     }
 
     @Override
     public String toString() {
-        return "BookDataInfo{" +
+        return "BookInfo{" +
                 "id=" + id +
                 ", bookName='" + bookName + '\'' +
                 ", author='" + author + '\'' +
-                ", sourceid=" + sourceid +
+                ", sourceName=" + sourceName +
                 ", newChapterId=" + newChapterId +
                 ", readChapterid=" + readChapterid +
                 ", closeTime=" + closeTime +
                 ", chapterTotal=" + chapterTotal +
                 ", unreadSeveral=" + unreadSeveral +
-                ", sourceDataInfos=" + sourceDataInfos +
+                ", sourceInfos=" + sourceInfos +
                 '}';
     }
 }

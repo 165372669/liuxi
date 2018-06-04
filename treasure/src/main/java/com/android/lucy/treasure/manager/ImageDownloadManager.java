@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 import android.widget.ListView;
 
-import com.android.lucy.treasure.bean.SearchDataInfo;
+import com.android.lucy.treasure.bean.SearchInfo;
 import com.android.lucy.treasure.runnable.BookImageAsync;
 import com.android.lucy.treasure.utils.BitmapUtils;
 import com.android.lucy.treasure.utils.ImageLruCache;
@@ -21,11 +21,11 @@ public class ImageDownloadManager {
 
     private ImageLruCache lruCache;
     private ListView listView;
-    private List<SearchDataInfo> searchDataInfos;
+    private List<SearchInfo> searchInfos;
 
-    public ImageDownloadManager(ListView listView, List<SearchDataInfo> searchDataInfos) {
+    public ImageDownloadManager(ListView listView, List<SearchInfo> searchInfos) {
         this.listView = listView;
-        this.searchDataInfos = searchDataInfos;
+        this.searchInfos = searchInfos;
         lruCache = ImageLruCache.getInstance();
     }
 
@@ -34,10 +34,10 @@ public class ImageDownloadManager {
      *
      */
     public void loadVideoInfos(int start, int end) {
-        if (searchDataInfos.size() == 0)
+        if (searchInfos.size() == 0)
             return;
         for (int i = start; i < end; i++) {
-            String mImgUrl = searchDataInfos.get(i).getImgUrl();
+            String mImgUrl = searchInfos.get(i).getImgUrl();
             //MyLogcat.myLog(getClass().getName()+"，mImgUrl："+mImgUrl);
             //从缓存中取出图片
             BitmapDrawable bitmapDrawable = lruCache.getBitmapFromCache(mImgUrl);
