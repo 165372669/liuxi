@@ -333,7 +333,7 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
             book.setReadChapterid(adapter.getCurrentChapterId());
             book.setReadChapterPager(adapter.getPagerPosition());
             int update = book.update(book.getId());
-            MyLogcat.myLog("id:" + book.getId() + ",readChapterid:" + adapter.getCurrentChapterId() + ",update:" + update);
+            MyLogcat.myLog("id:" + book.getId() + ",readChapterid:" + book.getReadChapterid() + ",update:" + update);
         } else {
             MyLogcat.myLog("无书籍数据");
         }
