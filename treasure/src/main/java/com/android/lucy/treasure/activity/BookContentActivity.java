@@ -329,11 +329,11 @@ public class BookContentActivity extends Activity implements OnChapterContentLis
                 .limit(1)
                 .find(BookInfo.class);
         if (booklist.size() > 0) {
-            ContentValues values = new ContentValues();
-            values.put("readChapterid", adapter.getCurrentChapterId());
-            values.put("readChapterPager", adapter.getPagerPosition());
-            int update = DataSupport.update(BookInfo.class, values, bookInfo.getId());
-            MyLogcat.myLog("id:" + bookInfo.getId() + ",readChapterid:" + adapter.getCurrentChapterId() + ",update:" + update);
+            BookInfo book = booklist.get(0);
+            book.setReadChapterid(adapter.getCurrentChapterId());
+            book.setReadChapterPager(adapter.getPagerPosition());
+            int update = book.update(book.getId());
+            MyLogcat.myLog("id:" + book.getId() + ",readChapterid:" + adapter.getCurrentChapterId() + ",update:" + update);
         } else {
             MyLogcat.myLog("无书籍数据");
         }
