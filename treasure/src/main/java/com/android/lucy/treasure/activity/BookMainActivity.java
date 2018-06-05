@@ -15,7 +15,7 @@ import android.view.Window;
 
 import com.android.lucy.treasure.view.ChangeColorIconWithText;
 import com.android.lucy.treasure.R;
-import com.android.lucy.treasure.fragment.TabFragment;
+import com.android.lucy.treasure.fragment.BookShelfFragment;
 
 import org.litepal.tablemanager.Connector;
 
@@ -65,11 +65,10 @@ public class BookMainActivity extends FragmentActivity implements View.OnClickLi
                 "Fourth Fragment !"};
         final List<Fragment> mTabs = new ArrayList<>();
         for (String title : mTitles) {
-            TabFragment tabFragment = new TabFragment();
+            BookShelfFragment bookShelfFragment = new BookShelfFragment();
             Bundle bundle = new Bundle();
-            bundle.putString(TabFragment.TITLE, title);
-            tabFragment.setArguments(bundle);
-            mTabs.add(tabFragment);
+            bookShelfFragment.setArguments(bundle);
+            mTabs.add(bookShelfFragment);
         }
 
         mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {

@@ -1,1 +1,1 @@
-include ':treasure'
+include ':treasure', 'LRecyclerview_library'
