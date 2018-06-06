@@ -16,7 +16,7 @@ public class SourceInfo extends DataSupport implements Serializable {
     private String sourceBaiduUrl; //来源百度网址
     private String sourceName; //来源名称
     private String sourceUrl;  //来源小说网址
-    private String webType;        //网站类型
+    private String webType;    //网站类型
     private ArrayList<CatalogInfo> catalogInfos;//章节集合
 
     private static final long serialVersionUID = 2;

@@ -19,9 +19,4 @@ public class NoSlippageViewPager extends ViewPager {
         super(context, attrs);
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        return false;
-    }
-
 }

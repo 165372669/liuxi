@@ -185,6 +185,9 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
             bookInfo = new BookInfo(bookName, author);
             ThreadPool.getInstance().submitTask(new BaiduSourceThread(url, bookInfo, bookHandler));
         }
+        bookInfo.setType(searchInfo.getType()); //类型
+        bookInfo.setImgUrl(searchInfo.getImgUrl());//封面链接
+        bookInfo.setZhuishuUrl(searchInfo.getBookUrl_ZhuiShu());//追书页面链接
         new BookImageAsync(iv_cover).execute(searchInfo.getImgUrl());
     }
 
@@ -294,8 +297,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     }
 
 
-
-
     /**
      * 更新小说详细数据
      * 包括作者，书名，类型，更新时间，字数
@@ -312,7 +313,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         tv_timeUpdate_book.setText(searchInfo.getBookUpdateTime());
         progressBar.setVisibility(View.INVISIBLE);
         ll_book_detail.setVisibility(View.VISIBLE);
-
+        bookInfo.setWordCountTotal(searchInfo.getBookSize());//字数
+        bookInfo.setUpdateTime(searchInfo.getBookUpdateTime());//更新时间
     }
 
     /**

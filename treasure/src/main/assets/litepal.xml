@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
     <dbname value="bookData" />
-    <version value="14" />
+    <version value="15" />
     <list>
         <mapping class="com.android.lucy.treasure.bean.BookInfo" />
         <mapping class="com.android.lucy.treasure.bean.SourceInfo" />

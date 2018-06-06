@@ -14,7 +14,14 @@ public class BookInfo extends DataSupport implements Serializable {
     private int id;
     private String bookName; //小说名称
     private String author;   //作者名称
+    private String type;//小说类型
+    private String updateTime;//最后更新时间
+    private String newChapterName; //最新章节名
+    private String readChapterName;//已读章节名
     private String sourceName;    //来源选择
+    private String zhuishuUrl;//追书网页url
+    private String wordCountTotal; //总字数
+    private String imgUrl;//封面链接
     private int newChapterId; //最新章节id
     private int readChapterid;//已读章节id
     private int readChapterPager;//已读章节页面
@@ -53,6 +60,62 @@ public class BookInfo extends DataSupport implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getNewChapterName() {
+        return newChapterName;
+    }
+
+    public void setNewChapterName(String newChapterName) {
+        this.newChapterName = newChapterName;
+    }
+
+    public String getReadChapterName() {
+        return readChapterName;
+    }
+
+    public void setReadChapterName(String readChapterName) {
+        this.readChapterName = readChapterName;
+    }
+
+    public String getWordCountTotal() {
+        return wordCountTotal;
+    }
+
+    public void setWordCountTotal(String wordCountTotal) {
+        this.wordCountTotal = wordCountTotal;
+    }
+
+    public String getZhuishuUrl() {
+        return zhuishuUrl;
+    }
+
+    public void setZhuishuUrl(String zhuishuUrl) {
+        this.zhuishuUrl = zhuishuUrl;
     }
 
     public String getBookName() {

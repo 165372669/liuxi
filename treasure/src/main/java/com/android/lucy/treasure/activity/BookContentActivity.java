@@ -2,11 +2,9 @@ package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -39,7 +37,6 @@ import com.android.lucy.treasure.view.ChapterViewPager;
 import com.android.lucy.treasure.view.CircleProgress;
 
 import org.litepal.crud.DataSupport;
-import org.litepal.tablemanager.Connector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,15 +142,13 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                 .limit(1)
                 .find(BookInfo.class);
         if (booklist.size() > 0) {
-//            BookInfo book = booklist.get(0);
-//            book.setReadChapterid(adapter.getCurrentChapterId());
-//            book.setReadChapterPager(adapter.getPagerPosition());
-//            book.getSourceInfos().get(sourceIndex).setSourceUrl(sourceUrl);
-//            int update = book.update(book.getId());
-            bookInfo.setReadChapterid(adapter.getCurrentChapterId());
+            int readChapterid = adapter.getCurrentChapterId();
+            int chapterTotal = catalogInfos.size();
+            bookInfo.setReadChapterid(readChapterid);
             bookInfo.setReadChapterPager(adapter.getPagerPosition());
+            bookInfo.setReadChapterName(catalogInfos.get(readChapterid).getChapterName());
+            bookInfo.setNewChapterName(catalogInfos.get(chapterTotal - 1).getChapterName());
             int update = bookInfo.update(bookInfo.getId());
-            updateData();
             MyLogcat.myLog("onPause：id:" + bookInfo.getId() + ",readChapterid:" +
                     bookInfo.getReadChapterid() + ",update:" + update);
             ThreadPool.getInstance().submitTask(new WriteDataFileThread("bookData.db"));
@@ -162,16 +157,6 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
         }
     }
 
-    public void updateData() {
-        SourceInfo sourceInfo = bookInfo.getSourceInfos().get(sourceIndex);
-        String sourceUrl = sourceInfo.getSourceUrl();
-        SQLiteDatabase db = Connector.getDatabase();
-        ContentValues values = new ContentValues();
-        values.put("sourceurl", sourceUrl);
-        db.update("sourceinfo", values, "id=?",
-                new String[]{String.valueOf(sourceInfo.getId())});
-
-    }
 
     @Override
     protected void onStop() {

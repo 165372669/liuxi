@@ -50,6 +50,7 @@ public class SearchInfo implements Parcelable {
         this.newChapter = newChapter;
     }
 
+
     public String getBookSize() {
         return bookSize;
     }
