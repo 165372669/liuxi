@@ -3,12 +3,9 @@ package com.android.lucy.treasure.runnable.source;
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
-import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
-import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
-import com.android.lucy.treasure.utils.ThreadPool;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -44,24 +41,32 @@ public class BaiduSourceThread extends BaseReadThread {
             //MyLogcat.myLog("sourceName:" + sourceName);
             selectSource(sourceInfo);
         }
+        sendObj(MyHandler.BAIDU_SEARCH_OK);
         MyLogcat.myLog("bookName:" + bookInfo.getBookName() + ",sourceDataSize:" + bookInfo.getSourceInfos());
     }
 
     private void selectSource(SourceInfo sourceInfo) {
         String sourceName = sourceInfo.getSourceName();
-        String sourceUrl = sourceInfo.getSourceUrl();
         String[] dda_sources = Key.DDA_SOURCE.split(",");
         String[] lia_sources = Key.LIA_SOURCE.split(",");
         for (int i = 0; i < dda_sources.length; i++) {
             if (sourceName.equals(dda_sources[i])) {
-                ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, sourceInfo,
-                        bookInfo.getBookName(), bookInfo.getAuthor(), bookHandler));
+                if (!bookInfo.getSourceInfos().contains(sourceInfo)) {
+                    //没有包含同一个来源
+                    sourceInfo.setBookInfo(bookInfo);
+                    sourceInfo.setWebType("DDA");
+                    bookInfo.getSourceInfos().add(sourceInfo);
+                }
             }
         }
         for (int i = 0; i < lia_sources.length; i++) {
             if (sourceName.equals(lia_sources[i])) {
-                ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceUrl, sourceInfo,
-                        bookInfo.getBookName(), bookInfo.getAuthor(), bookHandler));
+                if (!bookInfo.getSourceInfos().contains(sourceInfo)) {
+                    //没有包含同一个来源
+                    sourceInfo.setBookInfo(bookInfo);
+                    sourceInfo.setWebType("LIA");
+                    bookInfo.getSourceInfos().add(sourceInfo);
+                }
             }
         }
 

@@ -1,4 +1,4 @@
-package com.android.lucy.treasure.runnable;
+package com.android.lucy.treasure.runnable.async;
 
 import android.widget.ListView;
 
@@ -20,12 +20,12 @@ import java.util.List;
  * 获取搜索数据线程
  */
 
-public class SearchDataAsync extends BaseReadAsyncTask<List<SearchInfo>> {
+public class BookSearchAsync extends BaseReadAsyncTask<List<SearchInfo>> {
 
 
     private ListView lv_search;
 
-    public SearchDataAsync(ListView lv_search) {
+    public BookSearchAsync(ListView lv_search) {
         super();
         this.lv_search = lv_search;
     }
@@ -78,7 +78,6 @@ public class SearchDataAsync extends BaseReadAsyncTask<List<SearchInfo>> {
             searchDataAdapter.setIsAnimation(true, "translationY", 300, 0, 200);
             lv_search.setAdapter(searchDataAdapter);
             lv_search.setOnScrollListener(searchDataAdapter);
-            lv_search.setOnItemClickListener(searchDataAdapter);
         }
         super.onPostExecute(searchInfos);
     }

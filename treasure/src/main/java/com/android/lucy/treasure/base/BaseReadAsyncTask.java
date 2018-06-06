@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.android.lucy.treasure.bean.SearchInfo;
 import com.android.lucy.treasure.manager.AsyncManager;
+import com.android.lucy.treasure.utils.MyHandler;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,8 +41,7 @@ public abstract class BaseReadAsyncTask<T> extends AsyncTask<String, Object, T> 
             doc = Jsoup.connect(url).get();
 
         } catch (IOException e) {
-
-            System.out.println(getClass().getName() + "读取失败");
+            System.out.println(getClass().getName() + "搜索小说失败");
         }
         if (null != doc) {
             t = resoloveUrl(doc);

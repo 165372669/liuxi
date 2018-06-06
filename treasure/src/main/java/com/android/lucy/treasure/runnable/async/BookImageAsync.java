@@ -1,4 +1,4 @@
-package com.android.lucy.treasure.runnable;
+package com.android.lucy.treasure.runnable.async;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;

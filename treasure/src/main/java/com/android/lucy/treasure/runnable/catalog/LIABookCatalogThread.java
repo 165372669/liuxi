@@ -82,10 +82,9 @@ public class LIABookCatalogThread extends BaseReadThread {
                 CatalogInfo catalogInfo = new CatalogInfo(sourceInfo, i, chapterUrl, chapterName, 0);
                 sourceInfo.getCatalogInfos().add(catalogInfo);
                 i++;
+                if (getIsCancelled())
+                    return;
             }
-            if (getIsCancelled())
-                return;
-            sendObj(1);
         }
     }
 }

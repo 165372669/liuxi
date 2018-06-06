@@ -102,6 +102,18 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
         myHandler.sendMessage(msg);
     }
 
+    /**
+     *发送消息
+     * @param arg1  标识1
+     * @param arg2  标识2
+     */
+    protected void sendObj( int arg1, int arg2) {
+        Message msg = Message.obtain();
+        msg.arg1 = arg1;
+        msg.arg2 = arg2;
+        myHandler.sendMessage(msg);
+    }
+
     /*
 * 发送有标识的对象
 * */

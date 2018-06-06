@@ -19,11 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
+import com.android.lucy.treasure.adapter.SearchDataAdapter;
 import com.android.lucy.treasure.adapter.SearchHistoryAdapter;
 import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
+import com.android.lucy.treasure.bean.SearchInfo;
 import com.android.lucy.treasure.manager.AsyncManager;
-import com.android.lucy.treasure.runnable.SearchDataAsync;
+import com.android.lucy.treasure.runnable.async.BookSearchAsync;
 import com.android.lucy.treasure.runnable.file.ReadSearchHistoryThread;
 import com.android.lucy.treasure.runnable.file.WriteSearchHistoryThread;
 import com.android.lucy.treasure.utils.ImageLruCache;
@@ -43,7 +45,7 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
 
     private EditText et_search_content;
     private ListView lv_search;
-    private SearchDataAsync sdThread;
+    private BookSearchAsync sdThread;
     private FrameLayout fl_search_list;
     private ProgressBar progressBar;
     private View rl_search_history;
@@ -80,9 +82,9 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
     }
 
     /*
-    *
-    * 初始化控件
-    * */
+     *
+     * 初始化控件
+     * */
     private void initView() {
         fl_search_list = findViewById(R.id.fl_search_list);
 
@@ -104,18 +106,18 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
     }
 
     /*
-    *
-    * 初始化数据
-    * */
+     *
+     * 初始化数据
+     * */
     private void initData() {
         //读取历史搜索数据
         new Thread(new ReadSearchHistoryThread(new SearchHandler(this))).start();
     }
 
     /*
-    *
-    * 初始化监听事件
-    * */
+     *
+     * 初始化监听事件
+     * */
     private void initEvent() {
         //EditView设置软键盘搜索监听
         et_search_content.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -129,38 +131,36 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
             }
         });
         lv_search_history.setOnItemClickListener(this);
+        lv_search.setOnItemClickListener(this);
     }
 
-
-    /**
-     * Activity再次可见，顺序为onNewIntent->onRestart->onStart->onResume
-     * @param intent  意图
-     */
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        boolean visibility = intent.getBooleanExtra("visibility", false);
-        if (visibility) {
-            et_search_content.setText("");
-            lv_search.setVisibility(View.INVISIBLE);
-            rl_search_history.setVisibility(View.VISIBLE);
-        }
-    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String historyName = historys.get(position);
-        if (!historyName.isEmpty()) {
-            et_search_content.setText(historyName);
-            et_search_content.setSelection(historyName.length());//光标移到文字末尾
-            rl_search_history.setVisibility(View.INVISIBLE);
-            sdThread = new SearchDataAsync(lv_search);
-            sdThread.execute(URLUtils.ZHUISHU_SEARCH_URL + historyName);
-            sdThread.setOnUpdateUIListener(this);
-            progressBar.setVisibility(View.VISIBLE);
-            updateSearchHistory(historyName);
+        MyLogcat.myLog("view:" + parent.getId() + ",id:" + id);
+        switch (parent.getId()) {
+            case R.id.lv_search_history:
+                String historyName = historys.get(position);
+                if (!historyName.isEmpty()) {
+                    et_search_content.setText(historyName);
+                    et_search_content.setSelection(historyName.length());//光标移到文字末尾
+                    rl_search_history.setVisibility(View.INVISIBLE);
+                    sdThread = new BookSearchAsync(lv_search);
+                    sdThread.execute(URLUtils.ZHUISHU_SEARCH_URL + historyName);
+                    sdThread.setOnUpdateUIListener(this);
+                    progressBar.setVisibility(View.VISIBLE);
+                    updateSearchHistory(historyName);
+                }
+                keyboardBack();
+                break;
+            case R.id.lv_search:
+                SearchInfo searchInfo = ((SearchDataAdapter) lv_search.getAdapter()).getDatas(position);
+                Context context = MyApplication.getContext();
+                Intent intent = new Intent(context, BookIntroducedActivity.class);
+                intent.putExtra("searchInfo", searchInfo);
+                startActivity(intent);
+                break;
         }
-        keyboardBack();
     }
 
     public void iv_click(View v) {
@@ -177,15 +177,17 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
         }
     }
 
-    /*
-    * 开启线程搜索小说
-    * */
+
+    /**
+     * 开启线程搜索小说
+     */
     private void search() {
+        //获取搜索关键字
         String searchBookName = et_search_content.getText().toString().trim();
         if (!searchBookName.isEmpty()) {
             rl_search_history.setVisibility(View.INVISIBLE);
             updateSearchHistory(searchBookName);
-            sdThread = new SearchDataAsync(lv_search);
+            sdThread = new BookSearchAsync(lv_search);
             sdThread.execute(URLUtils.ZHUISHU_SEARCH_URL + searchBookName);
             sdThread.setOnUpdateUIListener(this);
             lv_search.setVisibility(View.INVISIBLE);
@@ -195,8 +197,8 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
     }
 
     /*
-    * 清空历史搜索数据
-    * */
+     * 清空历史搜索数据
+     * */
     private void clearHistory() {
         if (!SDCardHelper.isSDCardMounted())
             return;
@@ -210,8 +212,8 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
     }
 
     /*
-    * 更新历史搜索数据
-    * */
+     * 更新历史搜索数据
+     * */
     public void updateSearchHistory(String searchBookName) {
         if (null == historys)
             historys = new LinkedList<>();
@@ -233,8 +235,8 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
     }
 
     /*
-    * 软键盘收回
-    * */
+     * 软键盘收回
+     * */
     public void keyboardBack() {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (null != inputMethodManager)
@@ -267,8 +269,8 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
     }
 
     /*
-    * 设置进度条隐藏，ListView显示
-    * */
+     * 设置进度条隐藏，ListView显示
+     * */
     @Override
     public void setVisibility() {
         progressBar.setVisibility(View.INVISIBLE);

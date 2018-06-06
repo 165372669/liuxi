@@ -16,15 +16,12 @@ import android.widget.TextView;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
 import com.android.lucy.treasure.bean.BookInfo;
-import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.SearchInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
-import com.android.lucy.treasure.runnable.BookImageAsync;
-import com.android.lucy.treasure.runnable.ZhuiShuDataAsync;
-import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
+import com.android.lucy.treasure.runnable.async.BookImageAsync;
+import com.android.lucy.treasure.runnable.async.ZhuiShuDataAsync;
 import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
 import com.android.lucy.treasure.runnable.source.BaiduSourceThread;
-import com.android.lucy.treasure.utils.ArrayUtils;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
@@ -37,7 +34,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +42,9 @@ import java.util.Map;
  */
 
 public class BookIntroducedActivity extends Activity implements BaseReadAsyncTask.OnUpdateDataLisetener, View.OnClickListener {
+
+    public static int readChapterid = 0;
+    public static int readChapterPager = 0;
 
     private ImageView iv_cover;
     private TextView tv_author_book;
@@ -68,7 +67,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 
     class BookHandler extends MyHandler<BookIntroducedActivity> {
 
-        private boolean bt_flag = true;
 
         public BookHandler(BookIntroducedActivity bookIntroducedActivity) {
             super(bookIntroducedActivity);
@@ -78,27 +76,24 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         public void myHandleMessage(Message msg) {
             SourceInfo sourceInfo = (SourceInfo) msg.obj;
             switch (msg.arg1) {
-                case KEY_SOURCE_OK:
-                    MyLogcat.myLog("arg1:" + msg.arg1);
-                    if (!bookInfo.getSourceInfos().contains(sourceInfo)) {
-                        //没有包含同一个来源
-                        sourceInfo.setBookInfo(bookInfo);
-                        bookInfo.getSourceInfos().add(sourceInfo);
-                        bookInfo.setSourceName(sourceInfo.getSourceName());
-                    }
-                    if (bt_flag) {
+                case BAIDU_SEARCH_OK:
+                    if (bookInfo.getSourceInfos().size() > 0) {
                         mActivity.get().setReadBookState(true);
                         mActivity.get().setAddBookState(true, "加入书架");
-                        bt_flag = false;
+                    } else {
+                        MyLogcat.myLog("没有找到来源处理");
                     }
                     break;
-                case KEY_SOURCE_AGAIN_OK:
+                case SOURCE_OK:
+
+                    break;
+                case SOURCE_AGAIN_OK:
                     MyLogcat.myLog("arg1:" + msg.arg1);
                     //保存章节数据
                     DataSupport.saveAll(sourceInfo.getCatalogInfos());
                     setReadBookState(true);
                     break;
-                case KEY_SOURCE_NO:
+                case SOURCE_NO:
                     break;
             }
         }
@@ -114,6 +109,13 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        bookInfo.setReadChapterid(readChapterid);
+        bookInfo.setReadChapterPager(readChapterPager);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         MyLogcat.myLog("Book-onDestroy被调用");
@@ -125,7 +127,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         if (addText.equals("移除书籍")) {
             bookInfo.save();
             DataSupport.saveAll(bookInfo.getSourceInfos());
-            DataSupport.saveAll(bookInfo.getSourceInfos().get(getSourceIndex()).getCatalogInfos());
         }
     }
 
@@ -175,17 +176,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                 .find(BookInfo.class, true);
         if (booklist.size() > 0) {
             bookInfo = booklist.get(0);
-            int sourceIndex = ArrayUtils.getArrayIndex(bookInfo.getSourceInfos(), bookInfo.getSourceName());
-            SourceInfo sourceInfo = bookInfo.getSourceInfos().get(sourceIndex);
-            ArrayList<CatalogInfo> catalogInfos = (ArrayList<CatalogInfo>) sourceInfo.getCatalogInfos(sourceInfo.getId());
-            if (catalogInfos.size() == 0) {
-                sourceInfo.setBookInfo(bookInfo);
-                ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceInfo.getSourceUrl(), sourceInfo,
-                        bookName, author, bookHandler));
-            }else {
-                setReadBookState(true);
-            }
-            sourceInfo.setCatalogInfos(catalogInfos);
+            setReadBookState(true);
             setAddBookState(true, "移出书架");
             MyLogcat.myLog("查询数据:" + "readchapterid:" + bookInfo.getReadChapterid() + ",pager:" + bookInfo.getReadChapterPager() + ",bookInfo:" + bookInfo);
         } else {
@@ -194,7 +185,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
             bookInfo = new BookInfo(bookName, author);
             ThreadPool.getInstance().submitTask(new BaiduSourceThread(url, bookInfo, bookHandler));
         }
-
         new BookImageAsync(iv_cover).execute(searchInfo.getImgUrl());
     }
 
@@ -223,7 +213,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                 break;
             case R.id.bt_book_add:
                 String bookName = bookInfo.getBookName();
-                int sourceIndex = getSourceIndex();
                 //查询数据
                 List<BookInfo> booklist = DataSupport.select("bookName")
                         .where("bookName=?", bookName)
@@ -243,7 +232,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                     }
                     if (delete > 0) {
                         DataSupport.delete(BookInfo.class, bookInfo.getId());
-                        DataSupport.delete(SourceInfo.class, bookInfo.getSourceInfos().get(sourceIndex).getId());
                         bookInfo.setReadChapterid(0);
                         bookInfo.setReadChapterPager(0);
                         bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
@@ -252,8 +240,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                 } else {
                     boolean result = bookInfo.save();
                     DataSupport.saveAll(bookInfo.getSourceInfos());
-                    DataSupport.saveAll(bookInfo.getSourceInfos().get(sourceIndex).getCatalogInfos());
-                    MyLogcat.myLog("插入数据成功了吗：" + result + ",sourceIndex:" + sourceIndex);
                     if (result) {
                         bt_add_book.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                         bt_add_book.setText("移除书籍");
@@ -294,24 +280,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         }
     }
 
-    /**
-     * 获取来源数据在Source集合里面的Index
-     *
-     * @return 来源Index
-     */
-    public int getSourceIndex() {
-        //获取当前来源的index
-        String sourceName = bookInfo.getSourceName();
-        if (null == sourceName) {
-            bookInfo.setSourceName(bookInfo.getSourceInfos().get(0).getSourceName());
-        }
-        int sourceIndex = ArrayUtils.getArrayIndex(bookInfo.getSourceInfos(), sourceName);
-        if (sourceIndex == -1) {
-            sourceIndex = 0;
-        }
-        return sourceIndex;
-    }
-
     public void openUrl(String htmlUrl) {
         try {
             URL url = new URL(htmlUrl);
@@ -324,6 +292,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
             MyLogcat.myLog(htmlUrl + "，网页读取失败！");
         }
     }
+
+
 
 
     /**

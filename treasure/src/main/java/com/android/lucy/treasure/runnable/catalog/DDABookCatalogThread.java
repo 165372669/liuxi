@@ -1,10 +1,11 @@
 package com.android.lucy.treasure.runnable.catalog;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+
 import com.android.lucy.treasure.base.BaseReadThread;
-import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
-import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 
@@ -12,6 +13,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.litepal.crud.DataSupport;
+import org.litepal.tablemanager.Connector;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,6 +67,13 @@ public class DDABookCatalogThread extends BaseReadThread {
                     url = meta.attr("content");
                     MyLogcat.myLog("read_url:" + url);
                     sourceInfo.setSourceUrl(url);
+                    //更新数据库
+                    SQLiteDatabase db = Connector.getDatabase();
+                    ContentValues values = new ContentValues();
+                    values.put("sourceurl", url);
+                    db.update("sourceinfo", values, "id=?",
+                            new String[]{String.valueOf(sourceInfo.getId())});
+
                     break;
                 case "og:novel:author":
                     author = meta.attr("content");
@@ -90,14 +100,13 @@ public class DDABookCatalogThread extends BaseReadThread {
                 if (getIsCancelled())
                     return;
             }
-            if (null == sourceInfo.getBookInfo()) {
-                sendObj(sourceInfo, MyHandler.KEY_SOURCE_OK);
+            if (sourceInfo.getCatalogInfos().size() > 0) {
+                sendObj(sourceInfo, MyHandler.SOURCE_OK);
             } else {
-                sendObj(sourceInfo, MyHandler.KEY_SOURCE_AGAIN_OK);
+                sendObj(sourceInfo, MyHandler.SOURCE_AGAIN_OK);
             }
 //            MyLogcat.myLog("size:"+info.getCatalogInfos().size());
         }
-
     }
 
 

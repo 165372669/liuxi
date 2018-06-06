@@ -2,13 +2,13 @@ package com.android.lucy.treasure.runnable.chapter;
 
 import android.graphics.Rect;
 import android.os.Handler;
-import android.os.Message;
 
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ConfigInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.bean.TextInfo;
+import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.StringUtils;
 import com.android.lucy.treasure.view.CircleProgress;
@@ -51,7 +51,7 @@ public class DDAChapterContentThread extends BaseReadThread {
 
     @Override
     public void resoloveUrl(Document doc) {
-        cv_chapter_progress.setProgress(25);
+        cv_chapter_progress.startProgress(500);
         Elements divs = doc.select("div[id^=content]");
         String str = divs.toString();
         List<String> contents = new ArrayList<>();
@@ -67,18 +67,16 @@ public class DDAChapterContentThread extends BaseReadThread {
             contents.add(s);
             //System.out.println(m.group());
         }
-        cv_chapter_progress.setProgress(50);
+        cv_chapter_progress.startProgress(1000);
         if (contents.size() > 0) {
             spacingLineCount(contents);
             int pagerTotal = catalogInfo.getStrs().size();
             catalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
+            sendObj(MyHandler.CHAPTER_LOADING_OK, catalogInfo.getChapterId());
         } else {
             //没有获取到数据加一页面。
-            catalogInfo.getStrs().add(new PagerContentInfo(null, 0));
+            sendObj(MyHandler.CHAPTER_LOADING_NO, catalogInfo.getChapterId());
         }
-        Message msg = Message.obtain();
-        sendObj(msg, 1, catalogInfo.getChapterId());
-        cv_chapter_progress.setProgress(100);
     }
 
     @Override

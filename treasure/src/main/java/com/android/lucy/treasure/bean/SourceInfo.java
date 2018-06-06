@@ -13,16 +13,18 @@ import java.util.List;
 public class SourceInfo extends DataSupport implements Serializable {
     private int id;
     private BookInfo bookInfo;
-    private String sourceUrl; //来源网址
+    private String sourceBaiduUrl; //来源百度网址
     private String sourceName; //来源名称
+    private String sourceUrl;  //来源小说网址
+    private String webType;        //网站类型
     private ArrayList<CatalogInfo> catalogInfos;//章节集合
 
     private static final long serialVersionUID = 2;
 
 
-    public SourceInfo(String sourceName, String sourceUrl) {
+    public SourceInfo(String sourceName,String sourceBaiduUrl) {
         this.sourceName = sourceName;
-        this.sourceUrl = sourceUrl;
+        this.sourceBaiduUrl = sourceBaiduUrl;
         catalogInfos = new ArrayList<>();
     }
 
@@ -42,6 +44,14 @@ public class SourceInfo extends DataSupport implements Serializable {
         this.bookInfo = bookInfo;
     }
 
+    public String getSourceBaiduUrl() {
+        return sourceBaiduUrl;
+    }
+
+    public void setSourceBaiduUrl(String sourceBaiduUrl) {
+        this.sourceBaiduUrl = sourceBaiduUrl;
+    }
+
     public String getSourceUrl() {
         return sourceUrl;
     }
@@ -56,6 +66,14 @@ public class SourceInfo extends DataSupport implements Serializable {
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+
+    public String getWebType() {
+        return webType;
+    }
+
+    public void setWebType(String webType) {
+        this.webType = webType;
     }
 
     public ArrayList<CatalogInfo> getCatalogInfos() {

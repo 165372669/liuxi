@@ -27,7 +27,7 @@ import java.util.List;
  * 搜索List列表适配器
  */
 
-public class SearchDataAdapter extends BaseAdapter<SearchInfo> implements AdapterView.OnItemClickListener {
+public class SearchDataAdapter extends BaseAdapter<SearchInfo> {
 
 
     private ImageDownloadManager imageManager;
@@ -107,13 +107,4 @@ public class SearchDataAdapter extends BaseAdapter<SearchInfo> implements Adapte
     }
 
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-        SearchInfo searchInfo = mDatas.get(position);
-        Context context = MyApplication.getContext();
-        Intent intent = new Intent(context, BookIntroducedActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("searchInfo", searchInfo);
-        context.startActivity(intent);
-    }
 }

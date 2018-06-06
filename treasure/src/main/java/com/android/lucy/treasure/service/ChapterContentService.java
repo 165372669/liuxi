@@ -33,7 +33,6 @@ public class ChapterContentService extends Service {
 
     private MyBinder mBinder;
     private BookInfo bookInfo;
-    private OnChapterContentListener onChapterContentListener;
     private int chapterNameHeight;    //章节名View高
     private int bookNameHeight;       //书名View高
     private int chapterContentWidth;  //章节内容View宽
@@ -42,14 +41,14 @@ public class ChapterContentService extends Service {
     private Paint mTextPaint;
     private int textWidth; //字体宽度
     private int textHeight; //字体高度
-    private int loadChapterId; //下载的章节ID
     private BookContentActivity.ChapterContentHandler chapterContentHandler;
     private CircleProgress cv_chapter_progress;
+    private BookContentActivity activity;
 
 
     /*
-    * 该方法在创建service时只调用一次
-    * */
+     * 该方法在创建service时只调用一次
+     * */
     @Override
     public void onCreate() {
         mBinder = new MyBinder();
@@ -95,7 +94,6 @@ public class ChapterContentService extends Service {
      * @param chapterID 下载的章节id
      */
     public void startThreadProgress(int chapterID) {
-        this.loadChapterId = chapterID;
         CatalogInfo catalogInfo = bookInfo.getSourceInfos().get(0).getCatalogInfos().get(chapterID);
         ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
         if (null == pagerContentInfos) {
@@ -105,22 +103,9 @@ public class ChapterContentService extends Service {
             MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + chapterID);
             ConfigInfo configInfo = new ConfigInfo(chapterNameHeight, bookNameHeight, chapterContentWidth,
                     chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
-            cv_chapter_progress.setProgress(10);
             ThreadPool.getInstance().submitTask(new DDAChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
                     cv_chapter_progress));
         }
-    }
-
-    public void setOnChapterContentListener(OnChapterContentListener onChapterContentListener) {
-        this.onChapterContentListener = onChapterContentListener;
-    }
-
-    public void setView(CircleProgress cv_chapter_progress) {
-        this.cv_chapter_progress = cv_chapter_progress;
-    }
-
-    public interface OnChapterContentListener {
-        void setChapterContent();
     }
 
 
@@ -134,25 +119,29 @@ public class ChapterContentService extends Service {
     /**
      * 获取数据
      *
-     * @param bookInfo          小说对象
-     * @param contentPagerView      章节内容View
+     * @param bookInfo              小说对象
+     * @param activity              小说章节内容activity
      * @param chapterContentHandler
      */
-    public void setData(BookInfo bookInfo, ContentPager contentPagerView, BookContentActivity.ChapterContentHandler chapterContentHandler) {
+    public void setData(BookInfo bookInfo, BookContentActivity activity, BookContentActivity.ChapterContentHandler chapterContentHandler) {
         this.bookInfo = bookInfo;
+        this.activity = activity;
         this.chapterContentHandler = chapterContentHandler;
-        textInfoCount();
-        myMeasured(contentPagerView);
+        cv_chapter_progress = activity.getCircleProgress();
+        textInfoCount(20);
+        myMeasured(new ContentPager(activity));
         MyLogcat.myLog("NameHeight:" + chapterNameHeight + ",chapterContentHeight:" + chapterContentHeight + ",bookNameHeight:" + bookNameHeight);
     }
 
 
-    /*
-     *计算字体的宽和高
+    /**
+     * 根据字体大小计算字体的宽和高
+     *
+     * @param textSize 字体大小
      */
-    public void textInfoCount() {
+    public void textInfoCount(int textSize) {
         mTextPaint = new Paint();
-        mTextPaint.setTextSize(MyMathUtils.dip2px(this, 20));
+        mTextPaint.setTextSize(MyMathUtils.dip2px(this, textSize));
         Rect rect = new Rect();
         //获得18sp大小字体的宽和高。
         mTextPaint.getTextBounds("我", 0, 1, rect);
@@ -160,9 +149,11 @@ public class ChapterContentService extends Service {
         textHeight = rect.height();
     }
 
-    /*
+    /**
      * 手动测量页面的宽和高,根据字体大小计算页面最大行数
-     * */
+     *
+     * @param contentPagerView 页面对象
+     */
     public void myMeasured(ContentPager contentPagerView) {
         //获取手机屏幕宽高
         Resources resources = this.getResources();
@@ -189,10 +180,15 @@ public class ChapterContentService extends Service {
         MyLogcat.myLog("viewWidth:" + chapterContentWidth + ",pagerLine:" + pagerLine);
     }
 
-    /*
-* 计算一个页面根据字体高度能容纳多少行.
-* 页面行数等于控件高度/(字体高度*2)
-* */
+
+    /**
+     * 计算一个页面根据字体高度能容纳多少行.
+     * 页面行数等于控件高度/(字体高度*2)
+     *
+     * @param chapterTextHeight 章节内容控件高度
+     * @param textHeight        字体高度
+     * @return
+     */
     public int pagerLineCount(int chapterTextHeight, int textHeight) {
         //控件高度,1750,18sp字体能容纳21行。
         return chapterTextHeight / (textHeight * 2);

@@ -1,4 +1,4 @@
-package com.android.lucy.treasure.runnable;
+package com.android.lucy.treasure.runnable.async;
 
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
 import com.android.lucy.treasure.bean.SearchInfo;

@@ -111,29 +111,19 @@ public class CircleProgress extends View {
         canvas.drawCircle(mCenterX, mCenterY, mRadius, mPaint);
         //2、画动态圆弧
         mPaint.setColor(mRingColor);
-        canvas.drawArc(mRectF, 0, (float) (3.6 * mProgress), false, mPaint);
+        canvas.drawArc(mRectF, -90, (float) (0.36 * mProgress), false, mPaint);
+    }
+
+    //设置进度
+    public void startProgress(int progress) {
+        for (; mProgress < progress; mProgress++) {
+            postInvalidate();//重绘
+        }
     }
 
     //设置进度
     public void setProgress(int progress) {
-        if (progress > mProgress) {
-            int tempProgress = progress - mProgress;
-            for (int i = 0; i < tempProgress; i++) {
-                mProgress += i;
-                postInvalidate();//重绘
-            }
-        } else {
-            mProgress = progress;
-        }
+        this.mProgress = progress;
     }
 
-
-    /**
-     * 获取进度
-     *
-     * @return
-     */
-    public int getProgress() {
-        return this.mProgress;
-    }
 }

@@ -5,7 +5,6 @@ package com.android.lucy.treasure.utils;
  */
 
 public class URLUtils {
-    public static final String SODU_SEARCH_URL="http://www.sodu.cc/result.html?searchstr=";
     public static final String ZHUISHU_SEARCH_URL="http://www.zhuishushenqi.com/search?val=";
     public static final String ZHUISHU_URL="http://www.zhuishushenqi.com";
     public static final String BAiDU_SEARCH_URL_="https://www.baidu.com/s?wd=";

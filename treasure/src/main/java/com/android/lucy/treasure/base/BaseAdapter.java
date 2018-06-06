@@ -58,7 +58,7 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter implemen
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        this.convertView=convertView;
+        this.convertView = convertView;
         getDatas(mDatas);
         BaseViewHolder myViewHolder = BaseViewHolder.get(context, convertView, parent, laoyoutId, position);
         convert(myViewHolder, getItem(position), position);
@@ -103,10 +103,15 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter implemen
 
     }
 
+    public T getDatas(int index) {
+        return mDatas.get(index);
+    }
+
 
     public void setAnimation(View view) {
         ObjectAnimator.ofFloat(view, animType, x1, x2).setDuration(animTime).start();
     }
+
     public void setAnimation(View view, String animType, float x1, float x2, int animTime) {
         ObjectAnimator.ofFloat(view, animType, x1, x2).setDuration(animTime).start();
     }

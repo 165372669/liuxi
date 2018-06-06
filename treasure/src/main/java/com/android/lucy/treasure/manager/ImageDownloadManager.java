@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.android.lucy.treasure.bean.SearchInfo;
-import com.android.lucy.treasure.runnable.BookImageAsync;
+import com.android.lucy.treasure.runnable.async.BookImageAsync;
 import com.android.lucy.treasure.utils.BitmapUtils;
 import com.android.lucy.treasure.utils.ImageLruCache;
 import com.android.lucy.treasure.utils.ThreadPool;
