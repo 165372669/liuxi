@@ -24,11 +24,15 @@ public class BaiduSourceThread extends BaseReadThread {
 
     private BookInfo bookInfo;
     private MyHandler bookHandler;
+    private final String[] dda_sources;
+    private final String[] lia_sources;
 
     public BaiduSourceThread(String url, BookInfo bookInfo, MyHandler bookHandler) {
         super(url, bookHandler);
         this.bookInfo = bookInfo;
         this.bookHandler = bookHandler;
+        dda_sources = Key.DDA_SOURCE.split("/");
+        lia_sources = Key.LIA_SOURCE.split("/");
     }
 
 
@@ -40,6 +44,7 @@ public class BaiduSourceThread extends BaseReadThread {
             String sourceBaiduUrl = a.attr("href");
             String sourceNameTemp = a.text();
             String sourceName = shearSourceName(sourceNameTemp);
+            MyLogcat.myLog("sourceName:" + sourceName);
             SourceInfo sourceInfo = new SourceInfo(sourceName, sourceBaiduUrl);
             sourceInfo = selectSource(sourceInfo);
             if (null != sourceInfo && !bookInfo.getSourceInfos().contains(sourceInfo)) {
@@ -49,7 +54,7 @@ public class BaiduSourceThread extends BaseReadThread {
             }
         }
         sendObj(MyHandler.BAIDU_SEARCH_OK);
-        MyLogcat.myLog("bookName:" + bookInfo.getBookName() + ",sourceDataSize:" + bookInfo.getSourceInfos());
+
     }
 
     @Override
@@ -59,8 +64,6 @@ public class BaiduSourceThread extends BaseReadThread {
 
     private SourceInfo selectSource(SourceInfo sourceInfo) {
         String sourceName = sourceInfo.getSourceName();
-        String[] dda_sources = Key.DDA_SOURCE.split(",");
-        String[] lia_sources = Key.LIA_SOURCE.split(",");
         for (int i = 0; i < dda_sources.length; i++) {
             if (sourceName.equals(dda_sources[i])) {
                 sourceInfo.setWebType("DDA");
@@ -68,6 +71,7 @@ public class BaiduSourceThread extends BaseReadThread {
             }
         }
         for (int i = 0; i < lia_sources.length; i++) {
+            MyLogcat.myLog(lia_sources[i]);
             if (sourceName.equals(lia_sources[i])) {
                 sourceInfo.setWebType("LIA");
                 return sourceInfo;

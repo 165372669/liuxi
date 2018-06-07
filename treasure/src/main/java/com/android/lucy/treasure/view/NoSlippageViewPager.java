@@ -19,4 +19,9 @@ public class NoSlippageViewPager extends ViewPager {
         super(context, attrs);
     }
 
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        return false;//falase表示不拦截滑动，交给子View处理。
+    }
 }

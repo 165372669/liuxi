@@ -86,6 +86,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
             switch (msg.arg1) {
                 case BAIDU_SEARCH_OK:
                     if (bookInfo.getSourceInfos().size() > 0) {
+                        MyLogcat.myLog("bookName:" + bookInfo.getBookName() + ",sourceDataSize:" + bookInfo.getSourceInfos());
                         SourceInfo sourceInfo = bookInfo.getSourceInfos().get(0);
                         bookInfo.setSourceName(sourceInfo.getSourceName());//设置当前来源名；
                         sourceIndex = 0;

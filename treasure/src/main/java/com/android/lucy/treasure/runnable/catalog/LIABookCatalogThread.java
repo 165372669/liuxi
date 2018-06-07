@@ -16,6 +16,7 @@ import java.io.IOException;
 /**
  * 获取解析为li和a标签的小说目录
  * www.80txt.com  八零电子书
+ * www.88dus.com  88读书网
  */
 
 public class LIABookCatalogThread extends BaseReadThread {
@@ -65,12 +66,27 @@ public class LIABookCatalogThread extends BaseReadThread {
     }
 
     public void parseChapter(Document doc, Elements metas) {
+        int sourceIndex = bookInfo.getSourceIndex();
+        SourceInfo sourceInfo = bookInfo.getSourceInfos().get(sourceIndex);
         String bookName = null;
+        String url = null;
+        String author = null;
         if (metas.size() > 0) {
             for (Element meta : metas) {
                 String property = meta.attr("property");
-                if (property.equals("og:title"))
-                    bookName = meta.attr("content");
+                switch (property) {
+                    case "og:novel:book_name":
+                        bookName = meta.attr("content");
+                        break;
+                    case "og:novel:read_url":
+                        url = meta.attr("content");
+                        sourceInfo.setSourceUrl(url);
+                        break;
+                    case "og:novel:author":
+                        author = meta.attr("content");
+                        break;
+
+                }
             }
         }
         if (null != bookName && bookName.equals(bookInfo.getBookName())) {
@@ -86,6 +102,8 @@ public class LIABookCatalogThread extends BaseReadThread {
                 if (getIsCancelled())
                     return;
             }
+            bookInfo.setChapterTotal(i - 1);
+            bookInfo.setNewChapterId(i - 1); //最新章节id
             if (bookInfo.getCatalogInfos().size() > 0) {
                 sendObj(MyHandler.CATALOG_SOURCE_OK);
             } else {

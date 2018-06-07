@@ -32,6 +32,10 @@ public class BookShelfFragment extends Fragment {
 
 
     private LRecyclerView recyclerView;
+    private List<BookInfo> bookInfos;
+    private RecyclerView.Adapter adapter;
+    private LRecyclerViewAdapter mLRecyclerViewAdapter;
+
 
     @Nullable
     @Override
@@ -42,10 +46,19 @@ public class BookShelfFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MyLogcat.myLog("BookShelfFragment------onResume");
+        bookInfos = DataSupport.findAll(BookInfo.class, true);
+        mLRecyclerViewAdapter.notifyItemRangeChanged(0, 0);
+    }
+
+
     private void initDatas() {
-        List<BookInfo> bookInfos = DataSupport.findAll(BookInfo.class, true);
-        RecyclerView.Adapter adapter = new BookShelfAdapter(getContext(), bookInfos);
-        LRecyclerViewAdapter mLRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
+        bookInfos = DataSupport.findAll(BookInfo.class, true);
+        adapter = new BookShelfAdapter(getContext(), bookInfos);
+        mLRecyclerViewAdapter = new LRecyclerViewAdapter(adapter);
         recyclerView.setAdapter(mLRecyclerViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }

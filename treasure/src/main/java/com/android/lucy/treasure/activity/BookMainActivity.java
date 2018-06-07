@@ -35,7 +35,7 @@ public class BookMainActivity extends FragmentActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setOverflowButtonAlways();
-        ActionBar actionBar=getActionBar();
+        ActionBar actionBar = getActionBar();
         //使自定义的普通View能在菜单栏显示
         actionBar.setDisplayShowCustomEnabled(false);
         //设置在菜单栏里的图标不显示
@@ -49,7 +49,6 @@ public class BookMainActivity extends FragmentActivity implements View.OnClickLi
     }
 
 
-
     /**
      * 初始化所有事件
      */
@@ -61,15 +60,9 @@ public class BookMainActivity extends FragmentActivity implements View.OnClickLi
     private void initDatas() {
         //创建书架数据库
         Connector.getDatabase();
-        String[] mTitles = new String[]{"First Fragment !", "Second Fragment !", "Th",
-                "Fourth Fragment !"};
         final List<Fragment> mTabs = new ArrayList<>();
-        for (String title : mTitles) {
-            BookShelfFragment bookShelfFragment = new BookShelfFragment();
-            Bundle bundle = new Bundle();
-            bookShelfFragment.setArguments(bundle);
-            mTabs.add(bookShelfFragment);
-        }
+        BookShelfFragment bookShelfFragment = new BookShelfFragment();
+        mTabs.add(bookShelfFragment);
 
         mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
 
@@ -95,7 +88,7 @@ public class BookMainActivity extends FragmentActivity implements View.OnClickLi
         ChangeColorIconWithText four = findViewById(R.id.id_indicator_four);
         //进入页面初始化选中
         one.setIconAlpha(1.0f);
-        mViewPager.setCurrentItem(0,false);
+        mViewPager.setCurrentItem(0, false);
 
         mTabIndicators.add(one);
         mTabIndicators.add(two);
@@ -114,22 +107,24 @@ public class BookMainActivity extends FragmentActivity implements View.OnClickLi
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
     /*
     子菜单响应
     * */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.id_action_search:
-                Intent intent=new Intent(BookMainActivity.this,BookSearchActivity.class);
+                Intent intent = new Intent(BookMainActivity.this, BookSearchActivity.class);
                 startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-/*
-* 反射获取
-* */
+
+    /*
+    * 反射获取
+    * */
     private void setOverflowButtonAlways() {
         try {
             ViewConfiguration config = ViewConfiguration.get(this);

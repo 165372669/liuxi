@@ -28,8 +28,9 @@ import java.util.Set;
 
 /**
  * 获取解析为dd和a的小说章节目录
- * www.xxbiquge.com  获取小说章节
+ * www.xxbiquge.com  新笔趣阁
  * www.pbtxt.com  平板电子书网获取小说章节。
+ * www.ddbiquge.com  顶点笔趣阁
  */
 
 public class DDABookCatalogThread extends BaseReadThread {
@@ -86,10 +87,12 @@ public class DDABookCatalogThread extends BaseReadThread {
                 CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterHref, chapterName, 0);
                 bookInfo.getCatalogInfos().add(catalogInfo);
                 i++;
+                if (getIsCancelled()) {
+                    return;
+                }
             }
-            if (getIsCancelled()) {
-                return;
-            }
+            bookInfo.setChapterTotal(i - 1);
+            bookInfo.setNewChapterId(i - 1); //最新章节id
             if (bookInfo.getCatalogInfos().size() > 0) {
                 sendObj(MyHandler.CATALOG_SOURCE_OK);
             } else {

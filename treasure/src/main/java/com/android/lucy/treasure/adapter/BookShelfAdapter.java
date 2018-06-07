@@ -1,11 +1,15 @@
 package com.android.lucy.treasure.adapter;
 
 import android.content.Context;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.holder.SuperViewHolder;
+import com.android.lucy.treasure.runnable.async.BookImageAsync;
+import com.android.lucy.treasure.utils.URLUtils;
 
 import java.util.List;
 
@@ -28,9 +32,22 @@ public class BookShelfAdapter extends RecyclerViewBaseAdapter<BookInfo> {
     @Override
     public void onBindItemHolder(SuperViewHolder holder, int position) {
         BookInfo bookInfo = getDataList().get(position);
-        TextView bookName = (TextView) holder.getView(R.id.rl_book_name);
-        TextView sourceName = (TextView) holder.getView(R.id.rl_book_sourceName);
-        bookName.setText(bookInfo.getBookName());
-        sourceName.setText(bookInfo.getSourceName());
+        ImageView tv_bookImg = (ImageView) holder.getView(R.id.rl_book_img);
+        new BookImageAsync(tv_bookImg).execute(bookInfo.getImgUrl());
+        TextView tv_bookName = (TextView) holder.getView(R.id.rl_book_name);
+        TextView tv_bookAuthor = (TextView) holder.getView(R.id.rl_book_author);
+        TextView tv_bookType = (TextView) holder.getView(R.id.rl_book_type);
+        TextView tv_bookCount = (TextView) holder.getView(R.id.rl_book_count);
+        TextView tv_noChapterCount = (TextView) holder.getView(R.id.rl_book_noChapterCount);
+        TextView tv_uptateTime = (TextView) holder.getView(R.id.rl_book_updateTime);
+        int noChapterCount = bookInfo.getNewChapterId() - (bookInfo.getReadChapterid() + 1);
+        tv_noChapterCount.setText(String.valueOf(noChapterCount));
+        tv_bookName.setText(bookInfo.getBookName());
+        tv_bookAuthor.setText(bookInfo.getAuthor());
+        tv_bookType.setText(bookInfo.getType());
+        tv_bookCount.setText(bookInfo.getWordCountTotal());
+        tv_uptateTime.setText(bookInfo.getUpdateTime());
     }
+
+
 }
