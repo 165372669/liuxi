@@ -312,7 +312,4 @@ public class BookContentPagerAdapter extends PagerAdapter {
         return this.currentChapterId;
     }
 
-    public void setCatalogInfos(ArrayList<CatalogInfo> catalogInfos) {
-        this.catalogInfos = catalogInfos;
-    }
 }

@@ -22,6 +22,7 @@ public class BookInfo extends DataSupport implements Serializable {
     private String zhuishuUrl;//追书网页url
     private String wordCountTotal; //总字数
     private String imgUrl;//封面链接
+    private int sourceIndex;//来源在集合里的位置
     private int newChapterId; //最新章节id
     private int readChapterid;//已读章节id
     private int readChapterPager;//已读章节页面
@@ -29,6 +30,7 @@ public class BookInfo extends DataSupport implements Serializable {
     private int chapterTotal; //章节总数
     private int unreadSeveral;//未读章节数
     private ArrayList<SourceInfo> sourceInfos;//来源集合
+    private ArrayList<CatalogInfo> catalogInfos; //章节集合
 
     private static final long serialVersionUID = 1;
 
@@ -52,6 +54,7 @@ public class BookInfo extends DataSupport implements Serializable {
         this.chapterTotal = chapterTotal;
         this.unreadSeveral = unreadSeveral;
         sourceInfos = new ArrayList<>();
+        catalogInfos = new ArrayList<>();
     }
 
     public int getId() {
@@ -134,6 +137,14 @@ public class BookInfo extends DataSupport implements Serializable {
         this.author = author;
     }
 
+    public int getSourceIndex() {
+        return sourceIndex;
+    }
+
+    public void setSourceIndex(int sourceIndex) {
+        this.sourceIndex = sourceIndex;
+    }
+
     public int getNewChapterId() {
         return newChapterId;
     }
@@ -202,19 +213,37 @@ public class BookInfo extends DataSupport implements Serializable {
         this.sourceInfos = sourceInfos;
     }
 
+    public ArrayList<CatalogInfo> getCatalogInfos() {
+        return catalogInfos;
+    }
+
+    public void setCatalogInfos(ArrayList<CatalogInfo> catalogInfos) {
+        this.catalogInfos = catalogInfos;
+    }
+
     @Override
     public String toString() {
         return "BookInfo{" +
                 "id=" + id +
                 ", bookName='" + bookName + '\'' +
                 ", author='" + author + '\'' +
-                ", sourceName=" + sourceName +
+                ", type='" + type + '\'' +
+                ", updateTime='" + updateTime + '\'' +
+                ", newChapterName='" + newChapterName + '\'' +
+                ", readChapterName='" + readChapterName + '\'' +
+                ", sourceName='" + sourceName + '\'' +
+                ", zhuishuUrl='" + zhuishuUrl + '\'' +
+                ", wordCountTotal='" + wordCountTotal + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
+                ", sourceIndex=" + sourceIndex +
                 ", newChapterId=" + newChapterId +
                 ", readChapterid=" + readChapterid +
+                ", readChapterPager=" + readChapterPager +
                 ", closeTime=" + closeTime +
                 ", chapterTotal=" + chapterTotal +
                 ", unreadSeveral=" + unreadSeveral +
                 ", sourceInfos=" + sourceInfos +
+                ", catalogInfos=" + catalogInfos +
                 '}';
     }
 }

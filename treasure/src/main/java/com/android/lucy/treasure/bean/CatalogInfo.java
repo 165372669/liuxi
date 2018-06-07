@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 
 public class CatalogInfo extends DataSupport implements Comparable, Serializable {
-    private SourceInfo sourceInfo;
+    private BookInfo bookInfo;
     private int chapterId;  //章节id
     private String chapterUrl; //章节网址
     private String chapterName; //章节名
@@ -21,20 +21,20 @@ public class CatalogInfo extends DataSupport implements Comparable, Serializable
 
     private static final long serialVersionUID = 3;
 
-    public CatalogInfo( SourceInfo sourceInfo, int chapterId, String chapterUrl, String chapterName, int chapterPagerToatal) {
-        this.sourceInfo = sourceInfo;
+    public CatalogInfo(BookInfo bookInfo, int chapterId, String chapterUrl, String chapterName, int chapterPagerToatal) {
+        this.bookInfo = bookInfo;
         this.chapterId = chapterId;
         this.chapterUrl = chapterUrl;
         this.chapterName = chapterName;
         this.chapterPagerToatal = chapterPagerToatal;
     }
 
-    public SourceInfo getSourceInfo() {
-        return sourceInfo;
+    public BookInfo getBookInfo() {
+        return bookInfo;
     }
 
-    public void setSourceInfo(SourceInfo sourceInfo) {
-        this.sourceInfo = sourceInfo;
+    public void setBookInfo(BookInfo bookInfo) {
+        this.bookInfo = bookInfo;
     }
 
     public ArrayList<PagerContentInfo> getPagerContentInfos() {

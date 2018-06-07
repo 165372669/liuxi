@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.android.lucy.treasure.base.BaseReadThread;
+import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
 import com.android.lucy.treasure.utils.MyHandler;
@@ -13,7 +14,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
 import java.io.BufferedReader;
@@ -27,28 +27,24 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 获取解析为dd和a的小说目录
+ * 获取解析为dd和a的小说章节目录
  * www.xxbiquge.com  获取小说章节
  * www.pbtxt.com  平板电子书网获取小说章节。
  */
 
 public class DDABookCatalogThread extends BaseReadThread {
 
-    private SourceInfo sourceInfo;
-    private String bookName;
-    private String author;
+    private BookInfo bookInfo;
 
-    public DDABookCatalogThread(String url, SourceInfo sourceInfo, String bookName, String author,
-                                MyHandler myHandler) {
+    public DDABookCatalogThread(String url, BookInfo bookInfo, MyHandler myHandler) {
         super(url, myHandler);
-        this.sourceInfo = sourceInfo;
-        this.bookName = bookName;
-        this.author = author;
+        this.bookInfo = bookInfo;
     }
 
     @Override
     public void resoloveUrl(Document doc) {
-        MyLogcat.myLog("sourceName:" + sourceInfo.getSourceName());
+        int sourceIndex = bookInfo.getSourceIndex();
+        SourceInfo sourceInfo = bookInfo.getSourceInfos().get(sourceIndex);
         Elements metas = doc.select("meta[property]");
         //og:title     书名
         //og:novel:read_url  书页Url
@@ -67,13 +63,6 @@ public class DDABookCatalogThread extends BaseReadThread {
                     url = meta.attr("content");
                     MyLogcat.myLog("read_url:" + url);
                     sourceInfo.setSourceUrl(url);
-                    //更新数据库
-                    SQLiteDatabase db = Connector.getDatabase();
-                    ContentValues values = new ContentValues();
-                    values.put("sourceurl", url);
-                    db.update("sourceinfo", values, "id=?",
-                            new String[]{String.valueOf(sourceInfo.getId())});
-
                     break;
                 case "og:novel:author":
                     author = meta.attr("content");
@@ -86,33 +75,39 @@ public class DDABookCatalogThread extends BaseReadThread {
             url = url.substring(0, 24);
             MyLogcat.myLog("url:" + url);
         }
-        MyLogcat.myLog("bookName:" + this.bookName + "is bookName:" + bookName + ",author:" + this.author + "is author:" + author);
-        if ((null != bookName && bookName.equals(this.bookName)) || (null != author && author.equals(this.author))) {
+        MyLogcat.myLog("bookName:" + bookInfo.getBookName() + "is bookName:" + bookName + ",author:" + bookInfo.getAuthor() + "is author:" + author);
+        if ((null != bookName && bookName.equals(bookInfo.getBookName())) || (null != author && author.equals(bookInfo.getAuthor()))) {
             Elements dds = doc.select("dd");
             Elements as = dds.select("a");
             int i = 1;
             for (Element a : as) {
                 String chapterHref = url + a.attr("href");
                 String chapterName = a.text();
-                CatalogInfo catalogInfo = new CatalogInfo(sourceInfo, i, chapterHref, chapterName, 0);
-                sourceInfo.getCatalogInfos().add(catalogInfo);
+                CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterHref, chapterName, 0);
+                bookInfo.getCatalogInfos().add(catalogInfo);
                 i++;
-                if (getIsCancelled())
-                    return;
             }
-            if (sourceInfo.getCatalogInfos().size() > 0) {
-                sendObj(sourceInfo, MyHandler.SOURCE_OK);
+            if (getIsCancelled()) {
+                return;
+            }
+            if (bookInfo.getCatalogInfos().size() > 0) {
+                sendObj(MyHandler.CATALOG_SOURCE_OK);
             } else {
-                sendObj(sourceInfo, MyHandler.SOURCE_AGAIN_OK);
+                sendObj(MyHandler.CATALOG_SOURCE_NO);
             }
 //            MyLogcat.myLog("size:"+info.getCatalogInfos().size());
         }
     }
 
+    @Override
+    public void errorHandle(IOException e) {
+        sendObj(MyHandler.CATALOG_SOURCE_ERROR);
+    }
+
 
     @Override
     public void xxbuquge() {
-        if (sourceInfo.getSourceName().contains("xxbiquge")) {
+        if (bookInfo.getSourceName().contains("xxbiquge")) {
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
             try {

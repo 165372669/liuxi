@@ -30,6 +30,8 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
 
     public abstract void resoloveUrl(Document doc);
 
+    public abstract void errorHandle(IOException e);
+
 
     public BaseReadThread(String baseUrl, Handler myHandler) {
         this.baseUrl = baseUrl;
@@ -52,6 +54,7 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
             resoloveUrl(Jsoup.connect(baseUrl).get());
         } catch (IOException e) {
             MyLogcat.myLog(baseUrl + "，网页读取失败！！！");
+            errorHandle(e);
         } finally {
             //删除集合里的任务
             ThreadPool.getInstance().deleteRunnable(this);
@@ -103,11 +106,12 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
     }
 
     /**
-     *发送消息
-     * @param arg1  标识1
-     * @param arg2  标识2
+     * 发送消息
+     *
+     * @param arg1 标识1
+     * @param arg2 标识2
      */
-    protected void sendObj( int arg1, int arg2) {
+    protected void sendObj(int arg1, int arg2) {
         Message msg = Message.obtain();
         msg.arg1 = arg1;
         msg.arg2 = arg2;

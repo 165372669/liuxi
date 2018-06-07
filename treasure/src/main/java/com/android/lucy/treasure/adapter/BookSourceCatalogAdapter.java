@@ -28,13 +28,8 @@ public class BookSourceCatalogAdapter extends BaseAdapter<SourceInfo> {
         TextView tv_chapterName_new = myViewHolder.getView(R.id.tv_chapterName_new);
         TextView tv_sourceName_new = myViewHolder.getView(R.id.tv_sourceName_new);
         TextView tv_time_new = myViewHolder.getView(R.id.tv_time_new);
-        int size = sourceInfo.getCatalogInfos().size();
-        if (size > 0) {
-            CatalogInfo catalogInfo = sourceInfo.getCatalogInfos().get(size - 1);
-            tv_chapterName_new.setText(catalogInfo.getChapterName());
-            tv_sourceName_new.setText(sourceInfo.getSourceName());
-            tv_time_new.setText("update-time");
-        }
+        tv_sourceName_new.setText(sourceInfo.getSourceName());
+        tv_time_new.setText("update-time");
         //setAnimation(convertView,"translationX",500,0,500);
     }
 

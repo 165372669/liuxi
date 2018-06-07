@@ -1,5 +1,6 @@
 package com.android.lucy.treasure.utils;
 
+import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
 
 import java.util.List;

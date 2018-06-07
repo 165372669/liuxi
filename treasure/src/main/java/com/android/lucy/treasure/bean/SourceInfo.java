@@ -17,7 +17,6 @@ public class SourceInfo extends DataSupport implements Serializable {
     private String sourceName; //来源名称
     private String sourceUrl;  //来源小说网址
     private String webType;    //网站类型
-    private ArrayList<CatalogInfo> catalogInfos;//章节集合
 
     private static final long serialVersionUID = 2;
 
@@ -25,7 +24,6 @@ public class SourceInfo extends DataSupport implements Serializable {
     public SourceInfo(String sourceName,String sourceBaiduUrl) {
         this.sourceName = sourceName;
         this.sourceBaiduUrl = sourceBaiduUrl;
-        catalogInfos = new ArrayList<>();
     }
 
     public int getId() {
@@ -76,17 +74,6 @@ public class SourceInfo extends DataSupport implements Serializable {
         this.webType = webType;
     }
 
-    public ArrayList<CatalogInfo> getCatalogInfos() {
-        return catalogInfos;
-    }
-
-    public List<CatalogInfo> getCatalogInfos(int id) {
-        return DataSupport.where("sourceinfo_id = ?", String.valueOf(id)).find(CatalogInfo.class);
-    }
-
-    public void setCatalogInfos(ArrayList<CatalogInfo> catalogInfos) {
-        this.catalogInfos = catalogInfos;
-    }
 
 
     @Override
@@ -101,7 +88,6 @@ public class SourceInfo extends DataSupport implements Serializable {
         return "SourceInfo{" +
                 "sourceUrl='" + sourceUrl + '\'' +
                 ", sourceName='" + sourceName + '\'' +
-                ", catalogInfos=" + catalogInfos +
                 '}';
     }
 }

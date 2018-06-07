@@ -20,16 +20,12 @@ import java.io.IOException;
 
 public class LIABookCatalogThread extends BaseReadThread {
 
-    private SourceInfo sourceInfo;
-    private String bookName;
-    private String author;
 
-    public LIABookCatalogThread(String url, SourceInfo sourceInfo, String bookName, String author,
-                                MyHandler myHandler) {
+    private BookInfo bookInfo;
+
+    public LIABookCatalogThread(String url, BookInfo bookInfo, MyHandler myHandler) {
         super(url, myHandler);
-        this.sourceInfo = sourceInfo;
-        this.bookName = bookName;
-        this.author = author;
+        this.bookInfo = bookInfo;
     }
 
     @Override
@@ -41,6 +37,11 @@ public class LIABookCatalogThread extends BaseReadThread {
             parseTextDownload(doc);
         }
 
+    }
+
+    @Override
+    public void errorHandle(IOException e) {
+        sendObj(MyHandler.CATALOG_SOURCE_ERROR);
     }
 
 
@@ -72,18 +73,23 @@ public class LIABookCatalogThread extends BaseReadThread {
                     bookName = meta.attr("content");
             }
         }
-        if (null != bookName && bookName.equals(this.bookName)) {
+        if (null != bookName && bookName.equals(bookInfo.getBookName())) {
             Elements lis = doc.select("li");
             Elements rels = lis.select("a[rel]");
             int i = 1;
             for (Element rel : rels) {
                 String chapterUrl = rel.attr("href");
                 String chapterName = rel.text();
-                CatalogInfo catalogInfo = new CatalogInfo(sourceInfo, i, chapterUrl, chapterName, 0);
-                sourceInfo.getCatalogInfos().add(catalogInfo);
+                CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterUrl, chapterName, 0);
+                bookInfo.getCatalogInfos().add(catalogInfo);
                 i++;
                 if (getIsCancelled())
                     return;
+            }
+            if (bookInfo.getCatalogInfos().size() > 0) {
+                sendObj(MyHandler.CATALOG_SOURCE_OK);
+            } else {
+                sendObj(MyHandler.CATALOG_SOURCE_NO);
             }
         }
     }

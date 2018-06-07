@@ -21,14 +21,9 @@ import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ChapterIDAndName;
-import com.android.lucy.treasure.bean.SourceInfo;
 import com.android.lucy.treasure.pager.ContentPager;
-import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
-import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
 import com.android.lucy.treasure.service.ChapterContentService;
-import com.android.lucy.treasure.utils.ArrayUtils;
-import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.MyMathUtils;
@@ -56,7 +51,6 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
     private ArrayList<ContentPager> contentPagers;
     private TextView tv_chapter_catalog;
     private CircleProgress cv_chapter_progress;
-    private int sourceIndex;
     private ArrayList<CatalogInfo> catalogInfos;
     private BookContentActivity activity;
 
@@ -69,18 +63,6 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
         @Override
         public void myHandleMessage(Message msg) {
             switch (msg.arg1) {
-                case MyHandler.SOURCE_OK:
-                    cv_chapter_progress.startProgress(500);
-                    SourceInfo sourceInfo = (SourceInfo) msg.obj;
-                    catalogInfos = sourceInfo.getCatalogInfos();
-                    int readChapterid = bookInfo.getReadChapterid();
-                    int readChapterPager = bookInfo.getReadChapterPager();
-                    adapter.setCatalogInfos(catalogInfos);
-                    adapter.setCurrentChapterId(readChapterid, readChapterPager);
-                    viewPager.setChapterDatas(catalogInfos);
-                    viewPager.setChapterTotal(catalogInfos.size());
-                    service.startThreadProgress(readChapterid);
-                    break;
                 case MyHandler.CHAPTER_LOADING_OK://成功下载到章节并添加到页面集合
                     int loadChapterId = msg.arg2;
                     MyLogcat.myLog("下载的章节id:" + (loadChapterId - 1) + "，适配器的章节id:" + adapter.getCurrentChapterId());
@@ -92,9 +74,8 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                     break;
                 case MyHandler.CHAPTER_LOADING_NO:
                     //获取章节内容失败
-                    break;
-                case MyHandler.SOURCE_NO:
-                    //获取来源章节失败
+                case MyHandler.CHAPTER_LOADING_ERROR:
+                    //获取章节网页读取失败
                     break;
             }
         }
@@ -135,13 +116,13 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
     @Override
     protected void onPause() {
         super.onPause();
-        BookIntroducedActivity.readChapterid = adapter.getCurrentChapterId();
-        BookIntroducedActivity.readChapterPager = adapter.getPagerPosition();
         List<BookInfo> booklist = DataSupport.select("bookName")
                 .where("bookName=?", bookInfo.getBookName())
                 .limit(1)
                 .find(BookInfo.class);
         if (booklist.size() > 0) {
+            BookIntroducedActivity.readChapterid = adapter.getCurrentChapterId();
+            BookIntroducedActivity.readChapterPager = adapter.getPagerPosition();
             int readChapterid = adapter.getCurrentChapterId();
             int chapterTotal = catalogInfos.size();
             bookInfo.setReadChapterid(readChapterid);
@@ -153,6 +134,8 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                     bookInfo.getReadChapterid() + ",update:" + update);
             ThreadPool.getInstance().submitTask(new WriteDataFileThread("bookData.db"));
         } else {
+            BookIntroducedActivity.readChapterid = 0;
+            BookIntroducedActivity.readChapterPager = 0;
             MyLogcat.myLog("无书籍数据");
         }
     }
@@ -191,24 +174,7 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
         contentPagers = new ArrayList<>();
         ChapterContentHandler chapterContentHandler = new ChapterContentHandler(this);
         bookInfo = (BookInfo) getIntent().getSerializableExtra("baiduInfo");
-        sourceIndex = getSourceIndex(bookInfo);
-        SourceInfo sourceInfo = bookInfo.getSourceInfos().get(sourceIndex);
-        String sourceUrl = sourceInfo.getSourceUrl();
-        String url;
-        if (null != sourceUrl && !sourceUrl.isEmpty()) {
-            url = sourceUrl;
-        } else {
-            url = sourceInfo.getSourceBaiduUrl();
-        }
-        MyLogcat.myLog("url:" + url);
-        if (sourceInfo.getWebType().equals(Key.KEY_DDA)) {
-            ThreadPool.getInstance().submitTask(new DDABookCatalogThread(url, sourceInfo,
-                    bookInfo.getBookName(), bookInfo.getAuthor(), chapterContentHandler));
-        } else if (sourceInfo.getWebType().equals(Key.KEY_LIA)) {
-            ThreadPool.getInstance().submitTask(new LIABookCatalogThread(url, sourceInfo,
-                    bookInfo.getBookName(), bookInfo.getAuthor(), chapterContentHandler));
-        }
-        cv_chapter_progress.setVisibility(View.VISIBLE);
+        catalogInfos = bookInfo.getCatalogInfos();
         //启动服务
         Intent intent = new Intent(this, ChapterContentService.class);
         startService(intent);
@@ -221,6 +187,11 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                 service = mBinder.getService();
                 MyLogcat.myLog("Activity-onServiceConnected");
                 service.setData(bookInfo, activity, chapterContentHandler);
+                int readChapterid = bookInfo.getReadChapterid();
+                int readChapterPager = bookInfo.getReadChapterPager();
+                adapter.setCurrentChapterId(readChapterid, readChapterPager);
+                service.startThreadProgress(readChapterid);
+                cv_chapter_progress.setVisibility(View.VISIBLE);
             }
 
             //当activity跟service的连接意外丢失的时候会调用
@@ -240,29 +211,13 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
         adapter = new BookContentPagerAdapter(contentPagers, catalogInfos, viewPager, activity);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(contentPagers.size() * 100, false);
+        viewPager.setChapterDatas(catalogInfos);
+        viewPager.setChapterTotal(catalogInfos.size());
     }
 
     private void initEvent() {
         viewPager.addOnPageChangeListener(this);
         tv_chapter_catalog.setOnClickListener(this);
-    }
-
-    /**
-     * 获取来源数据在Source集合里面的Index
-     *
-     * @return 来源index
-     */
-    public int getSourceIndex(BookInfo bookInfo) {
-        //获取当前来源的index
-        String sourceName = bookInfo.getSourceName();
-        if (null == sourceName) {
-            bookInfo.setSourceName(bookInfo.getSourceInfos().get(0).getSourceName());
-        }
-        int sourceIndex = ArrayUtils.getArrayIndex(bookInfo.getSourceInfos(), sourceName);
-        if (sourceIndex == -1) {
-            sourceIndex = 0;
-        }
-        return sourceIndex;
     }
 
     /**

@@ -94,7 +94,7 @@ public class ChapterContentService extends Service {
      * @param chapterID 下载的章节id
      */
     public void startThreadProgress(int chapterID) {
-        CatalogInfo catalogInfo = bookInfo.getSourceInfos().get(0).getCatalogInfos().get(chapterID);
+        CatalogInfo catalogInfo = bookInfo.getCatalogInfos().get(chapterID);
         ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
         if (null == pagerContentInfos) {
             pagerContentInfos = new ArrayList<>();
@@ -105,6 +105,7 @@ public class ChapterContentService extends Service {
                     chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
             ThreadPool.getInstance().submitTask(new DDAChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
                     cv_chapter_progress));
+            cv_chapter_progress.startProgress(100);
         }
     }
 

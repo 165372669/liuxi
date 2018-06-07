@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 /**
  * www.pbtxt.com             平板电子书网
  * https://www.xxbiquge.com/ 新笔趣阁
+ * www.80txt.com  八零电子书
+ *
  * 获取章节内容线程
  */
 
@@ -51,7 +53,7 @@ public class DDAChapterContentThread extends BaseReadThread {
 
     @Override
     public void resoloveUrl(Document doc) {
-        cv_chapter_progress.startProgress(500);
+        cv_chapter_progress.startProgress(300);
         Elements divs = doc.select("div[id^=content]");
         String str = divs.toString();
         List<String> contents = new ArrayList<>();
@@ -67,16 +69,22 @@ public class DDAChapterContentThread extends BaseReadThread {
             contents.add(s);
             //System.out.println(m.group());
         }
-        cv_chapter_progress.startProgress(1000);
+        cv_chapter_progress.startProgress(500);
         if (contents.size() > 0) {
             spacingLineCount(contents);
             int pagerTotal = catalogInfo.getStrs().size();
             catalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
             sendObj(MyHandler.CHAPTER_LOADING_OK, catalogInfo.getChapterId());
         } else {
-            //没有获取到数据加一页面。
+            //没有获取到数据。
             sendObj(MyHandler.CHAPTER_LOADING_NO, catalogInfo.getChapterId());
         }
+    }
+
+    @Override
+    public void errorHandle(IOException e) {
+        //网页读取失败
+        sendObj(MyHandler.CHAPTER_LOADING_ERROR, catalogInfo.getChapterId());
     }
 
     @Override

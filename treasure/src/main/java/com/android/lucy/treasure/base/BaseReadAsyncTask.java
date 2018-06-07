@@ -9,7 +9,9 @@ import com.android.lucy.treasure.utils.MyHandler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 
 /**
  * 获取网页数据AsyncTask基类
