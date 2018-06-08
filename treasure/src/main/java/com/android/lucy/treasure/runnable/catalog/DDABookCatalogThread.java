@@ -76,7 +76,6 @@ public class DDABookCatalogThread extends BaseReadThread {
             url = url.substring(0, 24);
             MyLogcat.myLog("url:" + url);
         }
-        MyLogcat.myLog("bookName:" + bookInfo.getBookName() + "is bookName:" + bookName + ",author:" + bookInfo.getAuthor() + "is author:" + author);
         if ((null != bookName && bookName.equals(bookInfo.getBookName())) || (null != author && author.equals(bookInfo.getAuthor()))) {
             Elements dds = doc.select("dd");
             Elements as = dds.select("a");
@@ -85,6 +84,7 @@ public class DDABookCatalogThread extends BaseReadThread {
                 String chapterHref = url + a.attr("href");
                 String chapterName = a.text();
                 CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterHref, chapterName, 0);
+                catalogInfo.setBookInfo(bookInfo);
                 bookInfo.getCatalogInfos().add(catalogInfo);
                 i++;
                 if (getIsCancelled()) {

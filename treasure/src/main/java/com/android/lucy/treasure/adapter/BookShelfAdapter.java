@@ -5,11 +5,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
-import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.holder.SuperViewHolder;
 import com.android.lucy.treasure.runnable.async.BookImageAsync;
-import com.android.lucy.treasure.utils.URLUtils;
 
 import java.util.List;
 
@@ -48,6 +46,5 @@ public class BookShelfAdapter extends RecyclerViewBaseAdapter<BookInfo> {
         tv_bookCount.setText(bookInfo.getWordCountTotal());
         tv_uptateTime.setText(bookInfo.getUpdateTime());
     }
-
 
 }

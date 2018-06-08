@@ -67,8 +67,6 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                     int loadChapterId = msg.arg2;
                     MyLogcat.myLog("下载的章节id:" + (loadChapterId - 1) + "，适配器的章节id:" + adapter.getCurrentChapterId());
                     if (loadChapterId - 1 == adapter.getCurrentChapterId()) {
-                        cv_chapter_progress.setVisibility(View.INVISIBLE);
-                        cv_chapter_progress.setProgress(0);
                         adapter.notifyDataSetChanged();
                     }
                     break;
@@ -77,7 +75,12 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                 case MyHandler.CHAPTER_LOADING_ERROR:
                     //获取章节网页读取失败
                     break;
+                default:
+                    break;
+
             }
+            cv_chapter_progress.setVisibility(View.INVISIBLE);
+            cv_chapter_progress.setProgress(0);
         }
 
     }
@@ -136,7 +139,7 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
         } else {
             BookIntroducedActivity.readChapterid = 0;
             BookIntroducedActivity.readChapterPager = 0;
-            MyLogcat.myLog("无书籍数据");
+            MyLogcat.myLog("无保存书籍");
         }
     }
 

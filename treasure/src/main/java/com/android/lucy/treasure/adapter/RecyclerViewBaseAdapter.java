@@ -51,6 +51,7 @@ public abstract class RecyclerViewBaseAdapter<T> extends RecyclerView.Adapter<Su
         return mDataList;
     }
 
+
     public void setDataList(Collection<T> list) {
         this.mDataList.clear();
         this.mDataList.addAll(list);

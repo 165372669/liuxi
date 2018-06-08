@@ -4,7 +4,9 @@ import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
+import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
+import com.android.lucy.treasure.utils.MyLogcat;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -68,6 +70,7 @@ public class LIABookCatalogThread extends BaseReadThread {
     public void parseChapter(Document doc, Elements metas) {
         int sourceIndex = bookInfo.getSourceIndex();
         SourceInfo sourceInfo = bookInfo.getSourceInfos().get(sourceIndex);
+        String sourceName = sourceInfo.getSourceName();
         String bookName = null;
         String url = null;
         String author = null;
@@ -90,15 +93,32 @@ public class LIABookCatalogThread extends BaseReadThread {
             }
         }
         if (null != bookName && bookName.equals(bookInfo.getBookName())) {
+            Elements catalogs = null;
+            boolean is88dushu = false;
             Elements lis = doc.select("li");
-            Elements rels = lis.select("a[rel]");
+            switch (sourceName) {
+                case Key.KEY_88DUSHU:
+                    //处理88读书网
+                    is88dushu = true;
+                    catalogs = lis.select("a[href]");
+                    break;
+                case Key.KEY_80TXT:
+                    catalogs = lis.select("a[rel]");
+                    break;
+            }
             int i = 1;
-            for (Element rel : rels) {
-                String chapterUrl = rel.attr("href");
-                String chapterName = rel.text();
-                CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterUrl, chapterName, 0);
-                bookInfo.getCatalogInfos().add(catalogInfo);
-                i++;
+            for (Element cahpter : catalogs) {
+                String chapterUrl = cahpter.attr("href");
+                if (is88dushu) {
+                    chapterUrl = url + chapterUrl;
+                }
+                if (chapterUrl.endsWith("html")) {
+                    String chapterName = cahpter.text();
+                    CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterUrl, chapterName, 0);
+                    catalogInfo.setBookInfo(bookInfo);
+                    bookInfo.getCatalogInfos().add(catalogInfo);
+                    i++;
+                }
                 if (getIsCancelled())
                     return;
             }

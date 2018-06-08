@@ -3,12 +3,9 @@ package com.android.lucy.treasure.runnable.source;
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
-import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
-import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
-import com.android.lucy.treasure.utils.MyLogcat;
-import com.android.lucy.treasure.utils.ThreadPool;
+import com.android.lucy.treasure.utils.StringUtils;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -43,8 +40,7 @@ public class BaiduSourceThread extends BaseReadThread {
         for (Element a : as) {
             String sourceBaiduUrl = a.attr("href");
             String sourceNameTemp = a.text();
-            String sourceName = shearSourceName(sourceNameTemp);
-            MyLogcat.myLog("sourceName:" + sourceName);
+            String sourceName = StringUtils.shearSourceName(sourceNameTemp);
             SourceInfo sourceInfo = new SourceInfo(sourceName, sourceBaiduUrl);
             sourceInfo = selectSource(sourceInfo);
             if (null != sourceInfo && !bookInfo.getSourceInfos().contains(sourceInfo)) {
@@ -71,7 +67,6 @@ public class BaiduSourceThread extends BaseReadThread {
             }
         }
         for (int i = 0; i < lia_sources.length; i++) {
-            MyLogcat.myLog(lia_sources[i]);
             if (sourceName.equals(lia_sources[i])) {
                 sourceInfo.setWebType("LIA");
                 return sourceInfo;
@@ -80,20 +75,5 @@ public class BaiduSourceThread extends BaseReadThread {
         return null;
     }
 
-
-    /**
-     * 截取来源名称
-     *
-     * @param sourceName 来源网址
-     * @return
-     */
-    private String shearSourceName(String sourceName) {
-        if (sourceName.startsWith("http")) {
-            int start = sourceName.indexOf("//") + 2;
-            int end = sourceName.indexOf("/", start);
-            return sourceName.substring(start, end);
-        } else
-            return sourceName.substring(0, sourceName.indexOf("/"));
-    }
 
 }

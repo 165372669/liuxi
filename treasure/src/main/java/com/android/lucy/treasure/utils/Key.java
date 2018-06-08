@@ -11,4 +11,7 @@ public class Key {
             "www.readnovel.com,www.hongxiu.com";
     public static final String KEY_DDA = "DDA";
     public static final String KEY_LIA = "LIA";
+    public static final String KEY_88DUSHU = "www.88dushu.com";
+    public static final String KEY_88DUSHU_CHAPTER = "www.88dus.com";
+    public static final String KEY_80TXT = "www.80txt.com";
 }

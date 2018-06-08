@@ -8,6 +8,7 @@ import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ConfigInfo;
 import com.android.lucy.treasure.bean.PagerContentInfo;
 import com.android.lucy.treasure.bean.TextInfo;
+import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.StringUtils;
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
  * www.pbtxt.com             平板电子书网
  * https://www.xxbiquge.com/ 新笔趣阁
  * www.80txt.com  八零电子书
- *
+ * <p>
  * 获取章节内容线程
  */
 
@@ -53,8 +54,18 @@ public class DDAChapterContentThread extends BaseReadThread {
 
     @Override
     public void resoloveUrl(Document doc) {
+        String url = catalogInfo.getChapterUrl();
+        url = StringUtils.shearSourceName(url);
+        Elements divs;
+        switch (url) {
+            case Key.KEY_88DUSHU_CHAPTER:
+                divs = doc.select("div[class^=yd_text2]");
+                break;
+            default:
+                divs = doc.select("div[id^=content]");
+                break;
+        }
         cv_chapter_progress.startProgress(300);
-        Elements divs = doc.select("div[id^=content]");
         String str = divs.toString();
         List<String> contents = new ArrayList<>();
         String reg = "(\\“[\u4e00-\u9fa5]|[\u4e00-\u9fa5])(.)*";//以汉字开始或者以“汉字开始

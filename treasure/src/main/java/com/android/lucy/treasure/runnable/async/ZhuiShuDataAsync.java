@@ -46,11 +46,11 @@ public class ZhuiShuDataAsync extends BaseReadAsyncTask<SearchInfo> {
 
     @Override
     protected void onPostExecute(SearchInfo searchInfo) {
+        super.onPostExecute(searchInfo);
         if (isCancelled())
             return;
         if (null != onUpdateDataLisetener)
             onUpdateDataLisetener.setData(searchInfo);
-        super.onPostExecute(searchInfo);
     }
 
 

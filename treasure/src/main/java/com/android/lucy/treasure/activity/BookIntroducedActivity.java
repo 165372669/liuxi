@@ -1,7 +1,9 @@
 package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Gravity;
@@ -14,10 +16,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
+import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.SearchInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
+import com.android.lucy.treasure.dao.BookInfoDao;
 import com.android.lucy.treasure.runnable.async.BookImageAsync;
 import com.android.lucy.treasure.runnable.async.ZhuiShuDataAsync;
 import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
@@ -28,6 +32,7 @@ import com.android.lucy.treasure.utils.ArrayUtils;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
+import com.android.lucy.treasure.utils.SystemUtils;
 import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.utils.URLUtils;
 
@@ -35,6 +40,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.litepal.crud.DataSupport;
+import org.litepal.tablemanager.Connector;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -90,6 +96,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                         SourceInfo sourceInfo = bookInfo.getSourceInfos().get(0);
                         bookInfo.setSourceName(sourceInfo.getSourceName());//设置当前来源名；
                         sourceIndex = 0;
+                        bookInfo.setSourceIndex(sourceIndex);
                         String webType = sourceInfo.getWebType();
                         switch (webType) {
                             case Key.KEY_DDA:
@@ -102,11 +109,23 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                                 break;
                         }
                     } else {
-                        MyLogcat.myLog("没有找到书籍来源");
+                        //重新请求获取百度来源
+                        ThreadPool.getInstance().submitTask(new BaiduSourceThread(URLUtils.BAiDU_SEARCH_URL_ + bookInfo.getBookName(),
+                                bookInfo, bookHandler));
                     }
                     break;
                 case BAIDU_SEARCH_NO:
                     MyLogcat.myLog("百度来源网页读取失败");
+                    if (SystemUtils.isNetworkAvalible(MyApplication.getContext())) {
+                        MyLogcat.myLog("有网络");
+                        //重新请求获取百度来源
+                        ThreadPool.getInstance().submitTask(new BaiduSourceThread(URLUtils.BAiDU_SEARCH_URL_ + bookInfo.getBookName(),
+                                bookInfo, bookHandler));
+                    } else {
+                        MyLogcat.myLog("无网络");
+                        //设置网络
+                        SystemUtils.checkNetwork(mActivity.get());
+                    }
                     break;
                 case CATALOG_SOURCE_OK:
                     setReadBookState(true);
@@ -253,30 +272,32 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                     if (bookInfo.isSaved()) {
                         //删除数据
                         delete = bookInfo.delete();
-                        MyLogcat.myLog("删除数据！bookInfo.delete()" + delete);
+                        MyLogcat.myLog("删除数据！bookInfo.delete():" + delete);
                     } else {
                         //删除数据
                         BookInfo bookData = booklist.get(0);
                         delete = bookData.delete();
-                        MyLogcat.myLog("删除数据！!!bookData.delete()" + delete);
+                        MyLogcat.myLog("删除数据！!!bookData.delete():" + delete);
                     }
-                    if (delete > 0) {
-                        DataSupport.delete(BookInfo.class, bookInfo.getId());
-                        bookInfo.setReadChapterid(0);
-                        bookInfo.setReadChapterPager(0);
-                        bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
-                        bt_add_book.setText("加入书架");
-                        MyLogcat.myLog("sourceId:" + bookInfo.getSourceInfos().get(sourceIndex).getId());
-                    }
+                    // DataSupport.delete(BookInfo.class, bookInfo.getId());
+                    bookInfo.setReadChapterid(0);
+                    bookInfo.setReadChapterPager(0);
+                    bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
+                    bt_add_book.setText("加入书架");
                 } else {
                     boolean result = bookInfo.save();
-                    DataSupport.saveAll(bookInfo.getSourceInfos());
-                    DataSupport.saveAll(bookInfo.getCatalogInfos());
-                    if (result) {
+                    long bookId = 0;
+                    if (!result) {
+                        bookId = BookInfoDao.saveBookData(bookInfo); //存储数据
+                    }
+                    if (result || bookId > 0) {
+                        DataSupport.saveAll(bookInfo.getSourceInfos());
+                        DataSupport.saveAll(bookInfo.getCatalogInfos());
                         bt_add_book.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                         bt_add_book.setText("移除书籍");
-                        MyLogcat.myLog("bookName:" + bookInfo);
                     }
+
+                    MyLogcat.myLog("result:" + result + ",bookId:" + bookId + ",bookName:" + bookInfo);
                 }
                 ThreadPool.getInstance().submitTask(new WriteDataFileThread("bookData.db"));
                 break;
@@ -363,16 +384,20 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
      */
     @Override
     public void setData(SearchInfo searchInfo) {
-        tv_bookName_book.setText(searchInfo.getBookName());
-        tv_author_book.setText("作者：" + searchInfo.getAuthor());
-        tv_type_book.setText("类型：" + searchInfo.getType());
-        tv_desc_book.setText(searchInfo.getDesc());
-        tv_size_book.setText("总字数：" + searchInfo.getBookSize());
-        tv_timeUpdate_book.setText(searchInfo.getBookUpdateTime());
+
+        if (null != searchInfo) {
+            tv_bookName_book.setText(searchInfo.getBookName());
+            tv_author_book.setText("作者：" + searchInfo.getAuthor());
+            tv_type_book.setText("类型：" + searchInfo.getType());
+            tv_desc_book.setText(searchInfo.getDesc());
+            tv_size_book.setText("总字数：" + searchInfo.getBookSize());
+            tv_timeUpdate_book.setText(searchInfo.getBookUpdateTime());
+            bookInfo.setWordCountTotal(searchInfo.getBookSize());//字数
+            bookInfo.setUpdateTime(searchInfo.getBookUpdateTime());//更新时间
+        }
+
         progressBar.setVisibility(View.INVISIBLE);
         ll_book_detail.setVisibility(View.VISIBLE);
-        bookInfo.setWordCountTotal(searchInfo.getBookSize());//字数
-        bookInfo.setUpdateTime(searchInfo.getBookUpdateTime());//更新时间
     }
 
     /**

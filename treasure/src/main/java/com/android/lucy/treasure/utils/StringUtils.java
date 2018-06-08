@@ -30,4 +30,19 @@ public class StringUtils {
         return sb.toString();
     }
 
+    /**
+     * 截取来源名称
+     *
+     * @param sourceName 来源网址
+     * @return
+     */
+    public static String shearSourceName(String sourceName) {
+        if (sourceName.startsWith("http")) {
+            int start = sourceName.indexOf("//") + 2;
+            int end = sourceName.indexOf("/", start);
+            return sourceName.substring(start, end);
+        } else
+            return sourceName.substring(0, sourceName.indexOf("/"));
+    }
+
 }
