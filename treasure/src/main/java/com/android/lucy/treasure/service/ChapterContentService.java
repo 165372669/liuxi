@@ -105,7 +105,7 @@ public class ChapterContentService extends Service {
                     chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
             ThreadPool.getInstance().submitTask(new DDAChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
                     cv_chapter_progress));
-            cv_chapter_progress.startProgress(100);
+            cv_chapter_progress.startProgress(1000);
         }
     }
 

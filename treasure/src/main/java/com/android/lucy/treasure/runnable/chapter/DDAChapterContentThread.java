@@ -65,7 +65,7 @@ public class DDAChapterContentThread extends BaseReadThread {
                 divs = doc.select("div[id^=content]");
                 break;
         }
-        cv_chapter_progress.startProgress(300);
+        cv_chapter_progress.startProgress(3000);
         String str = divs.toString();
         List<String> contents = new ArrayList<>();
         String reg = "(\\“[\u4e00-\u9fa5]|[\u4e00-\u9fa5])(.)*";//以汉字开始或者以“汉字开始
@@ -80,9 +80,10 @@ public class DDAChapterContentThread extends BaseReadThread {
             contents.add(s);
             //System.out.println(m.group());
         }
-        cv_chapter_progress.startProgress(500);
+        cv_chapter_progress.startProgress(5000);
         if (contents.size() > 0) {
             spacingLineCount(contents);
+            cv_chapter_progress.startProgress(10000);
             int pagerTotal = catalogInfo.getStrs().size();
             catalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
             sendObj(MyHandler.CHAPTER_LOADING_OK, catalogInfo.getChapterId());

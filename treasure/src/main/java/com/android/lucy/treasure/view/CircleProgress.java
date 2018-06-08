@@ -111,7 +111,7 @@ public class CircleProgress extends View {
         canvas.drawCircle(mCenterX, mCenterY, mRadius, mPaint);
         //2、画动态圆弧
         mPaint.setColor(mRingColor);
-        canvas.drawArc(mRectF, -90, (float) (0.36 * mProgress), false, mPaint);
+        canvas.drawArc(mRectF, -90, (float) (0.036 * mProgress), false, mPaint);
     }
 
     //设置进度
