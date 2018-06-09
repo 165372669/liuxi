@@ -38,7 +38,7 @@ public class BookShelfAdapter extends RecyclerViewBaseAdapter<BookInfo> {
         TextView tv_bookCount = (TextView) holder.getView(R.id.rl_book_count);
         TextView tv_noChapterCount = (TextView) holder.getView(R.id.rl_book_noChapterCount);
         TextView tv_uptateTime = (TextView) holder.getView(R.id.rl_book_updateTime);
-        int noChapterCount = bookInfo.getNewChapterId() - (bookInfo.getReadChapterid() + 1);
+        int noChapterCount = bookInfo.getChapterTotal() - (bookInfo.getReadChapterid() + 1);
         tv_noChapterCount.setText(String.valueOf(noChapterCount));
         tv_bookName.setText(bookInfo.getBookName());
         tv_bookAuthor.setText(bookInfo.getAuthor());

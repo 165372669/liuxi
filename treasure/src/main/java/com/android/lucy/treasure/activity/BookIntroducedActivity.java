@@ -217,7 +217,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                 .find(BookInfo.class, true);
         if (booklist.size() > 0) {
             bookInfo = booklist.get(0);
-            sourceIndex = getSourceIndex(bookInfo);
+            sourceIndex = ArrayUtils.getSourceIndex(bookInfo);
             bookInfo.setSourceIndex(sourceIndex);
             setReadBookState(true);
             setAddBookState(true, "移除书籍");
@@ -279,6 +279,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                     // DataSupport.delete(BookInfo.class, bookInfo.getId());
                     bookInfo.setReadChapterid(0);
                     bookInfo.setReadChapterPager(0);
+                    bookInfo.setId(0);
                     bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
                     bt_add_book.setText("加入书架");
                 } else {
@@ -350,26 +351,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         } catch (IOException e) {
             MyLogcat.myLog(htmlUrl + "，网页读取失败！");
         }
-    }
-
-
-    /**
-     * 获取来源数据在Source集合里面的Index
-     *
-     * @return 来源index
-     */
-    public int getSourceIndex(BookInfo bookInfo) {
-        //获取当前来源的index
-        String sourceName = bookInfo.getSourceName();
-        if (null == sourceName) {
-            bookInfo.setSourceName(bookInfo.getSourceInfos().get(0).getSourceName());
-            return 0;
-        }
-        int sourceIndex = ArrayUtils.getArrayIndex(bookInfo.getSourceInfos(), sourceName);
-        if (sourceIndex == -1) {
-            sourceIndex = 0;
-        }
-        return sourceIndex;
     }
 
 

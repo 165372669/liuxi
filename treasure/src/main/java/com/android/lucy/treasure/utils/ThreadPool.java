@@ -14,9 +14,9 @@ import java.util.concurrent.Executors;
 
 public class ThreadPool {
     private volatile static ThreadPool threadPool;
-    public static final int POOL_SIZE = 10;
+    public static final int POOL_SIZE = 5;
     private ExecutorService executorService;
-    private List<BaseReadThread> runnables;
+    private List<Runnable> runnables;
 
     public ExecutorService getExecutorService() {
 
@@ -42,7 +42,7 @@ public class ThreadPool {
 
     public void submitTask(Runnable runnable) {
         if (runnable instanceof BaseReadThread) {
-            runnables.add((BaseReadThread) runnable);
+            runnables.add(runnable);
         }
         executorService.submit(runnable);
     }
@@ -58,9 +58,9 @@ public class ThreadPool {
      * @return
      */
     public boolean isexistTask(String flag) {
-        Iterator<BaseReadThread> iterator = runnables.iterator();
+        Iterator<Runnable> iterator = runnables.iterator();
         while (iterator.hasNext()) {
-            BaseReadThread task = iterator.next();
+            BaseReadThread task = (BaseReadThread) iterator.next();
             if (null != task) {
                 if (task.getFlag().equals(flag)) {
                     MyLogcat.myLog(task.getClass().getName() + "，任务重复：" + flag);
@@ -71,13 +71,14 @@ public class ThreadPool {
         return false;
     }
 
-    /*
-    * 取消线程
-    * */
+
+    /**
+     * 取消线程
+     */
     public void cancelTask() {
-        Iterator<BaseReadThread> iterator = runnables.iterator();
+        Iterator<Runnable> iterator = runnables.iterator();
         while (iterator.hasNext()) {
-            BaseReadThread task = iterator.next();
+            BaseReadThread task = (BaseReadThread) iterator.next();
             if (null != task) {
                 task.cancel();
             }
@@ -93,9 +94,9 @@ public class ThreadPool {
      * @param flag 章节标志
      */
     public void cancelTask(String flag) {
-        Iterator<BaseReadThread> iterator = runnables.iterator();
+        Iterator<Runnable> iterator = runnables.iterator();
         while (iterator.hasNext()) {
-            BaseReadThread task = iterator.next();
+            BaseReadThread task = (BaseReadThread) iterator.next();
             if (null != task) {
                 if (task.getFlag().equals(flag)) {
                     MyLogcat.myLog(task.getClass().getName() + "，取消任务：" + flag);
@@ -111,9 +112,9 @@ public class ThreadPool {
      * @param flag 章节标志
      */
     public void removeTask(String flag) {
-        Iterator<BaseReadThread> iterator = runnables.iterator();
+        Iterator<Runnable> iterator = runnables.iterator();
         while (iterator.hasNext()) {
-            BaseReadThread task = iterator.next();
+            BaseReadThread task = (BaseReadThread) iterator.next();
             if (!(null != task && task.getFlag().equals(flag))) {
                 MyLogcat.myLog(task.getClass().getName() + "：取消任务：" + flag);
                 task.cancel();

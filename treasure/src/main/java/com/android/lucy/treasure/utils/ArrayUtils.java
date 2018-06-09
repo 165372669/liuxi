@@ -1,5 +1,6 @@
 package com.android.lucy.treasure.utils;
 
+import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
 
@@ -26,5 +27,24 @@ public class ArrayUtils {
             }
         }
         return -1;
+    }
+
+    /**
+     * 获取来源数据在Source集合里面的Index
+     *
+     * @return 来源index
+     */
+    public static int getSourceIndex(BookInfo bookInfo) {
+        //获取当前来源的index
+        String sourceName = bookInfo.getSourceName();
+        if (null == sourceName) {
+            bookInfo.setSourceName(bookInfo.getSourceInfos().get(0).getSourceName());
+            return 0;
+        }
+        int sourceIndex = ArrayUtils.getArrayIndex(bookInfo.getSourceInfos(), sourceName);
+        if (sourceIndex == -1) {
+            sourceIndex = 0;
+        }
+        return sourceIndex;
     }
 }

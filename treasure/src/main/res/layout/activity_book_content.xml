@@ -6,24 +6,21 @@
     android:layout_height="match_parent">
 
 
-    <com.android.lucy.treasure.view.ChapterViewPager
-        android:id="@+id/vp_book_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <com.android.lucy.treasure.view.CircleProgress
         android:id="@+id/cv_chapter_progress"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="center"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:visibility="invisible"
-        tc:bgColor="@color/huise"
+        tc:bgroundWidth="7dp"
+        tc:bgroundColor="@color/black"
         tc:circleColor="@color/hailanse"
-        tc:roundWidth="7dp" />
+        tc:roundColor="@color/huise"
+        tc:roundWidth="5dp" />
 
     <LinearLayout
         android:id="@+id/ll_chapter_titleBar"
@@ -80,8 +77,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="目录"
-            android:textSize="18sp"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -90,8 +87,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="目录"
-            android:textSize="18sp"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -100,8 +97,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="目录"
-            android:textSize="18sp"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -110,8 +107,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="目录"
-            android:textSize="18sp"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tv_chapter_catalog"
@@ -121,8 +118,13 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="目录"
-            android:textSize="18sp"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:textSize="18sp" />
     </LinearLayout>
+
+    <com.android.lucy.treasure.view.ChapterViewPager
+        android:id="@+id/vp_book_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </FrameLayout>

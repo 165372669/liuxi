@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 public class CatalogInfo extends DataSupport implements Comparable, Serializable {
     private BookInfo bookInfo;
+    private int id;
     private int chapterId;  //章节id
     private String chapterUrl; //章节网址
     private String chapterName; //章节名
@@ -43,6 +44,14 @@ public class CatalogInfo extends DataSupport implements Comparable, Serializable
 
     public void setPagerContentInfos(ArrayList<PagerContentInfo> pagerContentInfos) {
         this.pagerContentInfos = pagerContentInfos;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getChapterId() {

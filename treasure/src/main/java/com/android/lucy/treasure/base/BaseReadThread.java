@@ -4,12 +4,15 @@ import android.os.Handler;
 import android.os.Message;
 
 import com.android.lucy.treasure.application.MyApplication;
+import com.android.lucy.treasure.bean.BookInfo;
+import com.android.lucy.treasure.dao.BookInfoDao;
 import com.android.lucy.treasure.interfaces.HTMLFollowRedirects;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.litepal.crud.DataSupport;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -61,6 +64,18 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
         }
     }
 
+    public void saveBookData(BookInfo bookInfo) {
+        int chapterTotal = bookInfo.getCatalogInfos().size();
+        int newChapterid = chapterTotal - 1;
+        bookInfo.setChapterTotal(chapterTotal);
+        bookInfo.setNewChapterId(newChapterid); //最新章节id
+        bookInfo.setNewChapterName(bookInfo.getCatalogInfos().get(newChapterid).getChapterName());
+        if (bookInfo.getId() > 0) {
+            bookInfo.update(bookInfo.getId());
+            DataSupport.saveAll(bookInfo.getCatalogInfos());
+        }
+    }
+
     @Override
     public void xxbuquge() {
     }
@@ -94,6 +109,7 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
         msg.arg1 = arg;
         myHandler.sendMessage(msg);
     }
+
 
     /*
 * 发送有标识的对象

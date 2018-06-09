@@ -22,23 +22,18 @@ import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ChapterIDAndName;
 import com.android.lucy.treasure.pager.ContentPager;
-import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
 import com.android.lucy.treasure.service.ChapterContentService;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.MyMathUtils;
-import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.view.ChapterViewPager;
 import com.android.lucy.treasure.view.CircleProgress;
 
-import org.litepal.crud.DataSupport;
-
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 小说内容页面,包含一个ViewPage，ViewPage里面添加ContentPagerView
- * 将一个章节的内容分割成一个若干个View。
+ * 将一个章节的内容分割成一个若干个页面。
  */
 
 public class BookContentActivity extends Activity implements ViewPager.OnPageChangeListener, View.OnClickListener {
@@ -119,23 +114,25 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
     @Override
     protected void onPause() {
         super.onPause();
-        List<BookInfo> booklist = DataSupport.select("bookName")
-                .where("bookName=?", bookInfo.getBookName())
-                .limit(1)
-                .find(BookInfo.class);
-        if (booklist.size() > 0) {
+        if (bookInfo.getId() > 0) {
             BookIntroducedActivity.readChapterid = adapter.getCurrentChapterId();
             BookIntroducedActivity.readChapterPager = adapter.getPagerPosition();
             int readChapterid = adapter.getCurrentChapterId();
-            int chapterTotal = catalogInfos.size();
-            bookInfo.setReadChapterid(readChapterid);
-            bookInfo.setReadChapterPager(adapter.getPagerPosition());
+            int readChapterPager = adapter.getPagerPosition();
+            if (readChapterid == 0) {
+                bookInfo.setToDefault("readChapterid");
+            } else {
+                bookInfo.setReadChapterid(readChapterid);
+            }
+            if (readChapterPager == 0) {
+                bookInfo.setToDefault("readChapterPager");
+            } else {
+                bookInfo.setReadChapterPager(readChapterPager);
+            }
             bookInfo.setReadChapterName(catalogInfos.get(readChapterid).getChapterName());
-            bookInfo.setNewChapterName(catalogInfos.get(chapterTotal - 1).getChapterName());
             int update = bookInfo.update(bookInfo.getId());
             MyLogcat.myLog("onPause：id:" + bookInfo.getId() + ",readChapterid:" +
                     bookInfo.getReadChapterid() + ",update:" + update);
-            ThreadPool.getInstance().submitTask(new WriteDataFileThread("bookData.db"));
         } else {
             BookIntroducedActivity.readChapterid = 0;
             BookIntroducedActivity.readChapterPager = 0;
@@ -159,7 +156,6 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
         //停止服务
 /*        Intent intent = new Intent(this, ChapterContentService.class);
         stopService(intent);*/
-        ThreadPool.getInstance().cancelTask("chapter-temp");
     }
 
     private void initViews() {

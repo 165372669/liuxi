@@ -7,6 +7,7 @@ import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
+import com.android.lucy.treasure.dao.BookInfoDao;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 
@@ -14,6 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
 import java.io.BufferedReader;
@@ -40,6 +42,7 @@ public class DDABookCatalogThread extends BaseReadThread {
     public DDABookCatalogThread(String url, BookInfo bookInfo, MyHandler myHandler) {
         super(url, myHandler);
         this.bookInfo = bookInfo;
+        flag = "DDABookCatalogThread";
     }
 
     @Override
@@ -79,20 +82,21 @@ public class DDABookCatalogThread extends BaseReadThread {
         if ((null != bookName && bookName.equals(bookInfo.getBookName())) || (null != author && author.equals(bookInfo.getAuthor()))) {
             Elements dds = doc.select("dd");
             Elements as = dds.select("a");
-            int i = 1;
+            int i = 0;
             for (Element a : as) {
                 String chapterHref = url + a.attr("href");
                 String chapterName = a.text();
-                CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterHref, chapterName, 0);
-                catalogInfo.setBookInfo(bookInfo);
-                bookInfo.getCatalogInfos().add(catalogInfo);
                 i++;
+                CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterHref, chapterName, 0);
+                if (!bookInfo.getCatalogInfos().contains(catalogInfo)) {
+                    catalogInfo.setBookInfo(bookInfo);
+                    bookInfo.getCatalogInfos().add(catalogInfo);
+                }
                 if (getIsCancelled()) {
                     return;
                 }
             }
-            bookInfo.setChapterTotal(i - 1);
-            bookInfo.setNewChapterId(i - 1); //最新章节id
+            saveBookData(bookInfo);
             if (bookInfo.getCatalogInfos().size() > 0) {
                 sendObj(MyHandler.CATALOG_SOURCE_OK);
             } else {
