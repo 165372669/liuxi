@@ -5,7 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="hailanse">#32cd99</color>
+    <color name="zhonghailanse">#32cd99</color>
     <color name="lvse">#00FF00</color>
     <color name="zhonglanse">#3232cd</color>
     <color name="rad">#ff0000</color>
@@ -14,4 +14,5 @@
     <color name="colorRed">#d50f09</color>
     <color name="chenghongse">#FF2400</color>
     <color name="hailan">#70DB93</color>
+    <color name="qingse">#00FFFF</color>
 </resources>

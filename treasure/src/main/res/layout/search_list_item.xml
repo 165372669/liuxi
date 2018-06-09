@@ -23,7 +23,7 @@
         android:maxLines="1"
         android:padding="1dp"
         android:text="末日机甲"
-        android:textColor="@color/hailanse"
+        android:textColor="@color/zhonghailanse"
         android:textSize="14sp" />
 
     <LinearLayout

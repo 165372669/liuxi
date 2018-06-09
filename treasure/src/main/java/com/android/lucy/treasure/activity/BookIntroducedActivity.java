@@ -2,8 +2,12 @@ package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -17,9 +21,11 @@ import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.base.BaseReadAsyncTask;
 import com.android.lucy.treasure.bean.BookInfo;
+import com.android.lucy.treasure.bean.ConfigInfo;
 import com.android.lucy.treasure.bean.SearchInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
 import com.android.lucy.treasure.dao.BookInfoDao;
+import com.android.lucy.treasure.pager.ContentPager;
 import com.android.lucy.treasure.runnable.async.BookImageAsync;
 import com.android.lucy.treasure.runnable.async.ZhuiShuDataAsync;
 import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
@@ -30,6 +36,7 @@ import com.android.lucy.treasure.utils.ArrayUtils;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
+import com.android.lucy.treasure.utils.MyMathUtils;
 import com.android.lucy.treasure.utils.SystemUtils;
 import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.utils.URLUtils;
@@ -280,7 +287,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                     bookInfo.setReadChapterid(0);
                     bookInfo.setReadChapterPager(0);
                     bookInfo.setId(0);
-                    bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
+                    bt_add_book.setBackgroundColor(getResources().getColor(R.color.zhonghailanse));
                     bt_add_book.setText("加入书架");
                 } else {
                     boolean result = bookInfo.save();
@@ -340,19 +347,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         }
     }
 
-    public void openUrl(String htmlUrl) {
-        try {
-            URL url = new URL(htmlUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            int statusCode = connection.getResponseCode();
-            Map<String, List<String>> headerFields = connection.getHeaderFields();
-            MyLogcat.myLog("code:" + statusCode + ",headerFields:" + headerFields.toString());
-
-        } catch (IOException e) {
-            MyLogcat.myLog(htmlUrl + "，网页读取失败！");
-        }
-    }
-
 
     /**
      * 更新小说详细数据
@@ -385,7 +379,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
      */
     public void setReadBookState(boolean state) {
         bt_read_book.setEnabled(state);
-        bt_read_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
+        bt_read_book.setBackgroundColor(getResources().getColor(R.color.zhonghailanse));
     }
 
     /**
@@ -400,7 +394,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         if (text.equals("移除书籍")) {
             bt_add_book.setBackgroundColor(getResources().getColor(R.color.colorAccent));
         } else {
-            bt_add_book.setBackgroundColor(getResources().getColor(R.color.hailanse));
+            bt_add_book.setBackgroundColor(getResources().getColor(R.color.zhonghailanse));
         }
 
     }
@@ -414,6 +408,5 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         intent.putExtra("baiduInfo", bookInfo);
         startActivity(intent);
     }
-
 
 }

@@ -6,27 +6,32 @@
     android:layout_height="match_parent">
 
 
+
+    <com.android.lucy.treasure.view.ChapterViewPager
+        android:id="@+id/vp_book_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <com.android.lucy.treasure.view.CircleProgress
         android:id="@+id/cv_chapter_progress"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_gravity="center"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:visibility="invisible"
-        tc:bgroundWidth="7dp"
-        tc:bgroundColor="@color/black"
-        tc:circleColor="@color/hailanse"
-        tc:roundColor="@color/huise"
+        tc:bgroundWidth="6dp"
+        tc:bgroundColor="@color/zhonghailanse"
+        tc:circleColor="@color/lvse"
+        tc:roundColor="@color/hailan"
         tc:roundWidth="5dp" />
 
     <LinearLayout
         android:id="@+id/ll_chapter_titleBar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="@color/hailanse"
+        android:background="@color/zhonghailanse"
         android:orientation="horizontal"
         android:visibility="invisible">
 
@@ -66,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="bottom"
-        android:background="@color/hailanse"
+        android:background="@color/zhonghailanse"
         android:orientation="horizontal"
         android:visibility="invisible">
 
@@ -121,10 +126,5 @@
             android:textColor="@color/white"
             android:textSize="18sp" />
     </LinearLayout>
-
-    <com.android.lucy.treasure.view.ChapterViewPager
-        android:id="@+id/vp_book_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </FrameLayout>

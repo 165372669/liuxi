@@ -74,7 +74,7 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                     break;
 
             }
-            cv_chapter_progress.setVisibility(View.INVISIBLE);
+            cv_chapter_progress.setVisibility(View.GONE);
             cv_chapter_progress.setProgress(0);
         }
 
@@ -167,6 +167,7 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
         viewPager.setActivity(this);
         tv_chapter_catalog = findViewById(R.id.tv_chapter_catalog);
         cv_chapter_progress = findViewById(R.id.cv_chapter_progress);
+        cv_chapter_progress.setVisibility(View.GONE);
     }
 
     private void initDatas() {
@@ -190,7 +191,7 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                 int readChapterPager = bookInfo.getReadChapterPager();
                 adapter.setCurrentChapterId(readChapterid, readChapterPager);
                 service.startThreadProgress(readChapterid);
-                cv_chapter_progress.setVisibility(View.VISIBLE);
+                cv_chapter_progress.setVisitiby(true);
             }
 
             //当activity跟service的连接意外丢失的时候会调用
@@ -323,7 +324,6 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                 intent.putExtra("readChapterId", adapter.getCurrentChapterId());
                 startActivity(intent);
                 break;
-
         }
     }
 
