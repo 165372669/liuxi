@@ -163,6 +163,7 @@ public class DividerDecoration extends RecyclerView.ItemDecoration {
             return this;
         }
 
+
         /**
          * Sets the left padding in pixels
          * @param pixelPadding left padding in pixels

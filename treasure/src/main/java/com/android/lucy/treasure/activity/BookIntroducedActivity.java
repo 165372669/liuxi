@@ -210,8 +210,7 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 
     private void initDatas() {
         bookHandler = new BookHandler(this);
-        Intent intent = getIntent();
-        SearchInfo searchInfo = intent.getParcelableExtra("searchInfo");
+        SearchInfo searchInfo = getIntent().getParcelableExtra("searchInfo");
         String bookName = searchInfo.getBookName();
         String author = searchInfo.getAuthor();
         //启动追书线程，获取字数和最新更新章节

@@ -26,7 +26,7 @@ public class BookInfo extends DataSupport implements Serializable {
     private int newChapterId; //最新章节id
     private int readChapterid;//已读章节id
     private int readChapterPager;//已读章节页面
-    private int closeTime;   //关闭时间
+    private long closeTime;   //关闭时间
     private int chapterTotal; //章节总数
     private int unreadSeveral;//未读章节数
     private ArrayList<SourceInfo> sourceInfos;//来源集合
@@ -177,11 +177,11 @@ public class BookInfo extends DataSupport implements Serializable {
         this.sourceName = sourceName;
     }
 
-    public int getCloseTime() {
+    public long getCloseTime() {
         return closeTime;
     }
 
-    public void setCloseTime(int closeTime) {
+    public void setCloseTime(long closeTime) {
         this.closeTime = closeTime;
     }
 

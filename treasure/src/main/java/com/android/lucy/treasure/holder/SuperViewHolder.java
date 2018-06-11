@@ -20,4 +20,8 @@ public class SuperViewHolder extends LRecyclerViewAdapter.ViewHolder {
         return itemView.findViewById(id);
     }
 
+    public View getitemView() {
+        return itemView;
+    }
+
 }

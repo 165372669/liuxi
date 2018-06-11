@@ -130,9 +130,11 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
                 bookInfo.setReadChapterPager(readChapterPager);
             }
             bookInfo.setReadChapterName(catalogInfos.get(readChapterid).getChapterName());
+            long closeTime = System.currentTimeMillis();
+            bookInfo.setCloseTime(closeTime);
             int update = bookInfo.update(bookInfo.getId());
             MyLogcat.myLog("onPause：id:" + bookInfo.getId() + ",readChapterid:" +
-                    bookInfo.getReadChapterid() + ",update:" + update);
+                    bookInfo.getReadChapterid() + ",closeTime" + bookInfo.getCloseTime() + ",update:" + update);
         } else {
             BookIntroducedActivity.readChapterid = 0;
             BookIntroducedActivity.readChapterPager = 0;

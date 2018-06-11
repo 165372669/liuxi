@@ -47,7 +47,7 @@ public class ChapterViewPager extends ViewPager {
         int action = ev.getAction();
         float motionValue;
         int disparityWidth = getWidth() / 7;
-        int disparityHeight = getHeight() / 4;
+        int disparityHeight = getHeight() / 3;
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 downTime = ev.getDownTime();

@@ -11,4 +11,5 @@ public class URLUtils {
 
     public static final String URL_80ELECTRONBOOK="www.80txt.com";
     public static final String URL_XXBIQUGEBOOK="www.xxbiquge.com";
+    public static final String URL_BAIDU_REMENBOOK="http://top.baidu.com/buzz?b=7&c=10&fr=topcategory_c10";
 }

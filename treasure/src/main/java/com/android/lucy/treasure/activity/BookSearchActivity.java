@@ -118,6 +118,7 @@ public class BookSearchActivity extends Activity implements BaseReadAsyncTask.On
     private void initData() {
         //读取历史搜索数据
         new Thread(new ReadSearchHistoryThread(new SearchHandler(this))).start();
+        keyboardBack();
     }
 
     /*

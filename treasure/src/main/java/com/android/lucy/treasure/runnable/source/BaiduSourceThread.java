@@ -5,6 +5,7 @@ import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
+import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.StringUtils;
 
 import org.jsoup.nodes.Document;
@@ -21,15 +22,11 @@ public class BaiduSourceThread extends BaseReadThread {
 
     private BookInfo bookInfo;
     private MyHandler bookHandler;
-    private final String[] dda_sources;
-    private final String[] lia_sources;
 
     public BaiduSourceThread(String url, BookInfo bookInfo, MyHandler bookHandler) {
         super(url, bookHandler);
         this.bookInfo = bookInfo;
         this.bookHandler = bookHandler;
-        dda_sources = Key.DDA_SOURCE.split("/");
-        lia_sources = Key.LIA_SOURCE.split("/");
     }
 
 
@@ -43,6 +40,7 @@ public class BaiduSourceThread extends BaseReadThread {
             String sourceName = StringUtils.shearSourceName(sourceNameTemp);
             SourceInfo sourceInfo = new SourceInfo(sourceName, sourceBaiduUrl);
             sourceInfo = selectSource(sourceInfo);
+            MyLogcat.myLog("未过滤来源：" + sourceName);
             if (null != sourceInfo && !bookInfo.getSourceInfos().contains(sourceInfo)) {
                 //没有包含同一个来源
                 sourceInfo.setBookInfo(bookInfo);
@@ -60,17 +58,12 @@ public class BaiduSourceThread extends BaseReadThread {
 
     private SourceInfo selectSource(SourceInfo sourceInfo) {
         String sourceName = sourceInfo.getSourceName();
-        for (int i = 0; i < dda_sources.length; i++) {
-            if (sourceName.equals(dda_sources[i])) {
-                sourceInfo.setWebType("DDA");
-                return sourceInfo;
-            }
-        }
-        for (int i = 0; i < lia_sources.length; i++) {
-            if (sourceName.equals(lia_sources[i])) {
-                sourceInfo.setWebType("LIA");
-                return sourceInfo;
-            }
+        if (Key.DDA_SOURCE.contains(sourceName)) {
+            sourceInfo.setWebType("DDA");
+            return sourceInfo;
+        } else if (Key.LIA_SOURCE.contains(sourceName)) {
+            sourceInfo.setWebType("DDA");
+            return sourceInfo;
         }
         return null;
     }

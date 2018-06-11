@@ -8,6 +8,7 @@ import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
 import com.android.lucy.treasure.dao.BookInfoDao;
+import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 
@@ -75,10 +76,12 @@ public class DDABookCatalogThread extends BaseReadThread {
                     break;
             }
         }
+
         if (null != url && url.startsWith("https://www.xxbiquge.com")) {
             url = url.substring(0, 24);
             MyLogcat.myLog("url:" + url);
         }
+
         if ((null != bookName && bookName.equals(bookInfo.getBookName())) || (null != author && author.equals(bookInfo.getAuthor()))) {
             Elements dds = doc.select("dd");
             Elements as = dds.select("a");

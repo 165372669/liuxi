@@ -23,7 +23,7 @@
         android:layout_marginTop="8dp"
         tc:bgroundWidth="6dp"
         tc:bgroundColor="@color/zhonghailanse"
-        tc:circleColor="@color/lvse"
+        tc:circleColor="@color/white"
         tc:roundColor="@color/hailan"
         tc:roundWidth="5dp" />
 
