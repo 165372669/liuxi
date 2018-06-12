@@ -27,7 +27,7 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
 
 
     protected String baseUrl;
-    private Handler myHandler;
+    protected Handler myHandler;
     private boolean isCancelled;
     protected String flag;//区分线程标志
 
@@ -148,7 +148,7 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
     public void writeFile(Object obj) {
         BufferedWriter bw = null;
         try {
-            File file = new File(MyApplication.getContext().getExternalCacheDir(), "sv.txt");
+            File file = new File(MyApplication.getContext().getExternalCacheDir(), "baidu.txt");
             MyLogcat.myLog("file:" + file.getPath());
             bw = new BufferedWriter(new FileWriter(file));
             bw.write(obj.toString());

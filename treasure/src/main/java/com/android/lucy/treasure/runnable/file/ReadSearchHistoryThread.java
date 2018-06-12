@@ -27,6 +27,7 @@ public class ReadSearchHistoryThread implements Runnable {
 
     @Override
     public void run() {
+        Message message = Message.obtain();
         if (!SDCardHelper.isSDCardMounted())
             return;
         String filesDir = SDCardHelper.getSDCardPrivateFilesDir(MyApplication.getContext(), "history");
@@ -42,13 +43,15 @@ public class ReadSearchHistoryThread implements Runnable {
 
                 historys.add(line);
             }
-            Message message = Message.obtain();
             message.obj = historys;
+            message.arg1 = MyHandler.SEARCH_HISTORYS_OK;
             mHandler.sendMessage(message);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            message.arg1 = MyHandler.SEARCH_HISTORYS_NOTFOUND;
+            mHandler.sendMessage(message);
         } catch (IOException e) {
-            e.printStackTrace();
+            message.arg1 = MyHandler.SEARCH_HISTORYS_ERROR;
+            mHandler.sendMessage(message);
         } finally {
             try {
                 if (null != br)

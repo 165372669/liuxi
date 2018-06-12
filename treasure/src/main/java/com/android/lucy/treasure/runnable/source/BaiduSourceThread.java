@@ -3,10 +3,12 @@ package com.android.lucy.treasure.runnable.source;
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.SourceInfo;
+import com.android.lucy.treasure.runnable.detalis.QiDianDetailsThread;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.StringUtils;
+import com.android.lucy.treasure.utils.ThreadPool;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,12 +23,10 @@ import java.io.IOException;
 public class BaiduSourceThread extends BaseReadThread {
 
     private BookInfo bookInfo;
-    private MyHandler bookHandler;
 
     public BaiduSourceThread(String url, BookInfo bookInfo, MyHandler bookHandler) {
         super(url, bookHandler);
         this.bookInfo = bookInfo;
-        this.bookHandler = bookHandler;
     }
 
 
@@ -34,6 +34,7 @@ public class BaiduSourceThread extends BaseReadThread {
     public void resoloveUrl(Document doc) {
         //获取第一条网址
         Elements as = doc.select("a[class^=c-showurl]");
+        writeFile(as.toString());
         for (Element a : as) {
             String sourceBaiduUrl = a.attr("href");
             String sourceNameTemp = a.text();
@@ -58,6 +59,15 @@ public class BaiduSourceThread extends BaseReadThread {
 
     private SourceInfo selectSource(SourceInfo sourceInfo) {
         String sourceName = sourceInfo.getSourceName();
+        if (Key.FILTER_SOURCE.contains(sourceName)) {
+            switch (sourceName) {
+                case Key.KEY_WWW_QIDIAN:
+                    //起点详情页面处理
+                    ThreadPool.getInstance().submitTask(new QiDianDetailsThread(
+                            sourceInfo.getSourceBaiduUrl(), bookInfo, myHandler));
+                    break;
+            }
+        }
         if (Key.DDA_SOURCE.contains(sourceName)) {
             sourceInfo.setWebType("DDA");
             return sourceInfo;

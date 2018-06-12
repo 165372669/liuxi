@@ -37,6 +37,11 @@ public class BookInfo extends DataSupport implements Serializable {
     public BookInfo() {
     }
 
+    public BookInfo(String bookName) {
+        this(bookName, null, null, 0, 0, 0, 0,
+                0, 0);
+    }
+
     public BookInfo(String bookName, String author) {
         this(bookName, author, null, 0, 0, 0, 0,
                 0, 0);

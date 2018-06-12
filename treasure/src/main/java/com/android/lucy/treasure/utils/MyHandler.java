@@ -12,21 +12,36 @@ import java.lang.ref.WeakReference;
 
 public abstract class MyHandler<T extends Activity> extends Handler {
 
+    //目录下载标志
+
     public final static int CATALOG_SOURCE_NO = 0;
 
     public final static int CATALOG_SOURCE_OK = 1;
 
     public final static int CATALOG_SOURCE_ERROR = 2;
 
+    //百度搜索标志
+
     public final static int BAIDU_SEARCH_OK = 3;
 
     public final static int BAIDU_SEARCH_NO = 4;
+
+    //章节下载标记
 
     public final static int CHAPTER_LOADING_OK = 5;
 
     public final static int CHAPTER_LOADING_NO = 6;
 
-    public final static int CHAPTER_LOADING_ERROR=7;
+    public final static int CHAPTER_LOADING_ERROR = 7;
+
+    //历史搜索标志
+
+    public final static int SEARCH_HISTORYS_OK = 8;
+
+    public final static int SEARCH_HISTORYS_NOTFOUND = 9;
+
+    public final static int SEARCH_HISTORYS_ERROR = 10;
+
 
     public abstract void myHandleMessage(Message msg);
 
