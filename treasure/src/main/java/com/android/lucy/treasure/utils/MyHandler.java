@@ -26,6 +26,8 @@ public abstract class MyHandler<T extends Activity> extends Handler {
 
     public final static int BAIDU_SEARCH_NO = 4;
 
+    public final static int BAIDU_SEARCH_ERROR = 11;
+
     //章节下载标记
 
     public final static int CHAPTER_LOADING_OK = 5;
@@ -42,6 +44,13 @@ public abstract class MyHandler<T extends Activity> extends Handler {
 
     public final static int SEARCH_HISTORYS_ERROR = 10;
 
+    //小说详情页面搜索
+
+    public final static int SEARCH_DETAILS_OK = 12;
+
+    public final static int SEARCH_DETAILS_NO = 13;
+
+    public final static int SEARCH_DETAILS_ERROR = 14;
 
     public abstract void myHandleMessage(Message msg);
 

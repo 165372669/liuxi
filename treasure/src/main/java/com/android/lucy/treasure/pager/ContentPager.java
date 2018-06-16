@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
-import com.android.lucy.treasure.bean.TextInfo;
+import com.android.lucy.treasure.bean.PagerContentTextInfo;
 import com.android.lucy.treasure.view.ChapterContentTextView;
 
 import java.util.List;
@@ -94,10 +94,10 @@ public class ContentPager {
     /**
      * 设置章节页面内容显示
      *
-     * @param textInfos 章节页面内容
+     * @param pagerContentTextInfos 章节页面内容
      */
-    public void setPagerContent(List<TextInfo> textInfos) {
-        tv_chapter_content.setContentArrays(textInfos);
+    public void setPagerContent(List<PagerContentTextInfo> pagerContentTextInfos) {
+        tv_chapter_content.setContentArrays(pagerContentTextInfos);
     }
 
     /**

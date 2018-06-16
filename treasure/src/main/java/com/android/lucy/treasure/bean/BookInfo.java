@@ -16,12 +16,15 @@ public class BookInfo extends DataSupport implements Serializable {
     private String author;   //作者名称
     private String type;//小说类型
     private String updateTime;//最后更新时间
+    private String state;//状态
+    private String bookCount; //总字数
     private String newChapterName; //最新章节名
+    private String synopsis;//书籍简介
     private String readChapterName;//已读章节名
     private String sourceName;    //来源选择
-    private String zhuishuUrl;//追书网页url
-    private String wordCountTotal; //总字数
+    private String datailsUrl;//详情网页url
     private String imgUrl;//封面链接
+    private byte[] image; //封面
     private int sourceIndex;//来源在集合里的位置
     private int newChapterId; //最新章节id
     private int readChapterid;//已读章节id
@@ -29,26 +32,23 @@ public class BookInfo extends DataSupport implements Serializable {
     private long closeTime;   //关闭时间
     private int chapterTotal; //章节总数
     private int unreadSeveral;//未读章节数
-    private ArrayList<SourceInfo> sourceInfos;//来源集合
-    private ArrayList<CatalogInfo> catalogInfos; //章节集合
-
+    private ArrayList<BookSourceInfo> bookSourceInfos;//来源集合
+    private ArrayList<BookCatalogInfo> bookCatalogInfos; //章节集合
     private static final long serialVersionUID = 1;
 
     public BookInfo() {
+
     }
 
-    public BookInfo(String bookName) {
-        this(bookName, null, null, 0, 0, 0, 0,
-                0, 0);
-    }
-
-    public BookInfo(String bookName, String author) {
+    public BookInfo(String bookName, String author, String imgUrl, String type, String synopsis, String newChapterName, byte[] image, String datailsUrl) {
         this(bookName, author, null, 0, 0, 0, 0,
-                0, 0);
+                0, 0, imgUrl, image, type, synopsis, newChapterName, datailsUrl);
     }
+
 
     public BookInfo(String bookName, String author, String sourceName, int newChapterId, int readChapterid,
-                    int readChapterPager, int closeTime, int chapterTotal, int unreadSeveral) {
+                    int readChapterPager, int closeTime, int chapterTotal, int unreadSeveral, String imgUrl,
+                    byte[] image, String type, String synopsis, String newChapterName, String datailsUrl) {
         this.bookName = bookName;
         this.author = author;
         this.sourceName = sourceName;
@@ -58,8 +58,14 @@ public class BookInfo extends DataSupport implements Serializable {
         this.closeTime = closeTime;
         this.chapterTotal = chapterTotal;
         this.unreadSeveral = unreadSeveral;
-        sourceInfos = new ArrayList<>();
-        catalogInfos = new ArrayList<>();
+        this.image = image;
+        this.imgUrl = imgUrl;
+        this.type = type;
+        this.synopsis = synopsis;
+        this.newChapterName = newChapterName;
+        this.datailsUrl = datailsUrl;
+        bookSourceInfos = new ArrayList<>();
+        bookCatalogInfos = new ArrayList<>();
     }
 
     public int getId() {
@@ -76,6 +82,16 @@ public class BookInfo extends DataSupport implements Serializable {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
     public String getType() {
@@ -110,20 +126,36 @@ public class BookInfo extends DataSupport implements Serializable {
         this.readChapterName = readChapterName;
     }
 
-    public String getWordCountTotal() {
-        return wordCountTotal;
+    public String getBookCount() {
+        return bookCount;
     }
 
-    public void setWordCountTotal(String wordCountTotal) {
-        this.wordCountTotal = wordCountTotal;
+    public void setBookCount(String bookCount) {
+        this.bookCount = bookCount;
     }
 
-    public String getZhuishuUrl() {
-        return zhuishuUrl;
+    public String getState() {
+        return state;
     }
 
-    public void setZhuishuUrl(String zhuishuUrl) {
-        this.zhuishuUrl = zhuishuUrl;
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getSynopsis() {
+        return synopsis;
+    }
+
+    public void setSynopsis(String synopsis) {
+        this.synopsis = synopsis;
+    }
+
+    public String getDatailsUrl() {
+        return datailsUrl;
+    }
+
+    public void setDatailsUrl(String datailsUrl) {
+        this.datailsUrl = datailsUrl;
     }
 
     public String getBookName() {
@@ -206,24 +238,24 @@ public class BookInfo extends DataSupport implements Serializable {
         this.unreadSeveral = unreadSeveral;
     }
 
-    public ArrayList<SourceInfo> getSourceInfos() {
-        return sourceInfos;
+    public ArrayList<BookSourceInfo> getBookSourceInfos() {
+        return bookSourceInfos;
     }
 
-    public List<SourceInfo> getSourceInfos(int id) {
-        return DataSupport.where("bookinfo_id = ?", String.valueOf(id)).find(SourceInfo.class);
+    public List<BookSourceInfo> getSourceInfos(int id) {
+        return DataSupport.where("bookinfo_id = ?", String.valueOf(id)).find(BookSourceInfo.class);
     }
 
-    public void setSourceInfos(ArrayList<SourceInfo> sourceInfos) {
-        this.sourceInfos = sourceInfos;
+    public void setBookSourceInfos(ArrayList<BookSourceInfo> bookSourceInfos) {
+        this.bookSourceInfos = bookSourceInfos;
     }
 
-    public ArrayList<CatalogInfo> getCatalogInfos() {
-        return catalogInfos;
+    public ArrayList<BookCatalogInfo> getBookCatalogInfos() {
+        return bookCatalogInfos;
     }
 
-    public void setCatalogInfos(ArrayList<CatalogInfo> catalogInfos) {
-        this.catalogInfos = catalogInfos;
+    public void setBookCatalogInfos(ArrayList<BookCatalogInfo> bookCatalogInfos) {
+        this.bookCatalogInfos = bookCatalogInfos;
     }
 
     @Override
@@ -234,11 +266,13 @@ public class BookInfo extends DataSupport implements Serializable {
                 ", author='" + author + '\'' +
                 ", type='" + type + '\'' +
                 ", updateTime='" + updateTime + '\'' +
+                ", state='" + state + '\'' +
+                ", bookCount='" + bookCount + '\'' +
                 ", newChapterName='" + newChapterName + '\'' +
+                ", synopsis='" + synopsis + '\'' +
                 ", readChapterName='" + readChapterName + '\'' +
                 ", sourceName='" + sourceName + '\'' +
-                ", zhuishuUrl='" + zhuishuUrl + '\'' +
-                ", wordCountTotal='" + wordCountTotal + '\'' +
+                ", datailsUrl='" + datailsUrl + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
                 ", sourceIndex=" + sourceIndex +
                 ", newChapterId=" + newChapterId +
@@ -247,8 +281,8 @@ public class BookInfo extends DataSupport implements Serializable {
                 ", closeTime=" + closeTime +
                 ", chapterTotal=" + chapterTotal +
                 ", unreadSeveral=" + unreadSeveral +
-                ", sourceInfos=" + sourceInfos +
-                ", catalogInfos=" + catalogInfos +
+                ", bookSourceInfos=" + bookSourceInfos +
+                ", bookCatalogInfos=" + bookCatalogInfos +
                 '}';
     }
 }

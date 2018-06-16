@@ -47,8 +47,6 @@ public class BookSearchAsync extends BaseReadAsyncTask<List<SearchInfo>> {
                 String type = spans.get(2).text();
                 Elements ps = div.select("p[class^=desc]");
                 String desc = ps.get(0).text();
-                SearchInfo sdInfo = new SearchInfo(imgSrc, bookName, author, type, desc, bookUrl_ZhuShu);
-                sdInfos.add(sdInfo);
                 if (isCancelled())
                     break;
             }
@@ -71,11 +69,10 @@ public class BookSearchAsync extends BaseReadAsyncTask<List<SearchInfo>> {
         //隐藏滚动
         if (null != onUpdateUIListener)
             onUpdateUIListener.setVisibility();
+
         if (null != searchInfos && searchInfos.size() > 0) {
-            ImageDownloadManager imageDownloadManager = new ImageDownloadManager(lv_search, searchInfos);
+            ImageDownloadManager imageDownloadManager = new ImageDownloadManager(lv_search);
             SearchDataAdapter searchDataAdapter = new SearchDataAdapter(MyApplication.getContext(), searchInfos, R.layout.search_list_item, imageDownloadManager);
-            //设置动画
-            searchDataAdapter.setIsAnimation(true, "translationY", 300, 0, 200);
             lv_search.setAdapter(searchDataAdapter);
             lv_search.setOnScrollListener(searchDataAdapter);
         }

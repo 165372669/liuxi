@@ -2,12 +2,8 @@ package com.android.lucy.treasure.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Message;
-import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -19,15 +15,10 @@ import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.application.MyApplication;
-import com.android.lucy.treasure.base.BaseReadAsyncTask;
 import com.android.lucy.treasure.bean.BookInfo;
-import com.android.lucy.treasure.bean.ConfigInfo;
-import com.android.lucy.treasure.bean.SearchInfo;
-import com.android.lucy.treasure.bean.SourceInfo;
+import com.android.lucy.treasure.bean.BookSourceInfo;
 import com.android.lucy.treasure.dao.BookInfoDao;
-import com.android.lucy.treasure.pager.ContentPager;
-import com.android.lucy.treasure.runnable.async.BookImageAsync;
-import com.android.lucy.treasure.runnable.async.ZhuiShuDataAsync;
+import com.android.lucy.treasure.runnable.catalog.BiqiugeBookCatalogThread;
 import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
 import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
@@ -36,7 +27,6 @@ import com.android.lucy.treasure.utils.ArrayUtils;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
-import com.android.lucy.treasure.utils.MyMathUtils;
 import com.android.lucy.treasure.utils.SystemUtils;
 import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.utils.URLUtils;
@@ -52,13 +42,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 小说详情页面
  */
 
-public class BookIntroducedActivity extends Activity implements BaseReadAsyncTask.OnUpdateDataLisetener, View.OnClickListener {
+public class BookIntroducedActivity extends Activity implements View.OnClickListener {
 
     public static int readChapterid = 0;
     public static int readChapterPager = 0;
@@ -72,7 +61,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
     private TextView tv_desc_book;
     private Button bt_read_book;
     private LinearLayout ll_book_detail;
-    private ZhuiShuDataAsync zhuiShuDataAsync;
     private ProgressBar progressBar;
     private BookHandler bookHandler;
     private ImageView iv_book_back;
@@ -95,20 +83,20 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 
             switch (msg.arg1) {
                 case BAIDU_SEARCH_OK:
-                    if (bookInfo.getSourceInfos().size() > 0) {
-                        MyLogcat.myLog("bookName:" + bookInfo.getBookName() + ",sourceDataSize:" + bookInfo.getSourceInfos());
-                        SourceInfo sourceInfo = bookInfo.getSourceInfos().get(0);
-                        bookInfo.setSourceName(sourceInfo.getSourceName());//设置当前来源名；
+                    if (bookInfo.getBookSourceInfos().size() > 0) {
+                        MyLogcat.myLog("bookName:" + bookInfo.getBookName() + ",sourceDataSize:" + bookInfo.getBookSourceInfos());
+                        BookSourceInfo bookSourceInfo = bookInfo.getBookSourceInfos().get(0);
+                        bookInfo.setSourceName(bookSourceInfo.getSourceName());//设置当前来源名；
                         sourceIndex = 0;
                         bookInfo.setSourceIndex(sourceIndex);
-                        String webType = sourceInfo.getWebType();
+                        String webType = bookSourceInfo.getWebType();
                         switch (webType) {
                             case Key.KEY_DDA:
-                                ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceInfo.getSourceBaiduUrl(),
+                                ThreadPool.getInstance().submitTask(new DDABookCatalogThread(bookSourceInfo.getSourceBaiduUrl(),
                                         bookInfo, bookHandler));
                                 break;
                             case Key.KEY_LIA:
-                                ThreadPool.getInstance().submitTask(new LIABookCatalogThread(sourceInfo.getSourceBaiduUrl(),
+                                ThreadPool.getInstance().submitTask(new LIABookCatalogThread(bookSourceInfo.getSourceBaiduUrl(),
                                         bookInfo, bookHandler));
                                 break;
                         }
@@ -132,6 +120,11 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                     }
                     break;
                 case CATALOG_SOURCE_OK:
+                    tv_size_book.setText(bookInfo.getBookCount());
+                    tv_timeUpdate_book.setText(bookInfo.getUpdateTime());
+                    bookInfo.setUpdateTime(bookInfo.getUpdateTime());//更新时间
+                    progressBar.setVisibility(View.INVISIBLE);
+                    ll_book_detail.setVisibility(View.VISIBLE);
                     setReadBookState(true);
                     setAddBookState(true, "加入书架");
                     break;
@@ -173,8 +166,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         String addText = bt_add_book.getText().toString();
         if (addText.equals("移除书籍")) {
             bookInfo.save();
-            DataSupport.saveAll(bookInfo.getSourceInfos());
-            DataSupport.saveAll(bookInfo.getCatalogInfos());
+            DataSupport.saveAll(bookInfo.getBookSourceInfos());
+            DataSupport.saveAll(bookInfo.getBookCatalogInfos());
         }
     }
 
@@ -210,19 +203,19 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
 
     private void initDatas() {
         bookHandler = new BookHandler(this);
-        SearchInfo searchInfo = getIntent().getParcelableExtra("searchInfo");
-        String bookName = searchInfo.getBookName();
-        String author = searchInfo.getAuthor();
-        //启动追书线程，获取字数和最新更新章节
-        zhuiShuDataAsync = new ZhuiShuDataAsync(searchInfo);
-        zhuiShuDataAsync.execute(URLUtils.ZHUISHU_URL + searchInfo.getBookUrl_ZhuiShu());
-        zhuiShuDataAsync.setOnUpdateDataListener(this);
+        bookInfo = (BookInfo) getIntent().getSerializableExtra("bookInfo");
+        tv_bookName_book.setText(bookInfo.getBookName());
+        tv_author_book.setText(bookInfo.getAuthor());
+        tv_type_book.setText(bookInfo.getType());
+        tv_desc_book.setText(bookInfo.getSynopsis());
+        MyLogcat.myLog("bookInfo:" + bookInfo.toString());
+        //启动详情页面线程，获取字数和最新更新章节
+//        zhuiShuDataAsync = new ZhuiShuDataAsync(searchInfo);
+//        //zhuiShuDataAsync.execute(URLUtils.ZHUISHU_URL + searchInfo.getBookUrl_ZhuiShu());
+//        zhuiShuDataAsync.setOnUpdateDataListener(this);
+        ThreadPool.getInstance().submitTask(new BiqiugeBookCatalogThread(bookInfo.getDatailsUrl(), bookInfo, bookHandler));
         //查询数据
-        List<BookInfo> booklist = DataSupport.where("bookName=?", bookName)
-                .limit(1)
-                .find(BookInfo.class, true);
-        if (booklist.size() > 0) {
-            bookInfo = booklist.get(0);
+        if (bookInfo.getId() > 0) {
             sourceIndex = ArrayUtils.getSourceIndex(bookInfo);
             bookInfo.setSourceIndex(sourceIndex);
             setReadBookState(true);
@@ -230,14 +223,13 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
             MyLogcat.myLog("查询数据:" + "readchapterid:" + bookInfo.getReadChapterid() + ",pager:" + bookInfo.getReadChapterPager() + ",bookInfo:" + bookInfo);
         } else {
             //启动百度线程，查找小说来源
-            String url = URLUtils.BAiDU_SEARCH_URL_ + bookName;
-            bookInfo = new BookInfo(bookName, author);
-            ThreadPool.getInstance().submitTask(new BaiduSourceThread(url, bookInfo, bookHandler));
+//            String url = URLUtils.BAiDU_SEARCH_URL_ + bookName;
+//            ThreadPool.getInstance().submitTask(new BaiduSourceThread(url, bookInfo, bookHandler));
         }
-        bookInfo.setType(searchInfo.getType()); //类型
-        bookInfo.setImgUrl(searchInfo.getImgUrl());//封面链接
-        bookInfo.setZhuishuUrl(searchInfo.getBookUrl_ZhuiShu());//追书页面链接
-        new BookImageAsync(iv_cover).execute(searchInfo.getImgUrl());
+//        bookInfo.setType(bookInfo.getType()); //类型
+//        bookInfo.setImgUrl(bookInfo.getImgUrl());//封面链接
+//        //bookInfo.setZhuishuUrl(searchInfo.getBookUrl_ZhuiShu());//追书页面链接
+//        new BookImageAsync(iv_cover).execute(bookInfo.getImgUrl());
     }
 
     private void initEvent() {
@@ -295,8 +287,8 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
                         bookId = BookInfoDao.saveBookData(bookInfo); //存储数据
                     }
                     if (result || bookId > 0) {
-                        DataSupport.saveAll(bookInfo.getSourceInfos());
-                        DataSupport.saveAll(bookInfo.getCatalogInfos());
+                        DataSupport.saveAll(bookInfo.getBookSourceInfos());
+                        DataSupport.saveAll(bookInfo.getBookCatalogInfos());
                         bt_add_book.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                         bt_add_book.setText("移除书籍");
                     }
@@ -346,30 +338,6 @@ public class BookIntroducedActivity extends Activity implements BaseReadAsyncTas
         }
     }
 
-
-    /**
-     * 更新小说详细数据
-     * 包括作者，书名，类型，更新时间，字数
-     *
-     * @param searchInfo 搜索的数据对象
-     */
-    @Override
-    public void setData(SearchInfo searchInfo) {
-
-        if (null != searchInfo) {
-            tv_bookName_book.setText(searchInfo.getBookName());
-            tv_author_book.setText("作者：" + searchInfo.getAuthor());
-            tv_type_book.setText("类型：" + searchInfo.getType());
-            tv_desc_book.setText(searchInfo.getDesc());
-            tv_size_book.setText("总字数：" + searchInfo.getBookSize());
-            tv_timeUpdate_book.setText(searchInfo.getBookUpdateTime());
-            bookInfo.setWordCountTotal(searchInfo.getBookSize());//字数
-            bookInfo.setUpdateTime(searchInfo.getBookUpdateTime());//更新时间
-        }
-
-        progressBar.setVisibility(View.INVISIBLE);
-        ll_book_detail.setVisibility(View.VISIBLE);
-    }
 
     /**
      * 设置开始阅读按钮状态

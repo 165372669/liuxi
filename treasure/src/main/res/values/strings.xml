@@ -13,4 +13,5 @@
     <string name="seatch_history">搜索历史</string>
     <string name="seatch_clear">清空</string>
     <string name="seatch_hint">请输入书名或作者名</string>
+    <string name="split">|</string>
 </resources>

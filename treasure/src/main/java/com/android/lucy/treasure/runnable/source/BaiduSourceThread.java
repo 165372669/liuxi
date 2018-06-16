@@ -2,8 +2,7 @@ package com.android.lucy.treasure.runnable.source;
 
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookInfo;
-import com.android.lucy.treasure.bean.SourceInfo;
-import com.android.lucy.treasure.runnable.detalis.QiDianDetailsThread;
+import com.android.lucy.treasure.bean.BookSourceInfo;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
@@ -39,13 +38,13 @@ public class BaiduSourceThread extends BaseReadThread {
             String sourceBaiduUrl = a.attr("href");
             String sourceNameTemp = a.text();
             String sourceName = StringUtils.shearSourceName(sourceNameTemp);
-            SourceInfo sourceInfo = new SourceInfo(sourceName, sourceBaiduUrl);
-            sourceInfo = selectSource(sourceInfo);
+            BookSourceInfo bookSourceInfo = new BookSourceInfo(sourceName, sourceBaiduUrl);
+            bookSourceInfo = selectSource(bookSourceInfo);
             MyLogcat.myLog("未过滤来源：" + sourceName);
-            if (null != sourceInfo && !bookInfo.getSourceInfos().contains(sourceInfo)) {
+            if (null != bookSourceInfo && !bookInfo.getBookSourceInfos().contains(bookSourceInfo)) {
                 //没有包含同一个来源
-                sourceInfo.setBookInfo(bookInfo);
-                bookInfo.getSourceInfos().add(sourceInfo);
+                bookSourceInfo.setBookInfo(bookInfo);
+                bookInfo.getBookSourceInfos().add(bookSourceInfo);
             }
         }
         sendObj(MyHandler.BAIDU_SEARCH_OK);
@@ -57,23 +56,14 @@ public class BaiduSourceThread extends BaseReadThread {
         sendObj(MyHandler.BAIDU_SEARCH_NO);
     }
 
-    private SourceInfo selectSource(SourceInfo sourceInfo) {
-        String sourceName = sourceInfo.getSourceName();
-        if (Key.FILTER_SOURCE.contains(sourceName)) {
-            switch (sourceName) {
-                case Key.KEY_WWW_QIDIAN:
-                    //起点详情页面处理
-                    ThreadPool.getInstance().submitTask(new QiDianDetailsThread(
-                            sourceInfo.getSourceBaiduUrl(), bookInfo, myHandler));
-                    break;
-            }
-        }
+    private BookSourceInfo selectSource(BookSourceInfo bookSourceInfo) {
+        String sourceName = bookSourceInfo.getSourceName();
         if (Key.DDA_SOURCE.contains(sourceName)) {
-            sourceInfo.setWebType("DDA");
-            return sourceInfo;
+            bookSourceInfo.setWebType("DDA");
+            return bookSourceInfo;
         } else if (Key.LIA_SOURCE.contains(sourceName)) {
-            sourceInfo.setWebType("DDA");
-            return sourceInfo;
+            bookSourceInfo.setWebType("DDA");
+            return bookSourceInfo;
         }
         return null;
     }

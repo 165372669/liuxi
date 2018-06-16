@@ -17,7 +17,7 @@ import com.android.lucy.treasure.activity.BookContentActivity;
 import com.android.lucy.treasure.activity.BookMainActivity;
 import com.android.lucy.treasure.adapter.BookShelfRecyclerViewAdapter;
 import com.android.lucy.treasure.bean.BookInfo;
-import com.android.lucy.treasure.bean.SourceInfo;
+import com.android.lucy.treasure.bean.BookSourceInfo;
 import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
 import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
@@ -153,12 +153,12 @@ public class BookShelfFragment extends Fragment implements OnRefreshListener, Bo
         List<BookInfo> bookInfos = adapter.getDataList();
         for (BookInfo bookInfo : bookInfos) {
             int sourceIndex = ArrayUtils.getSourceIndex(bookInfo);
-            SourceInfo sourceInfo = bookInfo.getSourceInfos().get(sourceIndex);
-            String sourceUrl = sourceInfo.getSourceUrl();
+            BookSourceInfo bookSourceInfo = bookInfo.getBookSourceInfos().get(sourceIndex);
+            String sourceUrl = bookSourceInfo.getSourceUrl();
             if (null == sourceUrl) {
-                sourceUrl = sourceInfo.getSourceBaiduUrl();
+                sourceUrl = bookSourceInfo.getSourceBaiduUrl();
             }
-            String sourceType = sourceInfo.getWebType();
+            String sourceType = bookSourceInfo.getWebType();
             switch (sourceType) {
                 case Key.KEY_DDA:
                     ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, bookInfo, shelfHandler));

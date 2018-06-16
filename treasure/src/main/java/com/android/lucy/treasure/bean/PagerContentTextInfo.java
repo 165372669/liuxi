@@ -4,7 +4,7 @@ package com.android.lucy.treasure.bean;
  * 文字实体类
  */
 
-public class TextInfo {
+public class PagerContentTextInfo {
     private String s;//字体
     private float width;//字宽
     private float x; //要画的x坐标
@@ -12,7 +12,7 @@ public class TextInfo {
     private boolean isStringOneLine;//是否为段落第一行首字母。
 
 
-    public TextInfo(String s) {
+    public PagerContentTextInfo(String s) {
         this.s = s;
     }
 

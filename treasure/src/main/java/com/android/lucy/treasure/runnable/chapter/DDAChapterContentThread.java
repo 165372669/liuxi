@@ -4,10 +4,10 @@ import android.graphics.Rect;
 import android.os.Handler;
 
 import com.android.lucy.treasure.base.BaseReadThread;
-import com.android.lucy.treasure.bean.CatalogInfo;
-import com.android.lucy.treasure.bean.ConfigInfo;
-import com.android.lucy.treasure.bean.PagerContentInfo;
-import com.android.lucy.treasure.bean.TextInfo;
+import com.android.lucy.treasure.bean.BookCatalogInfo;
+import com.android.lucy.treasure.bean.PagerConfigInfo;
+import com.android.lucy.treasure.bean.ChapterPagerContentInfo;
+import com.android.lucy.treasure.bean.PagerContentTextInfo;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
@@ -39,22 +39,22 @@ import java.util.regex.Pattern;
 public class DDAChapterContentThread extends BaseReadThread {
 
 
-    private final CatalogInfo catalogInfo;
-    private final ConfigInfo configInfo;
+    private final BookCatalogInfo bookCatalogInfo;
+    private final PagerConfigInfo pagerConfigInfo;
     private final CircleProgress cv_chapter_progress;
 
-    public DDAChapterContentThread(String url, Handler myHandler, CatalogInfo catalogInfo, ConfigInfo configInfo, CircleProgress cv_chapter_progress) {
+    public DDAChapterContentThread(String url, Handler myHandler, BookCatalogInfo bookCatalogInfo, PagerConfigInfo pagerConfigInfo, CircleProgress cv_chapter_progress) {
         super(url, myHandler);
-        this.catalogInfo = catalogInfo;
-        this.configInfo = configInfo;
+        this.bookCatalogInfo = bookCatalogInfo;
+        this.pagerConfigInfo = pagerConfigInfo;
         this.cv_chapter_progress = cv_chapter_progress;
-        flag = "chapter-" + catalogInfo.getChapterId();
+        flag = "chapter-" + bookCatalogInfo.getChapterId();
     }
 
     @Override
     public void resoloveUrl(Document doc) {
         cv_chapter_progress.startProgress(300);
-        String url = catalogInfo.getChapterUrl();
+        String url = bookCatalogInfo.getChapterUrl();
         url = StringUtils.shearSourceName(url);
         Elements divs;
         switch (url) {
@@ -82,19 +82,19 @@ public class DDAChapterContentThread extends BaseReadThread {
         cv_chapter_progress.startProgress(1000);
         if (contents.size() > 0) {
             spacingLineCount(contents);
-            int pagerTotal = catalogInfo.getStrs().size();
-            catalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
-            sendObj(MyHandler.CHAPTER_LOADING_OK, catalogInfo.getChapterId());
+            int pagerTotal = bookCatalogInfo.getStrs().size();
+            bookCatalogInfo.setChapterPagerToatal(pagerTotal);//设置章节总数
+            sendObj(MyHandler.CHAPTER_LOADING_OK, bookCatalogInfo.getChapterId());
         } else {
             //没有获取到数据。
-            sendObj(MyHandler.CHAPTER_LOADING_NO, catalogInfo.getChapterId());
+            sendObj(MyHandler.CHAPTER_LOADING_NO, bookCatalogInfo.getChapterId());
         }
     }
 
     @Override
     public void errorHandle(IOException e) {
         //网页读取失败
-        sendObj(MyHandler.CHAPTER_LOADING_ERROR, catalogInfo.getChapterId());
+        sendObj(MyHandler.CHAPTER_LOADING_ERROR, bookCatalogInfo.getChapterId());
     }
 
     @Override
@@ -152,16 +152,16 @@ public class DDAChapterContentThread extends BaseReadThread {
      */
     public void spacingLineCount(List<String> books) {
         int pager = 0;//当前段落页数
-        ArrayList<TextInfo> textInfos = new ArrayList<>();
+        ArrayList<PagerContentTextInfo> pagerContentTextInfos = new ArrayList<>();
         int line = 1;//初始行数
         int lineWidth = 0; //一行宽度
         int z = 0;
         int lineTextLength = 0;//一行的字数
         float x = 0;
-        float y = configInfo.getChapterNameHeight();
+        float y = pagerConfigInfo.getChapterNameHeight();
         for (int i = 0; i < books.size(); i++) {
             if (getIsCancelled()) {
-                catalogInfo.clearStrs();
+                bookCatalogInfo.clearStrs();
                 return;
             }
             String str = books.get(i);
@@ -169,54 +169,54 @@ public class DDAChapterContentThread extends BaseReadThread {
             for (int j = 0; j < str.length(); j++) {
                 char ch = str.charAt(j);
                 String s = String.valueOf(ch);
-                TextInfo textInfo = new TextInfo(s);
-                int strWidth = configInfo.getTextWidth() + 3;
+                PagerContentTextInfo pagerContentTextInfo = new PagerContentTextInfo(s);
+                int strWidth = pagerConfigInfo.getTextWidth() + 3;
                 //段落的第一行加上两个字的宽度
                 if (j == 0) {
                     lineWidth = lineWidth + strWidth * 2;
-                    textInfo.setStringOneLine(true);
+                    pagerContentTextInfo.setStringOneLine(true);
                 }
                 //字母或者数字，一些符号重新赋值宽度，使其紧凑。
                 if (s.equals(".") || s.equals("“") || s.equals("”") || s.equals("*") ||
                         s.equals("(") || s.equals(")") || s.equals("+") || s.equals("-") ||
                         s.equals("/")) {
                     Rect rect = new Rect();
-                    configInfo.getmTextPaint().getTextBounds(s, 0, 1, rect);
+                    pagerConfigInfo.getmTextPaint().getTextBounds(s, 0, 1, rect);
                     strWidth = rect.width() + 2;
                 }
                 if (StringUtils.isNumOrLetters(s)) {
                     Rect rect = new Rect();
-                    configInfo.getmTextPaint().getTextBounds(s, 0, 1, rect);
+                    pagerConfigInfo.getmTextPaint().getTextBounds(s, 0, 1, rect);
                     strWidth = rect.width() + 5;
                 }
-                textInfo.setWidth(strWidth);
+                pagerContentTextInfo.setWidth(strWidth);
                 lineWidth += strWidth;
-                textInfos.add(textInfo);
+                pagerContentTextInfos.add(pagerContentTextInfo);
                 lineTextLength++;
                 //累加宽度比控件宽度大了或者字符到最后一段落了。
-                if (lineWidth >= configInfo.getChapterContentWidth() || j == str.length() - 1) {
+                if (lineWidth >= pagerConfigInfo.getChapterContentWidth() || j == str.length() - 1) {
                     float spacing = 0;
                     //累加宽度比控件宽度大才增加间歇
-                    if (lineWidth > configInfo.getChapterContentWidth()) {
+                    if (lineWidth > pagerConfigInfo.getChapterContentWidth()) {
                         lineWidth -= strWidth;
                         //大于了宽度删除最后一个元素
-                        textInfos.remove(textInfos.size() - 1);
+                        pagerContentTextInfos.remove(pagerContentTextInfos.size() - 1);
                         j--;
                         lineTextLength--;
-                        float spacingLine = configInfo.getChapterContentWidth() - lineWidth;
+                        float spacingLine = pagerConfigInfo.getChapterContentWidth() - lineWidth;
                         spacing = spacingLine / (lineTextLength);
                     }
-                    for (int q = 0; z < textInfos.size(); z++, q++) {
-                        TextInfo info = textInfos.get(z);
+                    for (int q = 0; z < pagerContentTextInfos.size(); z++, q++) {
+                        PagerContentTextInfo info = pagerContentTextInfos.get(z);
                         //如果是一行的首字母
                         if (q == 0) {
                             x = 0;
                             //如果是段落第一行首字母
                             if (info.isStringOneLine()) {
-                                x = (configInfo.getTextWidth() + 5) * 2;
+                                x = (pagerConfigInfo.getTextWidth() + 5) * 2;
                             }
                         } else {
-                            TextInfo text = textInfos.get(z - 1);
+                            PagerContentTextInfo text = pagerContentTextInfos.get(z - 1);
                             x = x + text.getWidth() + spacing;
                         }
                         info.setX(x);
@@ -225,17 +225,17 @@ public class DDAChapterContentThread extends BaseReadThread {
                     line++;//行数加1
                     lineWidth = 0;
                     x = 0;
-                    y = y + configInfo.getTextHeight() * 2;
+                    y = y + pagerConfigInfo.getTextHeight() * 2;
                     lineTextLength = 0;
                 }
                 //大于页面容纳最行大数，页面+1，行数归1
-                if (line > configInfo.getPagerLine()) {
+                if (line > pagerConfigInfo.getPagerLine()) {
                     pager++;
                     line = 1;
-                    y = configInfo.getChapterNameHeight();  //y坐标初始化
-                    PagerContentInfo pagerContentInfo = new PagerContentInfo(textInfos, pager);
-                    catalogInfo.getStrs().add(pagerContentInfo);
-                    textInfos = new ArrayList<>();
+                    y = pagerConfigInfo.getChapterNameHeight();  //y坐标初始化
+                    ChapterPagerContentInfo chapterPagerContentInfo = new ChapterPagerContentInfo(pagerContentTextInfos, pager);
+                    bookCatalogInfo.getStrs().add(chapterPagerContentInfo);
+                    pagerContentTextInfos = new ArrayList<>();
                     z = 0;
                 }
 
@@ -243,9 +243,9 @@ public class DDAChapterContentThread extends BaseReadThread {
             //最后一个段落
             if (i == books.size() - 1 && str.length() > 0) {
                 pager++;
-                PagerContentInfo pagerContentInfo = new PagerContentInfo(textInfos, pager);
-                if (pagerContentInfo.getTextInfos().size() > 0) {
-                    catalogInfo.getStrs().add(pagerContentInfo);
+                ChapterPagerContentInfo chapterPagerContentInfo = new ChapterPagerContentInfo(pagerContentTextInfos, pager);
+                if (chapterPagerContentInfo.getPagerContentTextInfos().size() > 0) {
+                    bookCatalogInfo.getStrs().add(chapterPagerContentInfo);
                 }
             }
         }

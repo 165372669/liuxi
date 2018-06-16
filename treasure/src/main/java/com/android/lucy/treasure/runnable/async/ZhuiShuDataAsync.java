@@ -38,8 +38,7 @@ public class ZhuiShuDataAsync extends BaseReadAsyncTask<SearchInfo> {
         if (as.size() > 0) {
             newChapter = as.get(2).text();
         }
-        searchInfo.setBookSize(bookSize);
-        searchInfo.setBookUpdateTime(bookUpdateTime);
+
         searchInfo.setNewChapter(newChapter);
         return searchInfo;
     }

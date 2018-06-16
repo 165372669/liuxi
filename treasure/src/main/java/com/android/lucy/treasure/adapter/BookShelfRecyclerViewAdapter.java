@@ -53,7 +53,7 @@ public class BookShelfRecyclerViewAdapter extends BaseRecyclerViewAdapter<BookIn
         tv_bookName.setText(bookInfo.getBookName());
         tv_bookAuthor.setText(bookInfo.getAuthor());
         tv_bookType.setText(bookInfo.getType());
-        tv_bookCount.setText(bookInfo.getWordCountTotal());
+        tv_bookCount.setText(bookInfo.getBookCount());
         tv_uptateTime.setText(bookInfo.getUpdateTime());
 
         //开启左滑功能

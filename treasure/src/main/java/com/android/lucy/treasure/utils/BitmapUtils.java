@@ -11,6 +11,10 @@ import com.android.lucy.treasure.application.MyApplication;
 
 import org.litepal.LitePalApplication;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 /**
  * Drawable工具类
  */
@@ -40,9 +44,14 @@ public class BitmapUtils {
         return inSampleSize / 2;
     }
 
-    /*
-    * 返回缩放后的图片
-    * */
+
+    /**
+     * 返回缩放后的图片
+     *
+     * @param buf  图片二进制数据
+     * @param view ImageView
+     * @return 返回图片
+     */
     public static Bitmap getBitmap(byte[] buf, View view) {
         if (buf.length > 0 && view != null) {
             BitmapFactory.Options options = new BitmapFactory.Options();
@@ -54,6 +63,27 @@ public class BitmapUtils {
             options.inJustDecodeBounds = false;
             ImageLruCache.getInstance().addInBitmapOptions(options);
             return BitmapFactory.decodeByteArray(buf, 0, buf.length, options);
+        }
+        return null;
+    }
+
+    public static byte[] getImageBytes(BitmapDrawable image) {
+        ByteArrayOutputStream byt = null;
+        ObjectOutputStream obj = null;
+        try {
+            byt = new ByteArrayOutputStream();
+            obj = new ObjectOutputStream(byt);
+            obj.writeObject(image);
+            return byt.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (null != byt) byt.close();
+                if (null != obj) obj.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

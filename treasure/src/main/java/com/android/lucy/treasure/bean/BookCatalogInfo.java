@@ -11,18 +11,18 @@ import java.util.ArrayList;
  * 章节详细信息
  */
 
-public class CatalogInfo extends DataSupport implements Comparable, Serializable {
+public class BookCatalogInfo extends DataSupport implements Comparable, Serializable {
     private BookInfo bookInfo;
     private int id;
     private int chapterId;  //章节id
     private String chapterUrl; //章节网址
     private String chapterName; //章节名
     private int chapterPagerToatal; //章节总页面数
-    private ArrayList<PagerContentInfo> pagerContentInfos; //页面内容集合
+    private ArrayList<ChapterPagerContentInfo> chapterPagerContentInfos; //页面内容集合
 
     private static final long serialVersionUID = 3;
 
-    public CatalogInfo(BookInfo bookInfo, int chapterId, String chapterUrl, String chapterName, int chapterPagerToatal) {
+    public BookCatalogInfo(BookInfo bookInfo, int chapterId, String chapterUrl, String chapterName, int chapterPagerToatal) {
         this.bookInfo = bookInfo;
         this.chapterId = chapterId;
         this.chapterUrl = chapterUrl;
@@ -38,12 +38,12 @@ public class CatalogInfo extends DataSupport implements Comparable, Serializable
         this.bookInfo = bookInfo;
     }
 
-    public ArrayList<PagerContentInfo> getPagerContentInfos() {
-        return pagerContentInfos;
+    public ArrayList<ChapterPagerContentInfo> getChapterPagerContentInfos() {
+        return chapterPagerContentInfos;
     }
 
-    public void setPagerContentInfos(ArrayList<PagerContentInfo> pagerContentInfos) {
-        this.pagerContentInfos = pagerContentInfos;
+    public void setChapterPagerContentInfos(ArrayList<ChapterPagerContentInfo> chapterPagerContentInfos) {
+        this.chapterPagerContentInfos = chapterPagerContentInfos;
     }
 
     public int getId() {
@@ -86,17 +86,17 @@ public class CatalogInfo extends DataSupport implements Comparable, Serializable
         this.chapterPagerToatal = chapterPagerToatal;
     }
 
-    public ArrayList<PagerContentInfo> getStrs() {
-        return pagerContentInfos;
+    public ArrayList<ChapterPagerContentInfo> getStrs() {
+        return chapterPagerContentInfos;
     }
 
-    public void setStrs(ArrayList<PagerContentInfo> strs) {
-        this.pagerContentInfos = strs;
+    public void setStrs(ArrayList<ChapterPagerContentInfo> strs) {
+        this.chapterPagerContentInfos = strs;
     }
 
     public void clearStrs() {
-        pagerContentInfos.clear();
-        pagerContentInfos = null;
+        chapterPagerContentInfos.clear();
+        chapterPagerContentInfos = null;
     }
 
 
@@ -107,17 +107,17 @@ public class CatalogInfo extends DataSupport implements Comparable, Serializable
 
     @Override
     public boolean equals(Object obj) {
-        CatalogInfo catalogInfo = (CatalogInfo) obj;
-        return chapterName.equals(catalogInfo.chapterName) && chapterId == catalogInfo.chapterId;
+        BookCatalogInfo bookCatalogInfo = (BookCatalogInfo) obj;
+        return chapterName.equals(bookCatalogInfo.chapterName) && chapterId == bookCatalogInfo.chapterId;
     }
 
     @Override
     public int compareTo(@NonNull Object obj) {
-        CatalogInfo catalogInfo = (CatalogInfo) obj;
-        if (this.chapterId > catalogInfo.chapterId)
+        BookCatalogInfo bookCatalogInfo = (BookCatalogInfo) obj;
+        if (this.chapterId > bookCatalogInfo.chapterId)
             return 1;
-        if (this.chapterId == catalogInfo.chapterId)
-            return this.chapterName.compareTo(catalogInfo.chapterName);
+        if (this.chapterId == bookCatalogInfo.chapterId)
+            return this.chapterName.compareTo(bookCatalogInfo.chapterName);
         return 0;
     }
 

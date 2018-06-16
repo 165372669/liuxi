@@ -18,8 +18,8 @@ import android.widget.TextView;
 
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
+import com.android.lucy.treasure.bean.BookCatalogInfo;
 import com.android.lucy.treasure.bean.BookInfo;
-import com.android.lucy.treasure.bean.CatalogInfo;
 import com.android.lucy.treasure.bean.ChapterIDAndName;
 import com.android.lucy.treasure.pager.ContentPager;
 import com.android.lucy.treasure.service.ChapterContentService;
@@ -46,7 +46,7 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
     private ArrayList<ContentPager> contentPagers;
     private TextView tv_chapter_catalog;
     private CircleProgress cv_chapter_progress;
-    private ArrayList<CatalogInfo> catalogInfos;
+    private ArrayList<BookCatalogInfo> bookCatalogInfos;
     private BookContentActivity activity;
 
     public class ChapterContentHandler extends MyHandler<BookContentActivity> {
@@ -129,7 +129,7 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
             } else {
                 bookInfo.setReadChapterPager(readChapterPager);
             }
-            bookInfo.setReadChapterName(catalogInfos.get(readChapterid).getChapterName());
+            bookInfo.setReadChapterName(bookCatalogInfos.get(readChapterid).getChapterName());
             long closeTime = System.currentTimeMillis();
             bookInfo.setCloseTime(closeTime);
             int update = bookInfo.update(bookInfo.getId());
@@ -176,7 +176,7 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
         contentPagers = new ArrayList<>();
         ChapterContentHandler chapterContentHandler = new ChapterContentHandler(this);
         bookInfo = (BookInfo) getIntent().getSerializableExtra("baiduInfo");
-        catalogInfos = bookInfo.getCatalogInfos();
+        bookCatalogInfos = bookInfo.getBookCatalogInfos();
         //启动服务
         Intent intent = new Intent(this, ChapterContentService.class);
         startService(intent);
@@ -210,11 +210,11 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
             contentPager.setTextSize(MyMathUtils.dip2px(this, 20));
             contentPagers.add(contentPager);
         }
-        adapter = new BookContentPagerAdapter(contentPagers, catalogInfos, viewPager, activity);
+        adapter = new BookContentPagerAdapter(contentPagers, bookCatalogInfos, viewPager, activity);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(contentPagers.size() * 100, false);
-        viewPager.setChapterDatas(catalogInfos);
-        viewPager.setChapterTotal(catalogInfos.size());
+        viewPager.setChapterDatas(bookCatalogInfos);
+        viewPager.setChapterTotal(bookCatalogInfos.size());
     }
 
     private void initEvent() {
@@ -263,17 +263,17 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
     public void preLoading(int chapterId) {
         int nextChapterid = chapterId + 1;
         int lastChapterid = chapterId - 1;
-        if (nextChapterid < catalogInfos.size()) {
+        if (nextChapterid < bookCatalogInfos.size()) {
             //预加载章节
-            CatalogInfo catalogInfo = catalogInfos.get(nextChapterid);
-            if (catalogInfo.getChapterPagerToatal() == 0) {
+            BookCatalogInfo bookCatalogInfo = bookCatalogInfos.get(nextChapterid);
+            if (bookCatalogInfo.getChapterPagerToatal() == 0) {
                 loadChapter(nextChapterid, false);
             }
         }
         if (lastChapterid >= 0) {
             //预加载章节
-            CatalogInfo catalogInfo = catalogInfos.get(lastChapterid);
-            if (catalogInfo.getChapterPagerToatal() == 0) {
+            BookCatalogInfo bookCatalogInfo = bookCatalogInfos.get(lastChapterid);
+            if (bookCatalogInfo.getChapterPagerToatal() == 0) {
                 loadChapter(lastChapterid, false);
             }
         }
@@ -316,10 +316,10 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
             //目录点击
             case R.id.tv_chapter_catalog:
                 ArrayList<ChapterIDAndName> chapterIDAndNames = new ArrayList<>();
-                for (int i = 0; i < catalogInfos.size(); i++) {
-                    CatalogInfo catalogInfo = catalogInfos.get(i);
-                    chapterIDAndNames.add(new ChapterIDAndName(catalogInfo.getChapterId()
-                            , catalogInfo.getChapterName()));
+                for (int i = 0; i < bookCatalogInfos.size(); i++) {
+                    BookCatalogInfo bookCatalogInfo = bookCatalogInfos.get(i);
+                    chapterIDAndNames.add(new ChapterIDAndName(bookCatalogInfo.getChapterId()
+                            , bookCatalogInfo.getChapterName()));
                 }
                 Intent intent = new Intent(this, BookChapterListActivity.class);
                 intent.putParcelableArrayListExtra("chapterIDAndNames", chapterIDAndNames);

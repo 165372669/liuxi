@@ -23,18 +23,16 @@ public class ImageDownloadManager {
     private ListView listView;
     private List<SearchInfo> searchInfos;
 
-    public ImageDownloadManager(ListView listView, List<SearchInfo> searchInfos) {
+    public ImageDownloadManager(ListView listView) {
         this.listView = listView;
-        this.searchInfos = searchInfos;
         lruCache = ImageLruCache.getInstance();
     }
 
     /**
      * 加载从Start到end所有视频图片
-     *
      */
     public void loadVideoInfos(int start, int end) {
-        if (searchInfos.size() == 0)
+        if (null == searchInfos || searchInfos.size() == 0)
             return;
         for (int i = start; i < end; i++) {
             String mImgUrl = searchInfos.get(i).getImgUrl();
@@ -54,4 +52,11 @@ public class ImageDownloadManager {
         }
     }
 
+    public List<SearchInfo> getSearchInfos() {
+        return searchInfos;
+    }
+
+    public void setSearchInfos(List<SearchInfo> searchInfos) {
+        this.searchInfos = searchInfos;
+    }
 }

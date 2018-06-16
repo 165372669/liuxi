@@ -2,18 +2,15 @@ package com.android.lucy.treasure.runnable.catalog;
 
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookInfo;
-import com.android.lucy.treasure.bean.CatalogInfo;
-import com.android.lucy.treasure.bean.SourceInfo;
-import com.android.lucy.treasure.dao.BookInfoDao;
+import com.android.lucy.treasure.bean.BookCatalogInfo;
+import com.android.lucy.treasure.bean.BookSourceInfo;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
-import com.android.lucy.treasure.utils.MyLogcat;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
 
@@ -72,8 +69,8 @@ public class LIABookCatalogThread extends BaseReadThread {
 
     public void parseChapter(Document doc, Elements metas) {
         int sourceIndex = bookInfo.getSourceIndex();
-        SourceInfo sourceInfo = bookInfo.getSourceInfos().get(sourceIndex);
-        String sourceName = sourceInfo.getSourceName();
+        BookSourceInfo bookSourceInfo = bookInfo.getBookSourceInfos().get(sourceIndex);
+        String sourceName = bookSourceInfo.getSourceName();
         String bookName = null;
         String url = null;
         String author = null;
@@ -86,7 +83,7 @@ public class LIABookCatalogThread extends BaseReadThread {
                         break;
                     case "og:novel:read_url":
                         url = meta.attr("content");
-                        sourceInfo.setSourceUrl(url);
+                        bookSourceInfo.setSourceUrl(url);
                         break;
                     case "og:novel:author":
                         author = meta.attr("content");
@@ -118,17 +115,17 @@ public class LIABookCatalogThread extends BaseReadThread {
                 if (chapterUrl.endsWith("html")) {
                     String chapterName = cahpter.text();
                     i++;
-                    CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterUrl, chapterName, 0);
-                    if (!bookInfo.getCatalogInfos().contains(catalogInfo)) {
-                        catalogInfo.setBookInfo(bookInfo);
-                        bookInfo.getCatalogInfos().add(catalogInfo);
+                    BookCatalogInfo bookCatalogInfo = new BookCatalogInfo(bookInfo, i, chapterUrl, chapterName, 0);
+                    if (!bookInfo.getBookCatalogInfos().contains(bookCatalogInfo)) {
+                        bookCatalogInfo.setBookInfo(bookInfo);
+                        bookInfo.getBookCatalogInfos().add(bookCatalogInfo);
                     }
                 }
                 if (getIsCancelled())
                     return;
             }
             saveBookData(bookInfo);
-            if (bookInfo.getCatalogInfos().size() > 0) {
+            if (bookInfo.getBookCatalogInfos().size() > 0) {
                 sendObj(MyHandler.CATALOG_SOURCE_OK);
             } else {
                 sendObj(MyHandler.CATALOG_SOURCE_NO);

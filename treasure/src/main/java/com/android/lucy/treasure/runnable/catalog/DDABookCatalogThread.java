@@ -1,14 +1,9 @@
 package com.android.lucy.treasure.runnable.catalog;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-
 import com.android.lucy.treasure.base.BaseReadThread;
+import com.android.lucy.treasure.bean.BookCatalogInfo;
 import com.android.lucy.treasure.bean.BookInfo;
-import com.android.lucy.treasure.bean.CatalogInfo;
-import com.android.lucy.treasure.bean.SourceInfo;
-import com.android.lucy.treasure.dao.BookInfoDao;
-import com.android.lucy.treasure.utils.Key;
+import com.android.lucy.treasure.bean.BookSourceInfo;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 
@@ -16,8 +11,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.litepal.crud.DataSupport;
-import org.litepal.tablemanager.Connector;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,7 +42,7 @@ public class DDABookCatalogThread extends BaseReadThread {
     @Override
     public void resoloveUrl(Document doc) {
         int sourceIndex = bookInfo.getSourceIndex();
-        SourceInfo sourceInfo = bookInfo.getSourceInfos().get(sourceIndex);
+        BookSourceInfo bookSourceInfo = bookInfo.getBookSourceInfos().get(sourceIndex);
         Elements metas = doc.select("meta[property]");
         //og:title     书名
         //og:novel:read_url  书页Url
@@ -67,7 +60,7 @@ public class DDABookCatalogThread extends BaseReadThread {
                 case "og:novel:read_url":
                     url = meta.attr("content");
                     MyLogcat.myLog("read_url:" + url);
-                    sourceInfo.setSourceUrl(url);
+                    bookSourceInfo.setSourceUrl(url);
                     break;
                 case "og:novel:author":
                     author = meta.attr("content");
@@ -90,22 +83,22 @@ public class DDABookCatalogThread extends BaseReadThread {
                 String chapterHref = url + a.attr("href");
                 String chapterName = a.text();
                 i++;
-                CatalogInfo catalogInfo = new CatalogInfo(bookInfo, i, chapterHref, chapterName, 0);
-                if (!bookInfo.getCatalogInfos().contains(catalogInfo)) {
-                    catalogInfo.setBookInfo(bookInfo);
-                    bookInfo.getCatalogInfos().add(catalogInfo);
+                BookCatalogInfo bookCatalogInfo = new BookCatalogInfo(bookInfo, i, chapterHref, chapterName, 0);
+                if (!bookInfo.getBookCatalogInfos().contains(bookCatalogInfo)) {
+                    bookCatalogInfo.setBookInfo(bookInfo);
+                    bookInfo.getBookCatalogInfos().add(bookCatalogInfo);
                 }
                 if (getIsCancelled()) {
                     return;
                 }
             }
             saveBookData(bookInfo);
-            if (bookInfo.getCatalogInfos().size() > 0) {
+            if (bookInfo.getBookCatalogInfos().size() > 0) {
                 sendObj(MyHandler.CATALOG_SOURCE_OK);
             } else {
                 sendObj(MyHandler.CATALOG_SOURCE_NO);
             }
-//            MyLogcat.myLog("size:"+info.getCatalogInfos().size());
+//            MyLogcat.myLog("size:"+info.getBookCatalogInfos().size());
         }
     }
 

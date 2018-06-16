@@ -13,9 +13,9 @@ import android.view.View;
 
 import com.android.lucy.treasure.activity.BookContentActivity;
 import com.android.lucy.treasure.bean.BookInfo;
-import com.android.lucy.treasure.bean.CatalogInfo;
-import com.android.lucy.treasure.bean.ConfigInfo;
-import com.android.lucy.treasure.bean.PagerContentInfo;
+import com.android.lucy.treasure.bean.BookCatalogInfo;
+import com.android.lucy.treasure.bean.ChapterPagerContentInfo;
+import com.android.lucy.treasure.bean.PagerConfigInfo;
 import com.android.lucy.treasure.pager.ContentPager;
 import com.android.lucy.treasure.runnable.chapter.DDAChapterContentThread;
 import com.android.lucy.treasure.utils.MyLogcat;
@@ -94,16 +94,16 @@ public class ChapterContentService extends Service {
      * @param chapterID 下载的章节id
      */
     public void startThreadProgress(int chapterID) {
-        CatalogInfo catalogInfo = bookInfo.getCatalogInfos().get(chapterID);
-        ArrayList<PagerContentInfo> pagerContentInfos = catalogInfo.getStrs();
-        if (null == pagerContentInfos) {
-            pagerContentInfos = new ArrayList<>();
-            catalogInfo.setStrs(pagerContentInfos);
-            String chapterUrl = catalogInfo.getChapterUrl();
+        BookCatalogInfo bookCatalogInfo = bookInfo.getBookCatalogInfos().get(chapterID);
+        ArrayList<ChapterPagerContentInfo> chapterPagerContentInfos = bookCatalogInfo.getStrs();
+        if (null == chapterPagerContentInfos) {
+            chapterPagerContentInfos = new ArrayList<>();
+            bookCatalogInfo.setStrs(chapterPagerContentInfos);
+            String chapterUrl = bookCatalogInfo.getChapterUrl();
             MyLogcat.myLog("调用下载章节线程：" + "章节Id:" + chapterID);
-            ConfigInfo configInfo = new ConfigInfo(chapterNameHeight, bookNameHeight, chapterContentWidth,
+            PagerConfigInfo pagerConfigInfo = new PagerConfigInfo(chapterNameHeight, bookNameHeight, chapterContentWidth,
                     chapterContentHeight, pagerLine, mTextPaint, textWidth, textHeight);
-            ThreadPool.getInstance().submitTask(new DDAChapterContentThread(chapterUrl, chapterContentHandler, catalogInfo, configInfo,
+            ThreadPool.getInstance().submitTask(new DDAChapterContentThread(chapterUrl, chapterContentHandler, bookCatalogInfo, pagerConfigInfo,
                     cv_chapter_progress));
         }
     }

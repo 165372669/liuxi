@@ -34,48 +34,43 @@ public class SearchDataAdapter extends BaseAdapter<SearchInfo> {
     private ImageLruCache lruCache;
     private int start;
     private int end;
-    private List<SearchInfo> mDatas;
     private boolean flag = true;
 
 
     public SearchDataAdapter(Context context, List<SearchInfo> mDatas, int laoyoutId, ImageDownloadManager imageManager) {
         super(context, mDatas, laoyoutId);
         this.imageManager = imageManager;
-        this.mDatas = mDatas;
         lruCache = ImageLruCache.getInstance();
-
+        imageManager.setSearchInfos(mDatas);
     }
 
 
     @Override
     public void convert(BaseViewHolder myViewHolder, SearchInfo searchInfo, int position) {
-        if (isAnimation)
-            if (isScrollDown)
-                setAnimation(convertView);
         TextView tv_bookName = myViewHolder.getView(R.id.tv_bookName);
         TextView tv_author = myViewHolder.getView(R.id.tv_author);
         TextView tv_type = myViewHolder.getView(R.id.tv_type);
-        TextView tv_desc = myViewHolder.getView(R.id.tv_desc);
-        ImageView iv_book = myViewHolder.getView(R.id.iv_book);
+        TextView tv_newsChapterName = myViewHolder.getView(R.id.tv_newsChapterName);
+        ImageView iv_book = myViewHolder.getView(R.id.iv_book_img);
 
         String imgUrl = searchInfo.getImgUrl();
         iv_book.setTag(imgUrl);
-        BitmapDrawable drawable = lruCache.getBitmapFromCache(imgUrl);
-        if (null != drawable)
-            iv_book.setImageDrawable(BitmapUtils.bitmapToDrawable(drawable.getBitmap()));
+        BitmapDrawable image = lruCache.getBitmapFromCache(imgUrl);
+        if (null != image)
+            iv_book.setImageDrawable(BitmapUtils.bitmapToDrawable(image.getBitmap()));
         else
             iv_book.setImageDrawable(ContextCompat.getDrawable(context, R.mipmap.ic_launcher));
+        searchInfo.setImage(image);
         tv_bookName.setText(searchInfo.getBookName());
-        tv_author.setText("作者：" + searchInfo.getAuthor());
-        tv_type.setText("类型：" + searchInfo.getType());
-        tv_desc.setText("简介:" + searchInfo.getDesc());
+        tv_author.setText(searchInfo.getAuthor());
+        tv_type.setText(searchInfo.getType());
+        tv_newsChapterName.setText(searchInfo.getNewChapter());
     }
 
 
     @Override
     public void getDatas(List<SearchInfo> mDatas) {
     }
-
 
 
     /*

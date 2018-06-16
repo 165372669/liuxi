@@ -45,4 +45,8 @@ public class StringUtils {
             return sourceName.substring(0, sourceName.indexOf("/"));
     }
 
+    public static String splitString(String s, String split, int index) {
+        return s.split(split)[index];
+    }
+
 }

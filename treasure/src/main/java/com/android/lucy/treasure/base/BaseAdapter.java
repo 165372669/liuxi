@@ -21,12 +21,7 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter implemen
     private int laoyoutId;
     private int mFirstVisibleItem;
     protected boolean isScrollDown;//是否为下滑状态
-    protected boolean isAnimation; //是否加载动画
     private int mFirstTop;
-    private String animType;
-    private float x1;
-    private float x2;
-    private int animTime;
     protected View convertView;
 
     public BaseAdapter(Context context, List<T> datas, int laoyoutId) {
@@ -94,26 +89,9 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter implemen
 
     public abstract void getDatas(List<T> mDatas);
 
-    public void setIsAnimation(boolean isAnimation, String animType, float x1, float x2, int animTime) {
-        this.isAnimation = isAnimation;
-        this.animType = animType;
-        this.x1 = x1;
-        this.x2 = x2;
-        this.animTime = animTime;
-
-    }
 
     public T getDatas(int index) {
         return mDatas.get(index);
-    }
-
-
-    public void setAnimation(View view) {
-        ObjectAnimator.ofFloat(view, animType, x1, x2).setDuration(animTime).start();
-    }
-
-    public void setAnimation(View view, String animType, float x1, float x2, int animTime) {
-        ObjectAnimator.ofFloat(view, animType, x1, x2).setDuration(animTime).start();
     }
 
 }

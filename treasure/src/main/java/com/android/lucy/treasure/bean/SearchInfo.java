@@ -1,45 +1,38 @@
 package com.android.lucy.treasure.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.graphics.drawable.BitmapDrawable;
 
 /**
  * 搜索小说数据对象
  */
 
-public class SearchInfo implements Parcelable {
+public class SearchInfo{
 
-
+    private String datailsUrl; //详情页面
     private String imgUrl;//图片链接
     private String bookName;//书名
     private String author;//作者
     private String type;//类型
     private String desc;//介绍
-    private String bookUrl_ZhuiShu;//追书页面介绍
-    private String bookSize;//小说字数
-    private String bookUpdateTime;//最后更新时间
     private String newChapter;//最新章节
+    private BitmapDrawable image;
 
-    public SearchInfo(String imgUrl, String bookName, String author, String type, String desc, String bookUrl_ZhuiShu) {
+    public SearchInfo(String datailsUrl, String imgUrl, String bookName, String author, String type, String desc, String newChapter) {
+        this.datailsUrl = datailsUrl;
         this.imgUrl = imgUrl;
         this.bookName = bookName;
         this.author = author;
         this.type = type;
         this.desc = desc;
-        this.bookUrl_ZhuiShu = bookUrl_ZhuiShu;
+        this.newChapter = newChapter;
     }
 
-    protected SearchInfo(Parcel in) {
-        imgUrl = in.readString();
-        bookName = in.readString();
-        author = in.readString();
-        type = in.readString();
-        desc = in.readString();
-        bookUrl_ZhuiShu = in.readString();
-        bookSize = in.readString();
-        bookUpdateTime = in.readString();
-        newChapter = in.readString();
+    public String getDatailsUrl() {
+        return datailsUrl;
+    }
 
+    public void setDatailsUrl(String datailsUrl) {
+        this.datailsUrl = datailsUrl;
     }
 
     public String getNewChapter() {
@@ -50,29 +43,12 @@ public class SearchInfo implements Parcelable {
         this.newChapter = newChapter;
     }
 
-
-    public String getBookSize() {
-        return bookSize;
+    public BitmapDrawable getImage() {
+        return image;
     }
 
-    public void setBookSize(String bookSize) {
-        this.bookSize = bookSize;
-    }
-
-    public String getBookUpdateTime() {
-        return bookUpdateTime;
-    }
-
-    public void setBookUpdateTime(String bookUpdateTime) {
-        this.bookUpdateTime = bookUpdateTime;
-    }
-
-    public String getBookUrl_ZhuiShu() {
-        return bookUrl_ZhuiShu;
-    }
-
-    public void setBookUrl_ZhuiShu(String bookUrl_ZhuiShu) {
-        this.bookUrl_ZhuiShu = bookUrl_ZhuiShu;
+    public void setImage(BitmapDrawable image) {
+        this.image = image;
     }
 
     public String getImgUrl() {
@@ -115,38 +91,4 @@ public class SearchInfo implements Parcelable {
         this.desc = desc;
     }
 
-    @Override
-    public String toString() {
-        return imgUrl + bookName + author + type + desc + bookUrl_ZhuiShu;
-    }
-
-    public static final Creator<SearchInfo> CREATOR = new Creator<SearchInfo>() {
-        @Override
-        public SearchInfo createFromParcel(Parcel in) {
-            return new SearchInfo(in);
-        }
-
-        @Override
-        public SearchInfo[] newArray(int size) {
-            return new SearchInfo[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(getImgUrl());
-        parcel.writeString(getBookName());
-        parcel.writeString(getAuthor());
-        parcel.writeString(getType());
-        parcel.writeString(getDesc());
-        parcel.writeString(getBookUrl_ZhuiShu());
-        parcel.writeString(getBookSize());
-        parcel.writeString(getBookUpdateTime());
-        parcel.writeString(getNewChapter());
-    }
 }

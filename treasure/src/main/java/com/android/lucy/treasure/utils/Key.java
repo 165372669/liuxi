@@ -16,4 +16,5 @@ public class Key {
     public static final String KEY_88DUSHU_CHAPTER = "www.88dus.com";
     public static final String KEY_80TXT = "www.80txt.com";
     public static final String KEY_BIQUSA = "www.biqusa.com";
+    public static final String KEY_BIQIUGE= "http://www.biqiuge.com";
 }

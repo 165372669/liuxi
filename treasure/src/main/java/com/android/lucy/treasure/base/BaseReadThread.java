@@ -5,7 +5,6 @@ import android.os.Message;
 
 import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.bean.BookInfo;
-import com.android.lucy.treasure.dao.BookInfoDao;
 import com.android.lucy.treasure.interfaces.HTMLFollowRedirects;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
@@ -65,14 +64,14 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
     }
 
     public void saveBookData(BookInfo bookInfo) {
-        int chapterTotal = bookInfo.getCatalogInfos().size();
+        int chapterTotal = bookInfo.getBookCatalogInfos().size();
         int newChapterid = chapterTotal - 1;
         bookInfo.setChapterTotal(chapterTotal);
         bookInfo.setNewChapterId(newChapterid); //最新章节id
-        bookInfo.setNewChapterName(bookInfo.getCatalogInfos().get(newChapterid).getChapterName());
+        bookInfo.setNewChapterName(bookInfo.getBookCatalogInfos().get(newChapterid).getChapterName());
         if (bookInfo.getId() > 0) {
             bookInfo.update(bookInfo.getId());
-            DataSupport.saveAll(bookInfo.getCatalogInfos());
+            DataSupport.saveAll(bookInfo.getBookCatalogInfos());
         }
     }
 

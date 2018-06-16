@@ -7,8 +7,7 @@ import android.widget.TextView;
 import com.android.lucy.treasure.R;
 import com.android.lucy.treasure.base.BaseAdapter;
 import com.android.lucy.treasure.base.BaseViewHolder;
-import com.android.lucy.treasure.bean.CatalogInfo;
-import com.android.lucy.treasure.bean.SourceInfo;
+import com.android.lucy.treasure.bean.BookSourceInfo;
 
 import java.util.List;
 
@@ -16,19 +15,19 @@ import java.util.List;
  * 小说来源列表适配器
  */
 
-public class BookSourceCatalogAdapter extends BaseAdapter<SourceInfo> {
+public class BookSourceCatalogAdapter extends BaseAdapter<BookSourceInfo> {
 
 
-    public BookSourceCatalogAdapter(Context context, List<SourceInfo> datas, int laoyoutId) {
+    public BookSourceCatalogAdapter(Context context, List<BookSourceInfo> datas, int laoyoutId) {
         super(context, datas, laoyoutId);
     }
 
     @Override
-    public void convert(BaseViewHolder myViewHolder, SourceInfo sourceInfo, int position) {
+    public void convert(BaseViewHolder myViewHolder, BookSourceInfo bookSourceInfo, int position) {
         TextView tv_chapterName_new = myViewHolder.getView(R.id.tv_chapterName_new);
         TextView tv_sourceName_new = myViewHolder.getView(R.id.tv_sourceName_new);
         TextView tv_time_new = myViewHolder.getView(R.id.tv_time_new);
-        tv_sourceName_new.setText(sourceInfo.getSourceName());
+        tv_sourceName_new.setText(bookSourceInfo.getSourceName());
         tv_time_new.setText("update-time");
         //setAnimation(convertView,"translationX",500,0,500);
     }
@@ -43,7 +42,7 @@ public class BookSourceCatalogAdapter extends BaseAdapter<SourceInfo> {
     }
 
     @Override
-    public void getDatas(List<SourceInfo> mDatas) {
+    public void getDatas(List<BookSourceInfo> mDatas) {
 
     }
 

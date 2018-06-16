@@ -6,7 +6,7 @@ import android.graphics.Paint;
  * 计算字体需要的配置
  */
 
-public class ConfigInfo {
+public class PagerConfigInfo {
     private int chapterNameHeight;    //章节名View高
     private int bookNameHeight;       //书名View高
     private int chapterContentWidth;  //章节内容View宽
@@ -16,8 +16,8 @@ public class ConfigInfo {
     private int textWidth; //字体宽度
     private int textHeight; //字体高度
 
-    public ConfigInfo(int chapterNameHeight, int bookNameHeight, int chapterContentWidth, int chapterContentHeight,
-                      int pagerLine, Paint mTextPaint, int textWidth, int textHeight) {
+    public PagerConfigInfo(int chapterNameHeight, int bookNameHeight, int chapterContentWidth, int chapterContentHeight,
+                           int pagerLine, Paint mTextPaint, int textWidth, int textHeight) {
         this.chapterNameHeight = chapterNameHeight;
         this.bookNameHeight = bookNameHeight;
         this.chapterContentWidth = chapterContentWidth;

@@ -12,7 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.android.lucy.treasure.R;
-import com.android.lucy.treasure.bean.TextInfo;
+import com.android.lucy.treasure.bean.PagerContentTextInfo;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
 public class ChapterContentTextView extends View {
 
     private Paint textPaint;
-    private List<TextInfo> books; //章节内容
+    private List<PagerContentTextInfo> books; //章节内容
     private boolean isInvalidate;
 
     public ChapterContentTextView(Context context) {
@@ -74,8 +74,8 @@ public class ChapterContentTextView extends View {
     protected void onDraw(Canvas canvas) {
         if (!isInvalidate && null != books && books.size() > 0) {
             for (int i = 0; i < books.size(); i++) {
-                TextInfo textInfo = books.get(i);
-                canvas.drawText(textInfo.getS(), textInfo.getX(), textInfo.getY(), textPaint);
+                PagerContentTextInfo pagerContentTextInfo = books.get(i);
+                canvas.drawText(pagerContentTextInfo.getS(), pagerContentTextInfo.getX(), pagerContentTextInfo.getY(), textPaint);
             }
         } else {
             canvas.drawText("", 0, 0, textPaint);
@@ -100,7 +100,7 @@ public class ChapterContentTextView extends View {
     /*
     * 设置字符串数组
     * */
-    public void setContentArrays(List<TextInfo> strs) {
+    public void setContentArrays(List<PagerContentTextInfo> strs) {
         isInvalidate = false;
         this.books = strs;
         invalidateView();
