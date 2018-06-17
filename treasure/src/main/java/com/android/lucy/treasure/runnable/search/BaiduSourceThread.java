@@ -1,4 +1,4 @@
-package com.android.lucy.treasure.runnable.source;
+package com.android.lucy.treasure.runnable.search;
 
 import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookInfo;
@@ -7,7 +7,6 @@ import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.StringUtils;
-import com.android.lucy.treasure.utils.ThreadPool;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

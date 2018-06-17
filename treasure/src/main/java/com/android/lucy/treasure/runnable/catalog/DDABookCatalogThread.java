@@ -27,6 +27,7 @@ import java.util.Set;
  * www.xxbiquge.com  新笔趣阁
  * www.pbtxt.com  平板电子书网获取小说章节。
  * www.ddbiquge.com  顶点笔趣阁
+ * www.biqiuge.com  笔趣阁
  */
 
 public class DDABookCatalogThread extends BaseReadThread {
@@ -74,6 +75,11 @@ public class DDABookCatalogThread extends BaseReadThread {
             url = url.substring(0, 24);
             MyLogcat.myLog("url:" + url);
         }
+        if (null != url && url.startsWith("http://www.biqiuge.com")) {
+            String flag = "com/";
+            url = url.substring(0, url.indexOf(flag) + flag.length() - 1);
+            MyLogcat.myLog("url:" + url);
+        }
 
         if ((null != bookName && bookName.equals(bookInfo.getBookName())) || (null != author && author.equals(bookInfo.getAuthor()))) {
             Elements dds = doc.select("dd");
@@ -104,11 +110,15 @@ public class DDABookCatalogThread extends BaseReadThread {
 
     @Override
     public void errorHandle(IOException e) {
-        sendObj(MyHandler.CATALOG_SOURCE_ERROR);
+        if (count < 5) {
+            readUrl();
+            count++;
+        } else {
+            sendObj(MyHandler.CATALOG_SOURCE_ERROR);
+        }
     }
 
 
-    @Override
     public void xxbuquge() {
         if (bookInfo.getSourceName().contains("xxbiquge")) {
             HttpURLConnection urlConnection = null;

@@ -86,6 +86,7 @@ public class BookCatalogInfo extends DataSupport implements Comparable, Serializ
         this.chapterPagerToatal = chapterPagerToatal;
     }
 
+
     public ArrayList<ChapterPagerContentInfo> getStrs() {
         return chapterPagerContentInfos;
     }

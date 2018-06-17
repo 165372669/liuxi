@@ -4,7 +4,6 @@ package com.android.lucy.treasure.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Message;
@@ -31,8 +30,9 @@ import com.android.lucy.treasure.bean.SearchInfo;
 import com.android.lucy.treasure.manager.AsyncManager;
 import com.android.lucy.treasure.manager.ImageDownloadManager;
 import com.android.lucy.treasure.runnable.file.ReadSearchHistoryThread;
+import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
 import com.android.lucy.treasure.runnable.file.WriteSearchHistoryThread;
-import com.android.lucy.treasure.runnable.source.BiQiuGeSearchThread;
+import com.android.lucy.treasure.runnable.search.BiqiugeSearchThread;
 import com.android.lucy.treasure.utils.BitmapUtils;
 import com.android.lucy.treasure.utils.ImageLruCache;
 import com.android.lucy.treasure.utils.MyHandler;
@@ -41,6 +41,8 @@ import com.android.lucy.treasure.utils.SDCardHelper;
 import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.utils.URLUtils;
 import com.android.lucy.treasure.view.SearchEditTextView;
+
+import org.litepal.crud.DataSupport;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -106,12 +108,7 @@ public class BookSearchActivity extends Activity implements AdapterView.OnItemCl
                     MyLogcat.myLog("未搜索到书籍");
                     break;
                 case MyHandler.SEARCH_DETAILS_ERROR:
-                    String bookName = (String) msg.obj;
                     MyLogcat.myLog("搜索错误");
-                    String searchUrl = URLUtils.URL_BIQIUGE_SEARCH + bookName;
-                    ThreadPool.getInstance().submitTask(new BiQiuGeSearchThread(searchUrl, bookName,
-                            activity.searchInfos, this));
-                    //如果5次都搜索不到转入追书
                     break;
             }
         }
@@ -231,10 +228,13 @@ public class BookSearchActivity extends Activity implements AdapterView.OnItemCl
                 break;
             case R.id.lv_search:
                 SearchInfo searchInfo = ((SearchDataAdapter) lv_search.getAdapter()).getDatas(position);
-                BitmapDrawable image = searchInfo.getImage();
-                byte[] imageBytes = BitmapUtils.getImageBytes(image);
-                BookInfo bookInfo = new BookInfo(searchInfo.getBookName(), searchInfo.getAuthor(), searchInfo.getImgUrl(),
-                        searchInfo.getType(), searchInfo.getDesc(), searchInfo.getNewChapter(), imageBytes, searchInfo.getDatailsUrl());
+                BookInfo bookInfo = DataSupport.where("bookName=?", searchInfo.getBookName()).findFirst(BookInfo.class, true);
+                if (null == bookInfo) {
+                    //创建小说对象
+                    bookInfo = new BookInfo(searchInfo.getBookName(), searchInfo.getAuthor(), searchInfo.getImgUrl(),
+                            searchInfo.getType(), searchInfo.getDesc(), searchInfo.getNewChapter(), searchInfo.getDatailsUrl());
+                }
+                ThreadPool.getInstance().submitTask(new WriteDataFileThread("bookData.db"));
                 Intent intent = new Intent(this, BookIntroducedActivity.class);
                 intent.putExtra("bookInfo", bookInfo);
                 startActivity(intent);
@@ -267,7 +267,7 @@ public class BookSearchActivity extends Activity implements AdapterView.OnItemCl
             //更新搜索数据
             updateSearchHistory(searchBookName);
             String searchUrl = URLUtils.URL_BIQIUGE_SEARCH + searchBookName;
-            ThreadPool.getInstance().submitTask(new BiQiuGeSearchThread(searchUrl, searchBookName,
+            ThreadPool.getInstance().submitTask(new BiqiugeSearchThread(searchUrl, searchBookName,
                     searchInfos, searchHandler));
             lv_search.setVisibility(INVISIBLE);
             progressBar.setVisibility(VISIBLE);

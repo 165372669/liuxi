@@ -22,13 +22,14 @@ import java.io.IOException;
  * 获取网页数据基类
  */
 
-public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
+public abstract class BaseReadThread implements Runnable {
 
 
     protected String baseUrl;
     protected Handler myHandler;
     private boolean isCancelled;
     protected String flag;//区分线程标志
+    protected int count;
 
     public abstract void resoloveUrl(Document doc);
 
@@ -53,7 +54,8 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
             return;
         try {
             MyLogcat.myLog("BaseUrl:" + baseUrl);
-            resoloveUrl(Jsoup.connect(baseUrl).get());
+            Document doc = Jsoup.connect(baseUrl).timeout(3 * 1000).get();
+            resoloveUrl(doc);
         } catch (IOException e) {
             MyLogcat.myLog(baseUrl + "，网页读取失败！！！");
             errorHandle(e);
@@ -73,10 +75,6 @@ public abstract class BaseReadThread implements Runnable, HTMLFollowRedirects {
             bookInfo.update(bookInfo.getId());
             DataSupport.saveAll(bookInfo.getBookCatalogInfos());
         }
-    }
-
-    @Override
-    public void xxbuquge() {
     }
 
     /*

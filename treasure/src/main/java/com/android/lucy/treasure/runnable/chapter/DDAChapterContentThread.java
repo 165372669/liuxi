@@ -93,11 +93,14 @@ public class DDAChapterContentThread extends BaseReadThread {
 
     @Override
     public void errorHandle(IOException e) {
-        //网页读取失败
-        sendObj(MyHandler.CHAPTER_LOADING_ERROR, bookCatalogInfo.getChapterId());
+        if (count < 5) {
+            readUrl();
+        } else {
+            //网页读取失败
+            sendObj(MyHandler.CHAPTER_LOADING_ERROR, bookCatalogInfo.getChapterId());
+        }
     }
 
-    @Override
     public void xxbuquge() {
         if (baseUrl.startsWith("https://www.xxbiquge.com")) {
             HttpURLConnection urlConnection = null;

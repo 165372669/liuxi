@@ -20,8 +20,20 @@ public class BookSourceInfo extends DataSupport implements Serializable {
 
 
     public BookSourceInfo(String sourceName, String sourceBaiduUrl) {
-        this.sourceName = sourceName;
+        this(sourceBaiduUrl, sourceName, null, null);
+    }
+
+
+    public BookSourceInfo(String sourceBaiduUrl, String sourceName, String sourceUrl, String webType) {
+        this(null, sourceBaiduUrl, sourceName, sourceUrl, webType);
+    }
+
+    public BookSourceInfo(BookInfo bookInfo, String sourceBaiduUrl, String sourceName, String sourceUrl, String webType) {
+        this.bookInfo = bookInfo;
         this.sourceBaiduUrl = sourceBaiduUrl;
+        this.sourceName = sourceName;
+        this.sourceUrl = sourceUrl;
+        this.webType = webType;
     }
 
     public int getId() {
@@ -73,7 +85,6 @@ public class BookSourceInfo extends DataSupport implements Serializable {
     }
 
 
-
     @Override
     public boolean equals(Object obj) {
         BookSourceInfo bookSourceInfo = (BookSourceInfo) obj;
@@ -84,8 +95,12 @@ public class BookSourceInfo extends DataSupport implements Serializable {
     @Override
     public String toString() {
         return "BookSourceInfo{" +
-                "sourceUrl='" + sourceUrl + '\'' +
+                "id=" + id +
+                ", bookInfo=" + bookInfo +
+                ", sourceBaiduUrl='" + sourceBaiduUrl + '\'' +
                 ", sourceName='" + sourceName + '\'' +
+                ", sourceUrl='" + sourceUrl + '\'' +
+                ", webType='" + webType + '\'' +
                 '}';
     }
 }

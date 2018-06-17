@@ -24,7 +24,6 @@ public class BookInfo extends DataSupport implements Serializable {
     private String sourceName;    //来源选择
     private String datailsUrl;//详情网页url
     private String imgUrl;//封面链接
-    private byte[] image; //封面
     private int sourceIndex;//来源在集合里的位置
     private int newChapterId; //最新章节id
     private int readChapterid;//已读章节id
@@ -40,15 +39,15 @@ public class BookInfo extends DataSupport implements Serializable {
 
     }
 
-    public BookInfo(String bookName, String author, String imgUrl, String type, String synopsis, String newChapterName, byte[] image, String datailsUrl) {
+    public BookInfo(String bookName, String author, String imgUrl, String type, String synopsis, String newChapterName,String datailsUrl) {
         this(bookName, author, null, 0, 0, 0, 0,
-                0, 0, imgUrl, image, type, synopsis, newChapterName, datailsUrl);
+                0, 0, imgUrl, type, synopsis, newChapterName, datailsUrl);
     }
 
 
     public BookInfo(String bookName, String author, String sourceName, int newChapterId, int readChapterid,
                     int readChapterPager, int closeTime, int chapterTotal, int unreadSeveral, String imgUrl,
-                    byte[] image, String type, String synopsis, String newChapterName, String datailsUrl) {
+                    String type, String synopsis, String newChapterName, String datailsUrl) {
         this.bookName = bookName;
         this.author = author;
         this.sourceName = sourceName;
@@ -58,7 +57,6 @@ public class BookInfo extends DataSupport implements Serializable {
         this.closeTime = closeTime;
         this.chapterTotal = chapterTotal;
         this.unreadSeveral = unreadSeveral;
-        this.image = image;
         this.imgUrl = imgUrl;
         this.type = type;
         this.synopsis = synopsis;
@@ -84,15 +82,6 @@ public class BookInfo extends DataSupport implements Serializable {
         this.imgUrl = imgUrl;
     }
 
-
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
 
     public String getType() {
         return type;
@@ -281,8 +270,6 @@ public class BookInfo extends DataSupport implements Serializable {
                 ", closeTime=" + closeTime +
                 ", chapterTotal=" + chapterTotal +
                 ", unreadSeveral=" + unreadSeveral +
-                ", bookSourceInfos=" + bookSourceInfos +
-                ", bookCatalogInfos=" + bookCatalogInfos +
                 '}';
     }
 }

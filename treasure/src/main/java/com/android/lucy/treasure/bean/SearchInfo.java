@@ -15,7 +15,6 @@ public class SearchInfo{
     private String type;//类型
     private String desc;//介绍
     private String newChapter;//最新章节
-    private BitmapDrawable image;
 
     public SearchInfo(String datailsUrl, String imgUrl, String bookName, String author, String type, String desc, String newChapter) {
         this.datailsUrl = datailsUrl;
@@ -43,13 +42,6 @@ public class SearchInfo{
         this.newChapter = newChapter;
     }
 
-    public BitmapDrawable getImage() {
-        return image;
-    }
-
-    public void setImage(BitmapDrawable image) {
-        this.image = image;
-    }
 
     public String getImgUrl() {
         return imgUrl;

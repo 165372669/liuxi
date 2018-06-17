@@ -52,6 +52,7 @@ public abstract class MyHandler<T extends Activity> extends Handler {
 
     public final static int SEARCH_DETAILS_ERROR = 14;
 
+
     public abstract void myHandleMessage(Message msg);
 
     protected WeakReference<T> mActivity;

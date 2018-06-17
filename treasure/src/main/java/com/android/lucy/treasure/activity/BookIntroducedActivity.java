@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
-import android.view.Gravity;
+import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -18,15 +16,17 @@ import com.android.lucy.treasure.application.MyApplication;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.BookSourceInfo;
 import com.android.lucy.treasure.dao.BookInfoDao;
-import com.android.lucy.treasure.runnable.catalog.BiqiugeBookCatalogThread;
+import com.android.lucy.treasure.runnable.async.BookImageAsync;
+import com.android.lucy.treasure.runnable.details.BiqiugeBookDetailsThread;
 import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
 import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
-import com.android.lucy.treasure.runnable.source.BaiduSourceThread;
+import com.android.lucy.treasure.runnable.search.BaiduSourceThread;
 import com.android.lucy.treasure.utils.ArrayUtils;
 import com.android.lucy.treasure.utils.Key;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
+import com.android.lucy.treasure.utils.StringUtils;
 import com.android.lucy.treasure.utils.SystemUtils;
 import com.android.lucy.treasure.utils.ThreadPool;
 import com.android.lucy.treasure.utils.URLUtils;
@@ -60,8 +60,6 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
     private TextView tv_bookName_book;
     private TextView tv_desc_book;
     private Button bt_read_book;
-    private LinearLayout ll_book_detail;
-    private ProgressBar progressBar;
     private BookHandler bookHandler;
     private ImageView iv_book_back;
     private Button bt_add_book;
@@ -69,6 +67,9 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
     private Button bt_book_cache;
     private Button bt_book_catalog;
     private int sourceIndex;
+    private ProgressBar pb_details;
+    private ConstraintLayout cl_bOOk_details;
+    private TextView tv_readChapter_details;
 
 
     class BookHandler extends MyHandler<BookIntroducedActivity> {
@@ -120,11 +121,6 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
                     }
                     break;
                 case CATALOG_SOURCE_OK:
-                    tv_size_book.setText(bookInfo.getBookCount());
-                    tv_timeUpdate_book.setText(bookInfo.getUpdateTime());
-                    bookInfo.setUpdateTime(bookInfo.getUpdateTime());//更新时间
-                    progressBar.setVisibility(View.INVISIBLE);
-                    ll_book_detail.setVisibility(View.VISIBLE);
                     setReadBookState(true);
                     setAddBookState(true, "加入书架");
                     break;
@@ -134,7 +130,24 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
                 case CATALOG_SOURCE_ERROR:
                     MyLogcat.myLog("章节网页读取失败");
                     break;
+                case SEARCH_DETAILS_OK:
+                    //详情界面OK
+                    MyLogcat.myLog("详情界面OK");
+                    tv_size_book.setText(bookInfo.getBookCount());
+                    tv_timeUpdate_book.setText(bookInfo.getUpdateTime());//更新时间
+                    String readChapterName = bookInfo.getReadChapterName();
+                    if (null == readChapterName) {
+                        tv_readChapter_details.setText("未读");
 
+                    } else {
+                        tv_readChapter_details.setText(bookInfo.getReadChapterName());
+                    }
+                    pb_details.setVisibility(View.INVISIBLE);
+                    cl_bOOk_details.setVisibility(View.VISIBLE);
+                    break;
+                case SEARCH_DETAILS_ERROR:
+                    MyLogcat.myLog("读取详情界面失败");
+                    //超过5次+++;
             }
         }
     }
@@ -173,20 +186,8 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
 
 
     private void initViews() {
-
-        FrameLayout fl_book_detail_root = findViewById(R.id.ll_book_detail_root);
-        ll_book_detail = findViewById(R.id.ll_book_detail);
-        ll_book_detail.setVisibility(View.INVISIBLE);
-
-//      添加自定义圆形滚动
-        FrameLayout.LayoutParams prigress_layoutParams = new FrameLayout.LayoutParams(100, 100);
-        progressBar = new ProgressBar(this);
-        progressBar.setIndeterminateDrawable(getResources().getDrawable(R.drawable.progressbar_custom));
-        prigress_layoutParams.gravity = Gravity.CENTER;
-        progressBar.setLayoutParams(prigress_layoutParams);
-        fl_book_detail_root.addView(progressBar);
-
-
+        cl_bOOk_details = findViewById(R.id.cl_bOOk_details);
+        pb_details = findViewById(R.id.pb_detail);
         iv_cover = findViewById(R.id.iv_cover);
         iv_book_back = findViewById(R.id.iv_book_back);
         tv_bookName_book = findViewById(R.id.tv_bookName_book);
@@ -194,6 +195,7 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
         tv_type_book = findViewById(R.id.tv_type_book);
         tv_size_book = findViewById(R.id.tv_size_book);
         tv_timeUpdate_book = findViewById(R.id.tv_timeUpdate_book);
+        tv_readChapter_details = findViewById(R.id.tv_readChapter_detelis);
         tv_desc_book = findViewById(R.id.tv_desc_book);
         bt_read_book = findViewById(R.id.bt_book_read);
         bt_add_book = findViewById(R.id.bt_book_add);
@@ -202,18 +204,20 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
     }
 
     private void initDatas() {
+        pb_details.setVisibility(View.VISIBLE);
+        cl_bOOk_details.setVisibility(View.INVISIBLE);
         bookHandler = new BookHandler(this);
         bookInfo = (BookInfo) getIntent().getSerializableExtra("bookInfo");
+        ThreadPool.getInstance().submitTask(new BiqiugeBookDetailsThread(bookInfo.getDatailsUrl(), bookInfo, bookHandler));
         tv_bookName_book.setText(bookInfo.getBookName());
         tv_author_book.setText(bookInfo.getAuthor());
         tv_type_book.setText(bookInfo.getType());
         tv_desc_book.setText(bookInfo.getSynopsis());
-        MyLogcat.myLog("bookInfo:" + bookInfo.toString());
+        new BookImageAsync(iv_cover).execute(bookInfo.getImgUrl());
         //启动详情页面线程，获取字数和最新更新章节
 //        zhuiShuDataAsync = new ZhuiShuDataAsync(searchInfo);
 //        //zhuiShuDataAsync.execute(URLUtils.ZHUISHU_URL + searchInfo.getBookUrl_ZhuiShu());
 //        zhuiShuDataAsync.setOnUpdateDataListener(this);
-        ThreadPool.getInstance().submitTask(new BiqiugeBookCatalogThread(bookInfo.getDatailsUrl(), bookInfo, bookHandler));
         //查询数据
         if (bookInfo.getId() > 0) {
             sourceIndex = ArrayUtils.getSourceIndex(bookInfo);
@@ -222,6 +226,12 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
             setAddBookState(true, "移除书籍");
             MyLogcat.myLog("查询数据:" + "readchapterid:" + bookInfo.getReadChapterid() + ",pager:" + bookInfo.getReadChapterPager() + ",bookInfo:" + bookInfo);
         } else {
+            String sourceUrl = bookInfo.getDatailsUrl();
+            String sourceName = StringUtils.shearSourceName(sourceUrl);
+            MyLogcat.myLog("sourceName:" + sourceName + ",sourceUrl:" + sourceUrl);
+            bookInfo.getBookSourceInfos().add(new BookSourceInfo(bookInfo, null, sourceName, sourceUrl, Key.KEY_DDA));
+            ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, bookInfo, bookHandler));
+            MyLogcat.myLog("bookInfo:" + bookInfo.toString());
             //启动百度线程，查找小说来源
 //            String url = URLUtils.BAiDU_SEARCH_URL_ + bookName;
 //            ThreadPool.getInstance().submitTask(new BaiduSourceThread(url, bookInfo, bookHandler));
@@ -258,19 +268,16 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
             case R.id.bt_book_add:
                 String bookName = bookInfo.getBookName();
                 //查询数据
-                List<BookInfo> booklist = DataSupport.select("bookName")
-                        .where("bookName=?", bookName)
-                        .limit(1)
-                        .find(BookInfo.class);
+                BookInfo bookData = DataSupport.where("bookName=?", bookName).
+                        findFirst(BookInfo.class, true);
                 int delete;
-                if (booklist.size() > 0) {
+                if (null != bookData) {
                     if (bookInfo.isSaved()) {
                         //删除数据
                         delete = bookInfo.delete();
                         MyLogcat.myLog("删除数据！bookInfo.delete():" + delete);
                     } else {
                         //删除数据
-                        BookInfo bookData = booklist.get(0);
                         delete = bookData.delete();
                         MyLogcat.myLog("删除数据！!!bookData.delete():" + delete);
                     }

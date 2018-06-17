@@ -1,4 +1,4 @@
-package com.android.lucy.treasure.runnable.source;
+package com.android.lucy.treasure.runnable.search;
 
 import android.os.Handler;
 
@@ -20,11 +20,11 @@ import java.util.LinkedList;
  * www.biqiuge.com
  */
 
-public class BiQiuGeSearchThread extends BaseReadThread {
+public class BiqiugeSearchThread extends BaseReadThread {
     private LinkedList<SearchInfo> searchInfos;
     private String bookName;
 
-    public BiQiuGeSearchThread(String baseUrl, String bookName, LinkedList<SearchInfo> searchInfos, Handler myHandler) {
+    public BiqiugeSearchThread(String baseUrl, String bookName, LinkedList<SearchInfo> searchInfos, Handler myHandler) {
         super(baseUrl, myHandler);
         this.searchInfos = searchInfos;
         this.bookName = bookName;
@@ -75,6 +75,12 @@ public class BiQiuGeSearchThread extends BaseReadThread {
 
     @Override
     public void errorHandle(IOException e) {
-        sendObj(bookName, MyHandler.SEARCH_DETAILS_ERROR);
+        if (count < 5) {
+            readUrl();
+            count++;
+        } else {
+            sendObj(MyHandler.SEARCH_DETAILS_ERROR);
+        }
+
     }
 }

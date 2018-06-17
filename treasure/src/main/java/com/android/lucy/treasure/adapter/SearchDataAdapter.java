@@ -60,7 +60,6 @@ public class SearchDataAdapter extends BaseAdapter<SearchInfo> {
             iv_book.setImageDrawable(BitmapUtils.bitmapToDrawable(image.getBitmap()));
         else
             iv_book.setImageDrawable(ContextCompat.getDrawable(context, R.mipmap.ic_launcher));
-        searchInfo.setImage(image);
         tv_bookName.setText(searchInfo.getBookName());
         tv_author.setText(searchInfo.getAuthor());
         tv_type.setText(searchInfo.getType());

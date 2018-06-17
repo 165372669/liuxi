@@ -21,6 +21,7 @@ import com.android.lucy.treasure.adapter.BookContentPagerAdapter;
 import com.android.lucy.treasure.bean.BookCatalogInfo;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.ChapterIDAndName;
+import com.android.lucy.treasure.bean.ChapterPagerContentInfo;
 import com.android.lucy.treasure.pager.ContentPager;
 import com.android.lucy.treasure.service.ChapterContentService;
 import com.android.lucy.treasure.utils.MyHandler;
@@ -57,25 +58,29 @@ public class BookContentActivity extends Activity implements ViewPager.OnPageCha
 
         @Override
         public void myHandleMessage(Message msg) {
+            int loadChapterId = msg.arg2 - 1;
             switch (msg.arg1) {
                 case MyHandler.CHAPTER_LOADING_OK://成功下载到章节并添加到页面集合
-                    int loadChapterId = msg.arg2;
-                    MyLogcat.myLog("下载的章节id:" + (loadChapterId - 1) + "，适配器的章节id:" + adapter.getCurrentChapterId());
-                    if (loadChapterId - 1 == adapter.getCurrentChapterId()) {
+                    MyLogcat.myLog("下载的章节id:" + (loadChapterId) + "，适配器的章节id:" + adapter.getCurrentChapterId());
+                    if (loadChapterId == adapter.getCurrentChapterId()) {
                         adapter.notifyDataSetChanged();
                     }
+                    cv_chapter_progress.setVisibility(View.GONE);
+                    cv_chapter_progress.setProgress(0);
                     break;
                 case MyHandler.CHAPTER_LOADING_NO:
                     //获取章节内容失败
                 case MyHandler.CHAPTER_LOADING_ERROR:
                     //获取章节网页读取失败
+                    MyLogcat.myLog("失败章节:" + (msg.arg2 - 1));
+                    BookCatalogInfo bookCatalogInfo = bookCatalogInfos.get(loadChapterId);
+                    bookCatalogInfo.setChapterPagerContentInfos(null);
+                    //5次后处理
                     break;
                 default:
                     break;
 
             }
-            cv_chapter_progress.setVisibility(View.GONE);
-            cv_chapter_progress.setProgress(0);
         }
 
     }
