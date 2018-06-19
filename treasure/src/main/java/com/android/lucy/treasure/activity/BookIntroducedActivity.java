@@ -17,7 +17,7 @@ import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.BookSourceInfo;
 import com.android.lucy.treasure.dao.BookInfoDao;
 import com.android.lucy.treasure.runnable.async.BookImageAsync;
-import com.android.lucy.treasure.runnable.details.BiqiugeBookDetailsThread;
+import com.android.lucy.treasure.runnable.catalog.BiqiugeBookDetailsThread;
 import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
 import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
@@ -41,7 +41,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 
 /**
  * 小说详情页面

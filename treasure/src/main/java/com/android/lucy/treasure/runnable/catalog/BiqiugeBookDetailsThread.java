@@ -1,4 +1,4 @@
-package com.android.lucy.treasure.runnable.details;
+package com.android.lucy.treasure.runnable.catalog;
 
 import android.os.Handler;
 

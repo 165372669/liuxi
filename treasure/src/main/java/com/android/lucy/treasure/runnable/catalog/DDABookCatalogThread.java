@@ -7,20 +7,11 @@ import com.android.lucy.treasure.bean.BookSourceInfo;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 获取解析为dd和a的小说章节目录
@@ -115,54 +106,6 @@ public class DDABookCatalogThread extends BaseReadThread {
             count++;
         } else {
             sendObj(MyHandler.CATALOG_SOURCE_ERROR);
-        }
-    }
-
-
-    public void xxbuquge() {
-        if (bookInfo.getSourceName().contains("xxbiquge")) {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            try {
-                URL url = new URL(baseUrl);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                int statusCode = urlConnection.getResponseCode();
-                MyLogcat.myLog("code:" + statusCode);
-                if (statusCode == 302) {
-                    Map<String, List<String>> headerFields = urlConnection.getHeaderFields();
-                    Set<String> keySet = headerFields.keySet();
-                    Iterator<String> it = keySet.iterator();
-                    while (it.hasNext()) {
-                        String key = it.next();
-                        List<String> value = headerFields.get(key);
-                        //key:Location,s:https://www.xxbiquge.com/79_79382/
-                        if (key != null && key.equals("Location")) {
-                            baseUrl = value.get(0);
-                        }
-                    }
-                    urlConnection = (HttpURLConnection) new URL(baseUrl).openConnection();
-                    urlConnection.setDoInput(true);
-                    MyLogcat.myLog("statusCode:" + urlConnection.getResponseCode());
-                    if (urlConnection.getResponseCode() == 200) {
-                        StringBuilder sb = new StringBuilder();
-                        reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            sb.append(line);
-                        }
-                        resoloveUrl(Jsoup.parse(sb.toString(), baseUrl));
-                    }
-                }
-            } catch (IOException e) {
-                MyLogcat.myLog(baseUrl + "，网页读取失败！!!!");
-            } finally {
-                try {
-                    if (null != urlConnection) urlConnection.disconnect();
-                    if (null != reader) reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 }

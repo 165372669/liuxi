@@ -9,6 +9,7 @@ import com.android.lucy.treasure.interfaces.HTMLFollowRedirects;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.ThreadPool;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.litepal.crud.DataSupport;
@@ -54,7 +55,10 @@ public abstract class BaseReadThread implements Runnable {
             return;
         try {
             MyLogcat.myLog("BaseUrl:" + baseUrl);
-            Document doc = Jsoup.connect(baseUrl).timeout(3 * 1000).get();
+            // Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0
+            Connection conn = Jsoup.connect(baseUrl);
+            conn.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0");
+            Document doc = conn.timeout(3 * 1000).get();
             resoloveUrl(doc);
         } catch (IOException e) {
             MyLogcat.myLog(baseUrl + "，网页读取失败！！！");
