@@ -1,29 +1,26 @@
 package com.android.lucy.treasure.runnable.catalog;
 
-import android.os.Handler;
-
-import com.android.lucy.treasure.base.BaseReadThread;
 import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.utils.MyHandler;
 import com.android.lucy.treasure.utils.MyLogcat;
 import com.android.lucy.treasure.utils.StringUtils;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
 
 /**
- * 笔趣阁章节默认读取
+ * 笔趣阁
  * www.biqiuge.com
  */
 
-public class BiqiugeBookDetailsThread extends BaseReadThread {
+public class BiqiugeCatalogThread extends DDABookCatalogThread {
     private BookInfo bookInfo;
 
-    public BiqiugeBookDetailsThread(String baseUrl, BookInfo bookInfo, Handler myHandler) {
-        super(baseUrl, myHandler);
+    public BiqiugeCatalogThread(String baseUrl, BookInfo bookInfo, MyHandler myHandler) {
+        super(baseUrl, bookInfo, myHandler);
         this.bookInfo = bookInfo;
     }
 
@@ -43,7 +40,16 @@ public class BiqiugeBookDetailsThread extends BaseReadThread {
         if (bookInfo.getId() > 0) {
             bookInfo.saveOrUpdate("bookName=?", bookInfo.getBookName());
         }
-        sendObj(MyHandler.SEARCH_DETAILS_OK);
+    }
+
+    @Override
+    public void getCatalogs(Document doc) {
+        Elements lists = doc.getElementsByClass("listmain");
+        boolean isText;
+        for (Element list : lists) {
+            MyLogcat.myLog("text:" + list.text());
+        }
+        sendObj(MyHandler.CATALOG_SOURCE_OK);
     }
 
     @Override
@@ -52,7 +58,7 @@ public class BiqiugeBookDetailsThread extends BaseReadThread {
             readUrl();
             count++;
         } else {
-            sendObj(MyHandler.SEARCH_DETAILS_ERROR);
+            sendObj(MyHandler.CATALOG_SOURCE_ERROR);
         }
         //如果5次都搜索不到转入追书
     }

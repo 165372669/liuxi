@@ -17,7 +17,7 @@ import com.android.lucy.treasure.bean.BookInfo;
 import com.android.lucy.treasure.bean.BookSourceInfo;
 import com.android.lucy.treasure.dao.BookInfoDao;
 import com.android.lucy.treasure.runnable.async.BookImageAsync;
-import com.android.lucy.treasure.runnable.catalog.BiqiugeBookDetailsThread;
+import com.android.lucy.treasure.runnable.catalog.BiqiugeCatalogThread;
 import com.android.lucy.treasure.runnable.catalog.DDABookCatalogThread;
 import com.android.lucy.treasure.runnable.catalog.LIABookCatalogThread;
 import com.android.lucy.treasure.runnable.file.WriteDataFileThread;
@@ -135,12 +135,6 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
                     tv_size_book.setText(bookInfo.getBookCount());
                     tv_timeUpdate_book.setText(bookInfo.getUpdateTime());//更新时间
                     String readChapterName = bookInfo.getReadChapterName();
-                    if (null == readChapterName) {
-                        tv_readChapter_details.setText("未读");
-
-                    } else {
-                        tv_readChapter_details.setText(bookInfo.getReadChapterName());
-                    }
                     pb_details.setVisibility(View.INVISIBLE);
                     cl_bOOk_details.setVisibility(View.VISIBLE);
                     break;
@@ -207,7 +201,7 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
         cl_bOOk_details.setVisibility(View.INVISIBLE);
         bookHandler = new BookHandler(this);
         bookInfo = (BookInfo) getIntent().getSerializableExtra("bookInfo");
-        ThreadPool.getInstance().submitTask(new BiqiugeBookDetailsThread(bookInfo.getDatailsUrl(), bookInfo, bookHandler));
+        ThreadPool.getInstance().submitTask(new BiqiugeCatalogThread(bookInfo.getDatailsUrl(), bookInfo, bookHandler));
         tv_bookName_book.setText(bookInfo.getBookName());
         tv_author_book.setText(bookInfo.getAuthor());
         tv_type_book.setText(bookInfo.getType());
@@ -229,7 +223,6 @@ public class BookIntroducedActivity extends Activity implements View.OnClickList
             String sourceName = StringUtils.shearSourceName(sourceUrl);
             MyLogcat.myLog("sourceName:" + sourceName + ",sourceUrl:" + sourceUrl);
             bookInfo.getBookSourceInfos().add(new BookSourceInfo(bookInfo, null, sourceName, sourceUrl, Key.KEY_DDA));
-            ThreadPool.getInstance().submitTask(new DDABookCatalogThread(sourceUrl, bookInfo, bookHandler));
             MyLogcat.myLog("bookInfo:" + bookInfo.toString());
             //启动百度线程，查找小说来源
 //            String url = URLUtils.BAiDU_SEARCH_URL_ + bookName;

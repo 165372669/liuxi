@@ -39,9 +39,9 @@ public class DDABookCatalogThread extends BaseReadThread {
         //og:title     书名
         //og:novel:read_url  书页Url
         //og:novel:author  作者
-        String bookName = null;
-        String url = null;
-        String author = null;
+        bookName = null;
+        url = null;
+        author = null;
         for (Element meta : metas) {
             String property = meta.attr("property");
             switch (property) {
@@ -72,6 +72,10 @@ public class DDABookCatalogThread extends BaseReadThread {
             MyLogcat.myLog("url:" + url);
         }
 
+    }
+
+    @Override
+    public void getCatalogs(Document doc) {
         if ((null != bookName && bookName.equals(bookInfo.getBookName())) || (null != author && author.equals(bookInfo.getAuthor()))) {
             Elements dds = doc.select("dd");
             Elements as = dds.select("a");

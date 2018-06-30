@@ -24,6 +24,7 @@ public class LIABookCatalogThread extends BaseReadThread {
 
 
     private BookInfo bookInfo;
+    private BookSourceInfo bookSourceInfo;
 
     public LIABookCatalogThread(String url, BookInfo bookInfo, MyHandler myHandler) {
         super(url, myHandler);
@@ -34,6 +35,8 @@ public class LIABookCatalogThread extends BaseReadThread {
     @Override
     public void resoloveUrl(Document doc) {
         Elements metas = doc.select("meta[property]");
+        int sourceIndex = bookInfo.getSourceIndex();
+        bookSourceInfo = bookInfo.getBookSourceInfos().get(sourceIndex);
         if (metas.size() > 0) {
             parseChapter(doc, metas);
         } else {
@@ -41,6 +44,7 @@ public class LIABookCatalogThread extends BaseReadThread {
         }
 
     }
+
 
     @Override
     public void errorHandle(IOException e) {
@@ -68,12 +72,6 @@ public class LIABookCatalogThread extends BaseReadThread {
     }
 
     public void parseChapter(Document doc, Elements metas) {
-        int sourceIndex = bookInfo.getSourceIndex();
-        BookSourceInfo bookSourceInfo = bookInfo.getBookSourceInfos().get(sourceIndex);
-        String sourceName = bookSourceInfo.getSourceName();
-        String bookName = null;
-        String url = null;
-        String author = null;
         if (metas.size() > 0) {
             for (Element meta : metas) {
                 String property = meta.attr("property");
@@ -92,6 +90,11 @@ public class LIABookCatalogThread extends BaseReadThread {
                 }
             }
         }
+    }
+
+    @Override
+    public void getCatalogs(Document doc) {
+        String sourceName = bookSourceInfo.getSourceName();
         if (null != bookName && bookName.equals(bookInfo.getBookName())) {
             Elements catalogs = null;
             boolean is88dushu = false;

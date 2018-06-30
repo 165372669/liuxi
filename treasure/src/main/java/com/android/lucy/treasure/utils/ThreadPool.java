@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 public class ThreadPool {
     private volatile static ThreadPool threadPool;
-    public static final int POOL_SIZE = 5;
+    public static final int POOL_SIZE = 10;
     private ExecutorService executorService;
     private List<Runnable> runnables;
 

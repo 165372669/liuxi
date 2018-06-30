@@ -31,8 +31,13 @@ public abstract class BaseReadThread implements Runnable {
     private boolean isCancelled;
     protected String flag;//区分线程标志
     protected int count;
+    protected String bookName;
+    protected String author;
+    protected String url;
 
     public abstract void resoloveUrl(Document doc);
+
+    public abstract void getCatalogs(Document doc);
 
     public abstract void errorHandle(IOException e);
 
@@ -58,8 +63,18 @@ public abstract class BaseReadThread implements Runnable {
             // Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0
             Connection conn = Jsoup.connect(baseUrl);
             conn.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0");
+            conn.header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+            conn.header("Accept-Language", "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2");
+            conn.header("Accept-Encoding", "gzip, deflate");
+            conn.header("Cookie", "UM_distinctid=163f6db119c1d2-0644048e7f41168-143e7140-1fa400-163f6db119d650; " +
+                    "CNZZDATA1273376891=667199016-1528854860-%7C1529665059; bcolor=; font=; size=; fontcolor=; width=");
+            conn.header("Connection", "keep");
+            conn.header("Upgrade-Insecure-Requests", "1");
             Document doc = conn.timeout(3 * 1000).get();
+//            Connection.Response response = conn.response();
+//            MyLogcat.myLog("状态码：" + response.statusCode());
             resoloveUrl(doc);
+            getCatalogs(doc);
         } catch (IOException e) {
             MyLogcat.myLog(baseUrl + "，网页读取失败！！！");
             errorHandle(e);
